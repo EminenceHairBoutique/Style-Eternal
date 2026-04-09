@@ -387,3 +387,85 @@ table {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ─── Marquee / Infinite Scroll ──────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ─── Image Reveal ───────────────────────────────────────────────────── */
+@keyframes imageReveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-image-reveal {
+  animation: imageReveal 1.2s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* ─── Product Card Image Swap ────────────────────────────────────────── */
+.product-card-img-swap .img-secondary {
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.product-card-img-swap:hover .img-secondary {
+  opacity: 1;
+}
+.product-card-img-swap:hover .img-primary {
+  opacity: 0;
+}
+
+/* ─── Premium Line Reveal ────────────────────────────────────────────── */
+@keyframes lineGrow {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+.animate-line-grow {
+  animation: lineGrow 1.2s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* ─── Subtle Pulse (for live indicators) ─────────────────────────────── */
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.animate-subtle-pulse {
+  animation: subtlePulse 2s ease-in-out infinite;
+}
+
+/* ─── Mega Dropdown ──────────────────────────────────────────────────── */
+@keyframes megaDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-mega-drop {
+  animation: megaDropIn 250ms ease-out forwards;
+}
+
+/* ─── Trust Bar ──────────────────────────────────────────────────────── */
+.trust-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}

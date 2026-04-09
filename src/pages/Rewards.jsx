@@ -180,6 +180,32 @@ export default function Rewards() {
               </p>
             </Motion.div>
 
+            {/* Visual Tier Progression Bar */}
+            <Motion.div {...fadeUp} className="mb-14 hidden md:block">
+              <div className="relative max-w-4xl mx-auto">
+                <div className="h-[2px] bg-white/[0.06] w-full absolute top-3" />
+                <div className="h-[2px] bg-gradient-to-r from-se-steel/30 via-se-bone/20 via-se-gold/40 to-se-gold w-full absolute top-3" />
+                <div className="flex justify-between relative">
+                  {TIER_DATA.map((tier) => {
+                    const TierDotIcon = tier.icon;
+                    return (
+                      <div key={tier.name} className="flex flex-col items-center" style={{ width: "24%" }}>
+                        <div className={`w-6 h-6 rounded-full border ${tier.accent} bg-se-black flex items-center justify-center mb-3`}>
+                          <TierDotIcon className={`w-3 h-3 ${tier.iconColor}`} />
+                        </div>
+                        <span className="text-[10px] font-accent tracking-[0.15em] uppercase text-se-bone/60">
+                          {tier.name}
+                        </span>
+                        <span className="text-[9px] font-accent tracking-[0.1em] text-se-gold/60 mt-0.5">
+                          {tier.threshold}+
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </Motion.div>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
               {TIER_DATA.map((tier, i) => {
                 const TierIcon = tier.icon;

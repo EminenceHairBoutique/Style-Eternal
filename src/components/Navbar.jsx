@@ -36,12 +36,27 @@ export default function Navbar() {
 
   const navLinks = useMemo(() => [
     { label: "New Arrivals", href: "/shop?filter=new" },
-    { label: "Shop", href: "/shop" },
+    {
+      label: "Shop",
+      href: "/shop",
+      mega: [
+        { label: "All Products", href: "/shop" },
+        { label: "Tees", href: "/shop/tees" },
+        { label: "Hoodies", href: "/shop/hoodies" },
+        { label: "Outerwear", href: "/shop/outerwear" },
+        { label: "Bottoms", href: "/shop/bottoms" },
+        { label: "Headwear", href: "/shop/headwear" },
+        { label: "Accessories", href: "/shop/accessories" },
+      ],
+    },
     { label: "Drops", href: "/drops" },
     { label: "Collections", href: "/collections" },
     { label: "Editorial", href: "/editorial" },
     { label: "About", href: "/about" },
   ], []);
+
+  const [megaOpen, setMegaOpen] = useState(null);
+  const megaTimer = useRef(null);
 
   const mobileLinks = useMemo(() => [
     { label: "New Arrivals", href: "/shop?filter=new" },
@@ -107,15 +122,51 @@ export default function Navbar() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.2em] font-accent text-se-bone/70">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="link-hover hover:text-se-bone transition-colors duration-200"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.mega ? (
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => {
+                    clearTimeout(megaTimer.current);
+                    setMegaOpen(link.label);
+                  }}
+                  onMouseLeave={() => {
+                    megaTimer.current = setTimeout(() => setMegaOpen(null), 150);
+                  }}
+                >
+                  <Link
+                    to={link.href}
+                    className="link-hover hover:text-se-bone transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                  {megaOpen === link.label && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50">
+                      <div className="bg-se-charcoal border border-white/8 p-5 min-w-[180px] animate-mega-drop">
+                        {link.mega.map((sub) => (
+                          <Link
+                            key={sub.href}
+                            to={sub.href}
+                            className="block py-2 text-[11px] tracking-[0.15em] text-se-bone/60 hover:text-se-bone hover:pl-1 transition-all duration-200"
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="link-hover hover:text-se-bone transition-colors duration-200"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Right controls */}

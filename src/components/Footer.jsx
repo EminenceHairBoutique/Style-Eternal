@@ -93,6 +93,7 @@ const Footer = () => {
               <Link to="/about" className="block text-se-bone/60 hover:text-se-bone transition">Our Story</Link>
               <Link to="/editorial" className="block text-se-bone/60 hover:text-se-bone transition">Editorial</Link>
               <Link to="/community" className="block text-se-bone/60 hover:text-se-bone transition">Community</Link>
+              <Link to="/rewards" className="block text-se-bone/60 hover:text-se-bone transition">Rewards</Link>
               <Link to="/contact" className="block text-se-bone/60 hover:text-se-bone transition">Contact</Link>
             </div>
           </div>
@@ -103,13 +104,21 @@ const Footer = () => {
             <div className="space-y-3 text-[13px]">
               <Link to="/faqs" className="block text-se-bone/60 hover:text-se-bone transition">FAQ</Link>
               <Link to="/shipping" className="block text-se-bone/60 hover:text-se-bone transition">Shipping</Link>
-              <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Returns & Exchanges</Link>
+              <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Returns &amp; Exchanges</Link>
               <Link to="/size-guide" className="block text-se-bone/60 hover:text-se-bone transition">Size Guide</Link>
-              <Link to="/rewards" className="block text-se-bone/60 hover:text-se-bone transition">Rewards</Link>
               <a href={`mailto:${BRAND.supportEmail}`} className="block text-se-bone/60 hover:text-se-bone transition">{BRAND.supportEmail}</a>
               <Link to="/account" className="block text-se-bone/60 hover:text-se-bone transition">My Account</Link>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Brand Statement */}
+      <div className="border-t border-white/[0.04]">
+        <div className="content-wide py-8 text-center">
+          <p className="font-display text-[clamp(1rem,2.5vw,1.4rem)] tracking-[0.12em] text-se-bone/[0.08] leading-tight">
+            STYLE IS MEMORY. LEGACY IS FOREVER.
+          </p>
         </div>
       </div>
 
