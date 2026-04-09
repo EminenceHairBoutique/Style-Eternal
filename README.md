@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -50,3 +51,7 @@ Set `readyToShip: true` on any product in `src/data/products.js` to:
 ### Partner pricing preview
 
 Approved partners see a lightweight pricing preview in the account dashboard so they don’t have to hunt for the portal link.
+=======
+# Style-Eternal
+Style Eternal Website
+>>>>>>> e1a0ee9edde99dcf027ef0ca2632c10895c4710b
