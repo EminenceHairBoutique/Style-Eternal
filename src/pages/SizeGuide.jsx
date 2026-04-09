@@ -101,11 +101,15 @@ export default function SizeGuide() {
         {/* Category Tabs */}
         <div className="border-b border-white/5 sticky top-0 z-30 bg-se-black/95 backdrop-blur-sm">
           <div className="content-wide py-4">
-            <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Size guide categories">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.key}
                   type="button"
+                  role="tab"
+                  aria-selected={activeCategory === cat.key}
+                  aria-controls={`panel-${cat.key}`}
+                  id={`tab-${cat.key}`}
                   onClick={() => setActiveCategory(cat.key)}
                   className={`text-[11px] font-accent uppercase tracking-[0.2em] whitespace-nowrap transition pb-1 border-b-2 ${
                     activeCategory === cat.key
@@ -126,6 +130,9 @@ export default function SizeGuide() {
             {category && (
               <Motion.div
                 key={category.key}
+                role="tabpanel"
+                id={`panel-${category.key}`}
+                aria-labelledby={`tab-${category.key}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}

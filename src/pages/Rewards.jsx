@@ -13,11 +13,10 @@ const fadeUp = {
   transition: { duration: 0.7, ease: [0.2, 0, 0, 1] },
 };
 
-const TIER_DATA = [
-  {
-    name: "Foundation",
+/** Presentational config per tier — keyed by tier name from LOYALTY.tiers */
+const TIER_PRESENTATION = {
+  Foundation: {
     icon: Star,
-    threshold: "$0",
     description: "Your entry into the archive. Every member starts here.",
     perks: [
       "Access to member-only drops",
@@ -29,10 +28,8 @@ const TIER_DATA = [
     iconColor: "text-se-steel",
     bg: "bg-se-charcoal",
   },
-  {
-    name: "Established",
+  Established: {
     icon: Zap,
-    threshold: "$500",
     description: "You've proven your commitment. Perks start to unlock.",
     perks: [
       "Everything in Foundation",
@@ -44,10 +41,8 @@ const TIER_DATA = [
     iconColor: "text-se-bone",
     bg: "bg-se-charcoal",
   },
-  {
-    name: "Permanent",
+  Permanent: {
     icon: Shield,
-    threshold: "$1,500",
     description: "Inner circle. Reserved for those who live the brand.",
     perks: [
       "Everything in Established",
@@ -60,10 +55,8 @@ const TIER_DATA = [
     iconColor: "text-se-gold",
     bg: "bg-se-charcoal",
   },
-  {
-    name: "Eternal",
+  Eternal: {
     icon: Crown,
-    threshold: "$3,500",
     description: "The highest tier. Reserved for lifetime supporters.",
     perks: [
       "Everything in Permanent",
@@ -77,7 +70,19 @@ const TIER_DATA = [
     iconColor: "text-se-gold",
     bg: "bg-gradient-to-br from-se-charcoal to-[#1A1508]",
   },
-];
+};
+
+function formatThreshold(cents) {
+  const dollars = Math.round(cents / 100);
+  return `$${dollars.toLocaleString("en-US")}`;
+}
+
+/** Merge source-of-truth tier data from LOYALTY with presentational config */
+const TIER_DATA = LOYALTY.tiers.map((tier) => ({
+  name: tier.name,
+  threshold: formatThreshold(tier.minSpendCents),
+  ...TIER_PRESENTATION[tier.name],
+}));
 
 export default function Rewards() {
   return (
@@ -216,7 +221,7 @@ export default function Rewards() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-40px" }}
                     transition={{ duration: 0.5, delay: i * 0.1, ease: [0.2, 0, 0, 1] }}
-                    className={`${tier.bg} border ${tier.accent} p-6 md:p-7 flex flex-col`}
+                    className={`${tier.bg} tier-card-glow border ${tier.accent} p-6 md:p-7 flex flex-col`}
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <TierIcon className={`w-5 h-5 ${tier.iconColor}`} />
