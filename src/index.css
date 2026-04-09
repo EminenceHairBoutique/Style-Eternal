@@ -1,0 +1,366 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STYLE ETERNAL — Design System
+   Premium Streetwear / Newark, NJ — North Ward
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Design Tokens (CSS Custom Properties) ──────────────────────────── */
+:root {
+  /* Core palette */
+  --se-black: #0A0A0A;
+  --se-charcoal: #1A1A1A;
+  --se-asphalt: #2A2A2A;
+  --se-concrete: #3A3A3A;
+  --se-steel: #6B6B6B;
+  --se-bone: #E8E4DE;
+  --se-cream: #F5F2EC;
+  --se-white: #FAFAF8;
+
+  /* Accent */
+  --se-gold: #C4A35A;
+  --se-gold-muted: #A08A4A;
+  --se-red: #8B2020;
+  --se-red-bright: #C43030;
+
+  /* Typography */
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-accent: 'Space Grotesk', sans-serif;
+  --font-signature: 'Great Vibes', cursive;
+
+  /* Spacing rhythm */
+  --section-gap: clamp(4rem, 8vw, 8rem);
+  --content-max: 1280px;
+  --content-wide: 1440px;
+}
+
+/* ─── Tailwind v4 Theme Extension ────────────────────────────────────── */
+@theme {
+  --color-se-black: #0A0A0A;
+  --color-se-charcoal: #1A1A1A;
+  --color-se-asphalt: #2A2A2A;
+  --color-se-concrete: #3A3A3A;
+  --color-se-steel: #6B6B6B;
+  --color-se-bone: #E8E4DE;
+  --color-se-cream: #F5F2EC;
+  --color-se-white: #FAFAF8;
+  --color-se-gold: #C4A35A;
+  --color-se-gold-muted: #A08A4A;
+  --color-se-red: #8B2020;
+  --color-se-red-bright: #C43030;
+
+  --font-family-display: 'Oswald', sans-serif;
+  --font-family-body: 'Inter', sans-serif;
+  --font-family-accent: 'Space Grotesk', sans-serif;
+}
+
+/* ─── Base Styles ────────────────────────────────────────────────────── */
+body {
+  background-color: var(--se-black);
+  color: var(--se-bone);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--se-gold);
+  color: var(--se-black);
+}
+
+/* ─── Typography Utilities ───────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.font-accent {
+  font-family: var(--font-accent);
+}
+
+.font-signature {
+  font-family: var(--font-signature);
+}
+
+.text-label {
+  font-family: var(--font-accent);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.text-overline {
+  font-family: var(--font-accent);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--se-steel);
+}
+
+/* ─── Layout Utilities ───────────────────────────────────────────────── */
+.section-pad {
+  padding-top: var(--section-gap);
+  padding-bottom: var(--section-gap);
+}
+
+.content-wrap {
+  max-width: var(--content-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.content-wide {
+  max-width: var(--content-wide);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* ─── Premium Card System ────────────────────────────────────────────── */
+.card-hover {
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1),
+              box-shadow 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Product Card ───────────────────────────────────────────────────── */
+.product-card {
+  background: var(--se-charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color 300ms ease, transform 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+.product-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  background: var(--se-bone);
+  color: var(--se-black);
+  font-family: var(--font-accent);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  transition: background 200ms ease, transform 100ms ease;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--se-cream);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  background: transparent;
+  color: var(--se-bone);
+  font-family: var(--font-accent);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(232, 228, 222, 0.3);
+  transition: border-color 200ms ease, background 200ms ease, transform 100ms ease;
+  cursor: pointer;
+}
+.btn-outline:hover {
+  border-color: var(--se-bone);
+  background: rgba(232, 228, 222, 0.05);
+}
+.btn-outline:active {
+  transform: scale(0.98);
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  background: var(--se-gold);
+  color: var(--se-black);
+  font-family: var(--font-accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  transition: background 200ms ease, transform 100ms ease;
+  cursor: pointer;
+}
+.btn-gold:hover {
+  background: var(--se-gold-muted);
+}
+
+/* ─── Badge System ───────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-family: var(--font-accent);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.badge-new {
+  background: var(--se-bone);
+  color: var(--se-black);
+}
+.badge-limited {
+  background: var(--se-gold);
+  color: var(--se-black);
+}
+.badge-sold-out {
+  background: var(--se-concrete);
+  color: var(--se-steel);
+}
+.badge-archive {
+  background: transparent;
+  border: 1px solid var(--se-steel);
+  color: var(--se-steel);
+}
+
+/* ─── Dividers ───────────────────────────────────────────────────────── */
+.divider {
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.divider-gold {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--se-gold), transparent);
+}
+
+/* ─── Skeleton Loading ───────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.se-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--se-charcoal) 0%,
+    var(--se-asphalt) 40%,
+    var(--se-charcoal) 80%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ─── Focus States (Accessible + On-brand) ───────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--se-gold);
+  outline-offset: 3px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ─── Link Hover Underline ───────────────────────────────────────────── */
+.link-hover {
+  position: relative;
+  display: inline-block;
+}
+.link-hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+.link-hover:hover::after {
+  width: 100%;
+}
+
+/* ─── Dropdown Animation ─────────────────────────────────────────────── */
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dropdown-in {
+  animation: dropdownIn 200ms ease-out forwards;
+}
+
+/* ─── Image Placeholder ──────────────────────────────────────────────── */
+.img-fallback {
+  background-color: var(--se-charcoal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Mobile Tap Targets ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  button,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .tap-compact,
+  .tap-compact * {
+    min-height: unset;
+    min-width: unset;
+  }
+}
+
+/* ─── Scrollbar Styling ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--se-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--se-concrete);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--se-steel);
+}
+
+/* ─── Grain Overlay (optional cinematic texture) ─────────────────────── */
+.grain-overlay::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
