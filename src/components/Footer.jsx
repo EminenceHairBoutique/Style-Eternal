@@ -102,7 +102,10 @@ const Footer = () => {
             <p className="text-label text-se-steel mb-5">Help</p>
             <div className="space-y-3 text-[13px]">
               <Link to="/faqs" className="block text-se-bone/60 hover:text-se-bone transition">FAQ</Link>
-              <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Shipping & Returns</Link>
+              <Link to="/shipping" className="block text-se-bone/60 hover:text-se-bone transition">Shipping</Link>
+              <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Returns & Exchanges</Link>
+              <Link to="/size-guide" className="block text-se-bone/60 hover:text-se-bone transition">Size Guide</Link>
+              <Link to="/rewards" className="block text-se-bone/60 hover:text-se-bone transition">Rewards</Link>
               <a href={`mailto:${BRAND.supportEmail}`} className="block text-se-bone/60 hover:text-se-bone transition">{BRAND.supportEmail}</a>
               <Link to="/account" className="block text-se-bone/60 hover:text-se-bone transition">My Account</Link>
             </div>

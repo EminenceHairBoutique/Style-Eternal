@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { products, collections, getNewArrivals, getLimitedProducts } from "../data/products";
+import { collections, getNewArrivals, getLimitedProducts } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import SEO from "../components/SEO";
 import { subscribeEmail } from "../utils/subscribe";

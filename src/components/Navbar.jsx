@@ -60,8 +60,11 @@ export default function Navbar() {
     { label: "About", href: "/about" },
     { divider: true },
     { label: "Account", href: "/account" },
+    { label: "Rewards", href: "/rewards" },
     { label: "Contact", href: "/contact" },
     { label: "FAQ", href: "/faqs" },
+    { label: "Shipping", href: "/shipping" },
+    { label: "Size Guide", href: "/size-guide" },
   ], []);
 
   const itemCount = items.reduce((sum, i) => sum + (i.quantity || 1), 0);

@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { collections, getProductsByDrop } from "../data/products";
+import { getProductsByDrop } from "../data/products";
 import SEO from "../components/SEO";
 
 const fadeUp = {

@@ -364,3 +364,26 @@ body {
   opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
+
+/* ─── Premium Table Styles ───────────────────────────────────────────── */
+table {
+  border-collapse: collapse;
+}
+
+/* ─── Tier Card Glow (hover effect for loyalty tiers) ────────────────── */
+.tier-card-glow {
+  position: relative;
+  transition: box-shadow 300ms ease;
+}
+.tier-card-glow:hover {
+  box-shadow: 0 0 40px rgba(196, 163, 90, 0.08);
+}
+
+/* ─── Scroll Hide (horizontal scroll containers) ─────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
