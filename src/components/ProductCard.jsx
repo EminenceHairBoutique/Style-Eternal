@@ -8,6 +8,7 @@ const ProductCard = ({ product, featured = false }) => {
   const { addToCart, openCart } = useCart();
   const images = resolveProductImages(product);
   const img = product.image || images?.[0] || product.images?.[0] || null;
+  const imgSecondary = images?.[1] || product.images?.[1] || null;
 
   const handleQuickAdd = (e) => {
     e.preventDefault();
@@ -35,16 +36,26 @@ const ProductCard = ({ product, featured = false }) => {
       className={`group block product-card overflow-hidden ${featured ? "" : ""}`}
     >
       {/* Image */}
-      <div className={`relative ${featured ? "aspect-[3/4]" : "aspect-[3/4]"} bg-se-charcoal overflow-hidden`}>
+      <div className={`relative ${featured ? "aspect-[3/4]" : "aspect-[3/4]"} bg-se-charcoal overflow-hidden ${imgSecondary ? "product-card-img-swap" : ""}`}>
         {img ? (
-          <img
-            src={img}
-            alt={product.name}
-            className={`h-full w-full object-cover transition-transform duration-700 ease-out ${
-              isSoldOut ? "opacity-50 grayscale" : "group-hover:scale-[1.04]"
-            }`}
-            loading="lazy"
-          />
+          <>
+            <img
+              src={img}
+              alt={product.name}
+              className={`img-primary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out ${
+                isSoldOut ? "opacity-50 grayscale" : "group-hover:scale-[1.04]"
+              }`}
+              loading="lazy"
+            />
+            {imgSecondary && !isSoldOut && (
+              <img
+                src={imgSecondary}
+                alt={`${product.name} alternate view`}
+                className="img-secondary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.04]"
+                loading="lazy"
+              />
+            )}
+          </>
         ) : (
           <div className="h-full w-full flex items-center justify-center bg-se-asphalt">
             <span className="font-display text-[14px] tracking-[0.2em] text-se-steel">

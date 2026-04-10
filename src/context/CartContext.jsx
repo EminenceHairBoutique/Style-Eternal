@@ -8,7 +8,6 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { products } from "../data/products";
 import { resolveProductImages } from "../utils/productMedia";
 
 const CartContext = createContext(null);

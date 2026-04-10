@@ -1,6 +1,6 @@
 // src/pages/ProductDetail.jsx — Style Eternal (Streetwear PDP)
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   ChevronLeft,
   Minus,
@@ -135,7 +135,6 @@ const fadeUp = {
 /* ================================================================== */
 export default function ProductDetail() {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const { addToCart, openCart } = useCart();
 
   /* ---------- find product ---------- */
@@ -493,17 +492,20 @@ export default function ProductDetail() {
                   { icon: Truck, label: "Free Shipping 100+" },
                   { icon: RotateCcw, label: "30-Day Returns" },
                   { icon: ShieldCheck, label: "Authentic Guarantee" },
-                ].map(({ icon: Icon, label }) => (
+                ].map((item) => {
+                  const SignalIcon = item.icon;
+                  return (
                   <div
-                    key={label}
+                    key={item.label}
                     className="flex flex-col items-center gap-2 text-center"
                   >
-                    <Icon size={16} className="text-se-steel" />
+                    <SignalIcon size={16} className="text-se-steel" />
                     <span className="text-[10px] font-accent text-se-steel tracking-[0.05em] uppercase leading-tight">
-                      {label}
+                      {item.label}
                     </span>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="divider mb-2" />

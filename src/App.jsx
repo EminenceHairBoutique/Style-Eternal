@@ -38,6 +38,9 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const PrivacyChoices = lazy(() => import("./pages/PrivacyChoices"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Returns = lazy(() => import("./pages/Returns"));
+const Rewards = lazy(() => import("./pages/Rewards"));
+const Shipping = lazy(() => import("./pages/Shipping"));
+const SizeGuide = lazy(() => import("./pages/SizeGuide"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
@@ -86,6 +89,9 @@ export default function App() {
                 ["/terms", <Terms />],
                 ["/privacy-choices", <PrivacyChoices />],
                 ["/returns", <Returns />],
+                ["/rewards", <Rewards />],
+                ["/shipping", <Shipping />],
+                ["/size-guide", <SizeGuide />],
                 ["*", <NotFound />],
               ].map(([path, element]) => (
                 <Route

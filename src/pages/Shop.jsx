@@ -8,9 +8,6 @@ import {
   products,
   categories,
   collections,
-  getAvailableProducts,
-  getNewArrivals,
-  getLimitedProducts,
 } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import SEO from "../components/SEO";

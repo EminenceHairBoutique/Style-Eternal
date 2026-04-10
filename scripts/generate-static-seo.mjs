@@ -392,6 +392,27 @@ async function main() {
       ogType: "website",
     },
     {
+      pathname: "/rewards",
+      title: "Rewards — Eternal Rewards Program",
+      description:
+        "Join the Eternal Rewards program. Earn points, unlock tiers, and access exclusive perks as a Style Eternal member.",
+      ogType: "website",
+    },
+    {
+      pathname: "/shipping",
+      title: "Shipping Information",
+      description:
+        "Shipping options, delivery times, and packaging details for Style Eternal orders.",
+      ogType: "website",
+    },
+    {
+      pathname: "/size-guide",
+      title: "Size Guide",
+      description:
+        "Find your perfect fit with Style Eternal size charts for tees, hoodies, outerwear, bottoms, and headwear.",
+      ogType: "website",
+    },
+    {
       pathname: "/privacy",
       title: "Privacy Policy",
       description: "Read how Eminence Hair Boutique handles your data.",

@@ -86,7 +86,7 @@ export default function About() {
             <Motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
               <div className="divider-gold mb-10 mx-auto w-24" />
               <h2 className="font-display text-[clamp(1.8rem,5vw,3rem)] leading-[1.1] tracking-[0.04em] mb-8">
-                WE DON'T CHASE TRENDS.<br />
+                WE DON&apos;T CHASE TRENDS.<br />
                 WE OUTLAST THEM.
               </h2>
               <div className="space-y-4 text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed max-w-xl mx-auto">
@@ -98,10 +98,30 @@ export default function About() {
                 <p>
                   We use heavyweight fabrics because they last. We garment-wash
                   because we want the pieces to feel lived-in from day one.
-                  We screen-print because it holds. We don't cut corners on
+                  We screen-print because it holds. We don&apos;t cut corners on
                   materials because the streets taught us that cheap falls apart.
                 </p>
               </div>
+            </Motion.div>
+          </div>
+        </section>
+
+        {/* Founder Vision */}
+        <section className="border-b border-white/5 bg-gradient-to-b from-se-black to-se-charcoal/30">
+          <div className="content-wide py-20 md:py-28">
+            <Motion.div {...fadeUp} className="max-w-2xl mx-auto text-center">
+              <p className="text-[9px] tracking-[0.25em] uppercase text-se-gold font-accent mb-8">
+                Founder&apos;s Note
+              </p>
+              <blockquote className="font-display text-[clamp(1.2rem,3vw,1.8rem)] leading-[1.3] tracking-[0.04em] text-se-bone/70 mb-8">
+                &ldquo;I didn&apos;t start this brand to follow the industry. I started it
+                because the streets I grew up on deserve a label that takes them
+                seriously. Every piece we make carries that weight.&rdquo;
+              </blockquote>
+              <div className="divider-gold w-12 mx-auto mb-4" />
+              <p className="text-[11px] font-accent tracking-[0.2em] uppercase text-se-steel">
+                — Style Eternal
+              </p>
             </Motion.div>
           </div>
         </section>

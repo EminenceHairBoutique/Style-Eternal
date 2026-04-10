@@ -198,6 +198,7 @@ export default function AccountDashboard() {
             </div>
 
             <div className="mt-8 flex gap-3">
+              <Link to="/rewards" className="btn-gold text-[10px]">View Rewards</Link>
               <Link to="/contact" className="btn-outline text-[10px]">Support</Link>
               <Link to="/shop" className="btn-outline text-[10px]">Shop</Link>
             </div>
@@ -256,11 +257,12 @@ export default function AccountDashboard() {
   );
 }
 
-function StatCard({ icon: Icon, label, value, sub, loading: isLoading }) {
+function StatCard({ icon, label, value, sub, loading: isLoading }) {
+  const CardIcon = icon;
   return (
     <div className="border border-white/5 bg-se-charcoal p-5">
       <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">
-        <Icon className="w-4 h-4" /> {label}
+        <CardIcon className="w-4 h-4" /> {label}
       </div>
       <div className="mt-3 text-[18px] font-display tracking-[0.04em]">
         {isLoading ? "—" : value}

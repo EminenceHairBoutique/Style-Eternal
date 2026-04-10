@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { products, collections, getNewArrivals, getLimitedProducts } from "../data/products";
+import { collections, getNewArrivals, getLimitedProducts } from "../data/products";
 import ProductCard from "../components/ProductCard";
+import BrandPromise from "../components/BrandPromise";
 import SEO from "../components/SEO";
 import { subscribeEmail } from "../utils/subscribe";
 
@@ -55,11 +56,76 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 1: MOSAIC HERO
         ═══════════════════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden" style={{ height: "100dvh", minHeight: 680 }}>
+        <section className="relative overflow-hidden" style={{ minHeight: 680 }}>
 
-          {/* ── MOSAIC GRID ── */}
+          {/* ── MOBILE HERO (hidden on md+) ── */}
+          <div className="md:hidden relative" style={{ height: "100dvh", minHeight: 600 }}>
+            <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1C1205 0%, #0A0806 50%, #0A0A0A 100%)" }}>
+              <img
+                src="/assets/editorial/hero-cityscape.jpg"
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+                onError={(e) => { e.target.style.display = "none"; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-se-black via-se-black/40 to-transparent" />
+              <div className="grain-overlay absolute inset-0 opacity-30" />
+            </div>
+
+            <div className="absolute inset-0 flex flex-col justify-end p-6 pb-20">
+              <Motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, ease: [0.2, 0, 0, 1] }}
+              >
+                <h1
+                  className="font-display text-se-bone leading-[0.88] tracking-[0.02em] mb-5"
+                  style={{ fontSize: "clamp(3.5rem, 18vw, 6rem)" }}
+                >
+                  STYLE<br />ETERNAL
+                </h1>
+
+                <p className="font-accent text-[9px] tracking-[0.28em] uppercase text-se-bone/50 mb-2">
+                  NEWARK, NEW JERSEY — NORTH WARD
+                </p>
+
+                <div className="divider-gold w-12 mb-5" />
+
+                <p className="font-accent text-[10px] tracking-[0.18em] uppercase text-se-bone/60 leading-[1.8] mb-8">
+                  STYLE IS MEMORY.<br />LEGACY IS FOREVER.
+                </p>
+
+                <Link
+                  to="/shop"
+                  className="inline-flex items-center gap-3 border border-se-bone/30 px-5 py-3 text-[9px] font-accent tracking-[0.22em] uppercase text-se-bone/80 hover:border-se-bone/70 hover:text-se-bone transition duration-300"
+                >
+                  EXPLORE THE COLLECTION
+                  <ArrowRight size={11} />
+                </Link>
+              </Motion.div>
+            </div>
+
+            {/* Mobile quick-links */}
+            <div className="absolute bottom-0 left-0 right-0 h-[48px] border-t border-white/8 grid grid-cols-3 divide-x divide-white/8 bg-se-black/90 backdrop-blur-sm">
+              {[
+                { label: "New Arrivals", to: "/shop?filter=new" },
+                { label: "Latest Drop",  to: "/drops" },
+                { label: "Shop All",     to: "/shop" },
+              ].map(({ label, to }) => (
+                <Link
+                  key={label}
+                  to={to}
+                  className="flex items-center justify-center font-accent text-[8px] tracking-[0.22em] uppercase text-se-bone/40 hover:text-se-bone transition-all duration-200"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* ── DESKTOP MOSAIC GRID (hidden on mobile) ── */}
           <div
-            className="grid gap-[2px] bg-se-black"
+            className="hidden md:grid gap-[2px] bg-se-black"
             style={{
               height: "calc(100dvh - 52px)",
               minHeight: 628,
@@ -234,10 +300,10 @@ export default function Home() {
               </Motion.blockquote>
             </div>
 
-          </div>{/* end mosaic grid */}
+          </div>{/* end desktop mosaic grid */}
 
-          {/* ── BOTTOM NAV BAR ── */}
-          <div className="h-[52px] border-t border-white/8 grid grid-cols-3 divide-x divide-white/8 bg-se-black">
+          {/* ── DESKTOP BOTTOM NAV BAR ── */}
+          <div className="hidden md:grid h-[52px] border-t border-white/8 grid-cols-3 divide-x divide-white/8 bg-se-black">
             {[
               { label: "New Arrivals", to: "/shop?filter=new" },
               { label: "Drop 03",      to: "/collections/love-never-dies" },
@@ -254,6 +320,45 @@ export default function Home() {
           </div>
 
         </section>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 1.5: EDITORIAL MARQUEE
+        ═══════════════════════════════════════════════════════════════ */}
+        <div className="border-t border-b border-white/[0.04] overflow-hidden bg-se-black py-4">
+          <div className="animate-marquee flex items-center gap-12 whitespace-nowrap" style={{ width: "max-content" }}>
+            {[...Array(2)].map((_, setIdx) => (
+              <React.Fragment key={setIdx}>
+                {[
+                  "HEAVYWEIGHT COTTON",
+                  "◆",
+                  "BORN IN NEWARK",
+                  "◆",
+                  "SCREEN-PRINTED GRAPHICS",
+                  "◆",
+                  "GARMENT-WASHED",
+                  "◆",
+                  "PREMIUM STREETWEAR",
+                  "◆",
+                  "NORTH WARD",
+                  "◆",
+                  "STYLE IS MEMORY",
+                  "◆",
+                  "LIMITED RELEASES",
+                  "◆",
+                ].map((text, i) => (
+                  <span
+                    key={`${setIdx}-${i}`}
+                    className={`font-display text-[12px] md:text-[13px] tracking-[0.25em] ${
+                      text === "◆" ? "text-se-gold/40 text-[8px]" : "text-se-bone/20"
+                    }`}
+                  >
+                    {text}
+                  </span>
+                ))}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 2: NEW ARRIVALS
@@ -518,6 +623,36 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 8.5: REWARDS TEASER
+        ═══════════════════════════════════════════════════════════════ */}
+        <section className="border-t border-white/5">
+          <div className="content-wide py-16 md:py-20">
+            <Motion.div {...fadeUp} className="grid md:grid-cols-[1fr,auto] gap-8 items-center">
+              <div>
+                <p className="text-[9px] tracking-[0.25em] uppercase text-se-gold font-accent mb-3">
+                  Loyalty Program
+                </p>
+                <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.06em] mb-3">
+                  ETERNAL REWARDS
+                </h2>
+                <p className="text-[14px] text-se-bone/40 leading-relaxed max-w-lg">
+                  Earn points on every purchase. Unlock tiers. Access early drops, VIP perks,
+                  and exclusive product releases reserved for the inner circle.
+                </p>
+              </div>
+              <Link to="/rewards" className="btn-outline inline-flex items-center gap-2">
+                Learn More <ArrowRight size={14} />
+              </Link>
+            </Motion.div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 8.75: TRUST STRIP
+        ═══════════════════════════════════════════════════════════════ */}
+        <BrandPromise />
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 9: NEWSLETTER / SMS CAPTURE
