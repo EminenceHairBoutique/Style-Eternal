@@ -364,3 +364,181 @@ body {
   opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PASS 2 — Executive Creative Review Additions
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Tier Badge System ──────────────────────────────────────────────── */
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  font-family: var(--font-accent);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--se-charcoal);
+}
+
+.tier-foundation { border-color: rgba(255,255,255,0.1); color: var(--se-steel); }
+.tier-established { border-color: rgba(196,163,90,0.3); color: var(--se-gold-muted); }
+.tier-permanent { border-color: var(--se-gold-muted); color: var(--se-gold); background: linear-gradient(135deg, var(--se-charcoal), rgba(196,163,90,0.08)); }
+.tier-eternal { border-color: var(--se-gold); color: var(--se-gold); background: linear-gradient(135deg, rgba(196,163,90,0.12), rgba(196,163,90,0.04)); box-shadow: 0 0 20px rgba(196,163,90,0.08); }
+
+/* ─── Section Eyebrow ────────────────────────────────────────────────── */
+.section-eyebrow {
+  font-family: var(--font-accent);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--se-gold);
+}
+
+/* ─── Timeline Steps ─────────────────────────────────────────────────── */
+.timeline-step {
+  position: relative;
+  padding-left: 2.5rem;
+}
+.timeline-step::before {
+  content: attr(data-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-accent);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--se-black);
+  background: var(--se-gold);
+}
+.timeline-step::after {
+  content: "";
+  position: absolute;
+  left: 0.8125rem;
+  top: 1.75rem;
+  width: 1px;
+  height: calc(100% - 1.75rem);
+  background: rgba(255, 255, 255, 0.08);
+}
+.timeline-step:last-child::after {
+  display: none;
+}
+
+/* ─── Concierge Card ─────────────────────────────────────────────────── */
+.concierge-card {
+  position: relative;
+  background: var(--se-charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem;
+  overflow: hidden;
+}
+.concierge-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--se-gold), transparent);
+}
+
+/* ─── Mega Menu ──────────────────────────────────────────────────────── */
+@keyframes megaMenuIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.mega-menu {
+  animation: megaMenuIn 200ms ease-out forwards;
+}
+
+/* ─── Mobile Drawer Enhancement ──────────────────────────────────────── */
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.drawer-slide-in {
+  animation: slideInLeft 350ms cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* ─── Auth Panel ─────────────────────────────────────────────────────── */
+.auth-panel {
+  background: var(--se-charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+.auth-panel::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--se-gold-muted), transparent);
+}
+
+/* ─── Progress Bar Enhanced ──────────────────────────────────────────── */
+.progress-bar-track {
+  height: 6px;
+  background: var(--se-asphalt);
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--se-gold-muted), var(--se-gold));
+  transition: width 600ms cubic-bezier(0.2, 0, 0, 1);
+  position: relative;
+}
+.progress-bar-fill::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+}
+
+/* ─── Guarantee Cards ────────────────────────────────────────────────── */
+.guarantee-card {
+  background: var(--se-charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem;
+  text-align: center;
+  transition: border-color 300ms ease;
+}
+.guarantee-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ─── Stat Card Elevated ─────────────────────────────────────────────── */
+.stat-card-elevated {
+  background: var(--se-charcoal);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card-elevated::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--se-gold);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.stat-card-elevated:hover::before {
+  opacity: 1;
+}
