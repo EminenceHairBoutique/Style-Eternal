@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { products, collections, getNewArrivals, getLimitedProducts } from "../data/products";
+import { collections, getNewArrivals, getLimitedProducts } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import SEO from "../components/SEO";
 import { subscribeEmail } from "../utils/subscribe";
@@ -255,6 +255,22 @@ export default function Home() {
 
         </section>
 
+        {/* ── TRUST STRIP ── */}
+        <div className="border-y border-white/5 bg-se-black">
+          <div className="content-wide py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
+            {[
+              { text: "Free Shipping $150+" },
+              { text: "Heavyweight Premium" },
+              { text: "30-Day Returns" },
+              { text: "Newark, NJ Made" },
+            ].map(({ text }) => (
+              <span key={text} className="text-[9px] font-accent tracking-[0.25em] uppercase text-se-steel/70">
+                ✦ {text}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 2: NEW ARRIVALS
         ═══════════════════════════════════════════════════════════════ */}
@@ -351,10 +367,10 @@ export default function Home() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "Tees", href: "/shop/tees", desc: "Heavyweight. Oversized." },
-                { label: "Hoodies", href: "/shop/hoodies", desc: "French terry. Year-round." },
-                { label: "Outerwear", href: "/shop/outerwear", desc: "Statement pieces." },
-                { label: "Bottoms", href: "/shop/bottoms", desc: "Sweats. Cargos." },
+                { label: "Tees", href: "/shop/tees", desc: "Heavyweight 300gsm. Oversized cut." },
+                { label: "Hoodies", href: "/shop/hoodies", desc: "French terry. Heavy. Year-round." },
+                { label: "Outerwear", href: "/shop/outerwear", desc: "Coats. Bombers. Statements." },
+                { label: "Bottoms", href: "/shop/bottoms", desc: "Sweats. Cargos. Tailored." },
               ].map((cat, i) => (
                 <Motion.div
                   key={cat.label}
@@ -388,22 +404,28 @@ export default function Home() {
         <section className="section-pad border-t border-white/5">
           <div className="content-wide">
             <Motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+              <p className="section-eyebrow mb-6">The Philosophy</p>
               <div className="divider-gold mb-10 mx-auto w-24" />
-              <h2 className="font-display text-[clamp(1.8rem,5vw,3rem)] leading-[1.05] tracking-[0.04em] mb-8">
-                STYLE IS NOT WHAT YOU WEAR.
+              <h2 className="font-display text-[clamp(2rem,6vw,4rem)] leading-[1] tracking-[0.02em] mb-10">
+                STYLE IS NOT<br />WHAT YOU WEAR.
                 <br />
-                IT'S WHAT YOU SURVIVE IN.
+                <span className="text-se-gold/80">IT&apos;S WHAT YOU<br />SURVIVE IN.</span>
               </h2>
               <p className="text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed mb-4 max-w-xl mx-auto">
-                Born in Newark's North Ward, Style Eternal is a record of where we come from. Every stitch holds a story.
+                Born in Newark&apos;s North Ward, Style Eternal is a record of where we come from. Every stitch holds a story.
                 Every piece is made to endure — like the people who wear them.
               </p>
-              <p className="text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed mb-10 max-w-xl mx-auto">
-                We don't chase trends. We outlast them.
+              <p className="text-[16px] md:text-[18px] text-se-bone/60 leading-relaxed mb-10 max-w-xl mx-auto font-accent tracking-wide">
+                We don&apos;t chase trends. We outlast them.
               </p>
-              <Link to="/about" className="btn-outline">
-                Read Our Story
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <Link to="/about" className="btn-primary">
+                  Read Our Story
+                </Link>
+                <Link to="/community" className="btn-outline">
+                  Join the Community
+                </Link>
+              </div>
             </Motion.div>
           </div>
         </section>
@@ -514,6 +536,37 @@ export default function Home() {
                 <div className="h-full w-full bg-gradient-to-t from-se-charcoal to-se-asphalt flex items-center justify-center">
                   <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/20">NORTH WARD</span>
                 </div>
+              </Motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 8B: SOCIAL PROOF / BRAND STATS
+        ═══════════════════════════════════════════════════════════════ */}
+        <section className="relative overflow-hidden border-t border-white/5">
+          <div className="relative bg-gradient-to-b from-se-charcoal/50 to-se-black py-20 md:py-28">
+            <div className="content-wide">
+              <Motion.div {...fadeUp} className="max-w-4xl mx-auto text-center">
+                <p className="section-eyebrow mb-6">The Brand</p>
+                <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-[0.04em] mb-8">
+                  BUILT DIFFERENT.<br />WORN FOREVER.
+                </h2>
+                <div className="grid grid-cols-3 gap-6 md:gap-12 mb-12 max-w-lg mx-auto">
+                  {[
+                    { stat: "300gsm+", label: "Fabric Weight" },
+                    { stat: "Newark", label: "Designed In" },
+                    { stat: "Limited", label: "Every Drop" },
+                  ].map(({ stat, label }) => (
+                    <div key={label}>
+                      <p className="font-display text-[20px] md:text-[28px] tracking-[0.04em] text-se-bone">{stat}</p>
+                      <p className="text-[9px] font-accent tracking-[0.2em] uppercase text-se-steel mt-1">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link to="/about" className="btn-outline">
+                  Our Process
+                </Link>
               </Motion.div>
             </div>
           </div>
