@@ -13,22 +13,22 @@ export const LOYALTY = {
     {
       name: "Foundation",
       minSpendCents: 0,
-      perks: ["Member-only drops", "Birthday surprise"],
+      perks: ["Member-only drops", "Birthday surprise", "Order tracking"],
     },
     {
       name: "Established",
       minSpendCents: 50_000,
-      perks: ["Early access", "Priority restock alerts"],
+      perks: ["Early access to drops", "Priority restock alerts", "Free standard shipping"],
     },
     {
       name: "Permanent",
       minSpendCents: 150_000,
-      perks: ["VIP support", "Exclusive offers"],
+      perks: ["VIP concierge support", "Exclusive member offers", "Early sale access", "Free expedited shipping"],
     },
     {
       name: "Eternal",
       minSpendCents: 350_000,
-      perks: ["Private styling perks", "Top-tier VIP treatment"],
+      perks: ["Private styling consultation", "Archive access", "Complimentary overnight shipping", "Invite-only events", "Top-tier VIP treatment"],
     },
   ],
 };

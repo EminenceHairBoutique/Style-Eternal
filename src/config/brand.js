@@ -12,10 +12,10 @@ export const BRAND = {
 };
 
 export const SOCIAL = {
-  instagram: "",
-  tiktok: "",
-  youtube: "",
-  twitter: "",
+  instagram: "https://instagram.com/styleeternal",
+  tiktok: "https://tiktok.com/@styleeternal",
+  youtube: "https://youtube.com/@styleeternal",
+  twitter: "https://x.com/styleeternal",
 };
 
 export const MICROCOPY = {

@@ -26,13 +26,16 @@ export default function Collections() {
         <section className="pt-32 pb-16 md:pt-40 md:pb-24 border-b border-white/5">
           <div className="content-wide">
             <Motion.div {...fadeUp}>
-              <p className="text-overline mb-4">Explore</p>
+              <p className="section-eyebrow mb-4">Explore</p>
               <h1 className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-[0.9] tracking-[0.04em] mb-6">
                 COLLECTIONS
               </h1>
-              <p className="text-[15px] md:text-[17px] text-se-bone/50 max-w-lg leading-relaxed">
+              <p className="text-[15px] md:text-[17px] text-se-bone/50 max-w-lg leading-relaxed mb-3">
                 Each collection is rooted in a place, a moment, or a principle.
                 Browse the full universe.
+              </p>
+              <p className="text-[12px] font-accent text-se-steel tracking-[0.15em]">
+                {collections.length} collections · {collections.reduce((sum, c) => sum + getProductsByCollection(c.slug).length, 0)} pieces
               </p>
             </Motion.div>
           </div>
@@ -44,6 +47,7 @@ export default function Collections() {
             <div className="grid md:grid-cols-2 gap-6">
               {collections.map((col, i) => {
                 const count = getProductsByCollection(col.slug).length;
+                const isFirst = i === 0;
                 return (
                   <Motion.div
                     key={col.slug}
@@ -54,10 +58,10 @@ export default function Collections() {
                   >
                     <Link
                       to={`/collections/${col.slug}`}
-                      className="group block relative overflow-hidden border border-white/5 hover:border-white/15 transition-all duration-300"
+                      className={`group block relative overflow-hidden border border-white/5 hover:border-white/15 transition-all duration-300 ${isFirst ? "md:col-span-2" : ""}`}
                     >
                       {/* Image Area */}
-                      <div className="aspect-[16/10] bg-se-charcoal overflow-hidden relative">
+                      <div className={`${isFirst ? "aspect-[21/9]" : "aspect-[16/10]"} bg-se-charcoal overflow-hidden relative`}>
                         {col.image ? (
                           <img
                             src={col.image}
@@ -116,10 +120,14 @@ export default function Collections() {
         <section className="pb-20 md:pb-28">
           <div className="content-wide text-center">
             <Motion.div {...fadeUp}>
-              <div className="divider-gold mb-10 mx-auto w-16" />
-              <h2 className="font-display text-[clamp(1.5rem,3vw,2rem)] tracking-[0.08em] mb-6">
+              <p className="section-eyebrow mb-4">The Full Archive</p>
+              <div className="divider-gold mb-8 mx-auto w-16" />
+              <h2 className="font-display text-[clamp(1.5rem,3vw,2.5rem)] tracking-[0.06em] mb-4">
                 SEE EVERYTHING
               </h2>
+              <p className="text-[14px] text-se-bone/40 mb-8 max-w-sm mx-auto">
+                Every piece. Every collection. Every drop — in one place.
+              </p>
               <Link to="/shop" className="btn-primary">
                 Shop All Pieces
               </Link>
