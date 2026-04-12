@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { Instagram, Youtube, Shield, Truck, RotateCcw, Award } from "lucide-react";
 import { BRAND, SOCIAL } from "../config/brand";
 import { subscribeEmail } from "../utils/subscribe";
 
@@ -56,6 +57,29 @@ const Footer = () => {
         </div>
       </div>
 
+      {/* Trust Guarantees */}
+      <div className="border-b border-white/5">
+        <div className="content-wide py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[
+            { icon: Truck, title: "Free Shipping", desc: "On orders over $150" },
+            { icon: RotateCcw, title: "30-Day Returns", desc: "Hassle-free exchanges" },
+            { icon: Shield, title: "Secure Checkout", desc: "SSL encrypted payments" },
+            { icon: Award, title: "Premium Quality", desc: "300gsm+ heavyweight" },
+          ].map((item) => {
+            const ItemIcon = item.icon;
+            return (
+              <div key={item.title} className="flex items-start gap-3">
+                <ItemIcon size={16} className="text-se-gold mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-[11px] font-accent tracking-[0.1em] uppercase text-se-bone/70">{item.title}</p>
+                  <p className="text-[10px] text-se-steel mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Main Footer Grid */}
       <div className="content-wide py-12 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
@@ -103,9 +127,39 @@ const Footer = () => {
             <div className="space-y-3 text-[13px]">
               <Link to="/faqs" className="block text-se-bone/60 hover:text-se-bone transition">FAQ</Link>
               <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Shipping & Returns</Link>
+              <Link to="/contact" className="block text-se-bone/60 hover:text-se-bone transition">Contact</Link>
               <a href={`mailto:${BRAND.supportEmail}`} className="block text-se-bone/60 hover:text-se-bone transition">{BRAND.supportEmail}</a>
               <Link to="/account" className="block text-se-bone/60 hover:text-se-bone transition">My Account</Link>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Social & Payment */}
+      <div className="border-t border-white/5">
+        <div className="content-wide py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Social */}
+          <div className="flex items-center gap-6">
+            <span className="text-[9px] font-accent tracking-[0.25em] uppercase text-se-steel">Follow</span>
+            {[
+              { icon: Instagram, href: SOCIAL.instagram || "#", label: "Instagram" },
+              { icon: Youtube, href: SOCIAL.youtube || "#", label: "YouTube" },
+            ].map((item) => {
+              const SocialIcon = item.icon;
+              return (
+                <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white/5 rounded-full transition" aria-label={item.label}>
+                  <SocialIcon size={16} className="text-se-bone/40 hover:text-se-bone transition" />
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Payment methods text */}
+          <div className="flex items-center gap-4">
+            <span className="text-[9px] font-accent tracking-[0.2em] uppercase text-se-steel/50">We Accept</span>
+            {["Visa", "Mastercard", "Amex", "Apple Pay"].map((method) => (
+              <span key={method} className="text-[9px] font-accent tracking-[0.1em] text-se-steel/40">{method}</span>
+            ))}
           </div>
         </div>
       </div>
@@ -133,7 +187,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <p className="text-[11px] text-se-steel">
-            &copy; {new Date().getFullYear()} {BRAND.fullName}
+            &copy; {new Date().getFullYear()} {BRAND.fullName}. All rights reserved.
           </p>
         </div>
       </div>
