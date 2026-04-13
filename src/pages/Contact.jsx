@@ -72,7 +72,7 @@ export default function Contact() {
                   <CheckCircle size={40} className="mx-auto text-se-gold mb-6" />
                   <h2 className="font-display text-[26px] tracking-[0.06em] mb-4">MESSAGE RECEIVED</h2>
                   <p className="text-[14px] text-se-bone/40 mb-2">We&apos;ll get back to you within 24 hours.</p>
-                  <p className="text-[13px] text-se-steel">Check your email for a confirmation.</p>
+                  <p className="text-[13px] text-se-steel">Thank you for reaching out. Our team will respond as soon as possible.</p>
                 </Motion.div>
               ) : (
                 <Motion.form
