@@ -13,6 +13,19 @@ export default function EmailPopup() {
   const [status, setStatus] = useState("idle");
   const trapRef = useFocusTrap(visible);
 
+  const dismiss = () => {
+    setVisible(false);
+    try { localStorage.setItem(STORAGE_KEY, "true"); } catch { /* ignore */ }
+  };
+
+  // Dismiss on Escape key
+  useEffect(() => {
+    if (!visible) return;
+    const onKey = (e) => { if (e.key === "Escape") dismiss(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  });
+
   useEffect(() => {
     try {
       if (localStorage.getItem(STORAGE_KEY)) return;
@@ -48,11 +61,6 @@ export default function EmailPopup() {
       clearTimeout(timer);
     };
   }, []);
-
-  const dismiss = () => {
-    setVisible(false);
-    try { localStorage.setItem(STORAGE_KEY, "true"); } catch { /* ignore */ }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

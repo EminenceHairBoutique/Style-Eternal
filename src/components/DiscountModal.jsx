@@ -11,6 +11,19 @@ export default function DiscountModal({ user }) {
   const location = useLocation();
   const trapRef = useFocusTrap(open);
 
+  const dismiss = () => {
+    setOpen(false);
+    try { window.dispatchEvent(new Event("se_discount_dismissed")); } catch { /* ignore */ }
+  };
+
+  // Dismiss on Escape key
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === "Escape") dismiss(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  });
+
   useEffect(() => {
     if (user) return;
     if (location.pathname.includes("checkout")) return;
@@ -44,11 +57,6 @@ export default function DiscountModal({ user }) {
       clearTimeout(timer);
     };
   }, [user, location.pathname]);
-
-  const dismiss = () => {
-    setOpen(false);
-    try { window.dispatchEvent(new Event("se_discount_dismissed")); } catch { /* ignore */ }
-  };
 
   return (
     <AnimatePresence>
