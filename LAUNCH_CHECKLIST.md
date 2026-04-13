@@ -32,6 +32,7 @@ Set these in **Production** (and Preview if desired):
 ### Analytics / pixels (optional)
 - `VITE_GA_MEASUREMENT_ID` (GA4)
 - `VITE_META_PIXEL_ID` (Meta Pixel)
+- `VITE_TIKTOK_PIXEL_ID` (TikTok Pixel)
 
 ## 3) Newsletter lead capture (new)
 Two places now submit to **`/api/subscribe`**:

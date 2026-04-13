@@ -1,5 +1,6 @@
 /* eslint-env node */
 import Stripe from "stripe";
+import { checkRateLimit } from "./_utils/rateLimit.js";
 import { products } from "../src/data/products.js";
 import { applyCustomPricing } from "../src/utils/pricing.js";
 
@@ -19,6 +20,14 @@ export async function createHandler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+
+  // Rate limit: 5 checkout session creations per IP per minute
+  const allowed = await checkRateLimit(req, res, {
+    endpoint: "checkout",
+    max: 5,
+    windowMs: 60_000,
+  });
+  if (!allowed) return;
 
   const stripe = getStripe();
   if (!stripe) {
