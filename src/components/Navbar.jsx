@@ -122,16 +122,31 @@ export default function Navbar() {
                   className="relative"
                   onMouseEnter={openMega}
                   onMouseLeave={closeMega}
+                  onFocus={openMega}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      closeMega();
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      closeMega();
+                    }
+                  }}
                 >
                   <Link
                     to={link.href}
                     className="link-hover hover:text-se-bone transition-colors duration-200"
+                    aria-haspopup="true"
+                    aria-expanded={megaOpen}
+                    aria-controls="desktop-shop-mega-menu"
                   >
                     {link.label}
                   </Link>
                   <AnimatePresence>
                     {megaOpen && (
                       <Motion.div
+                        id="desktop-shop-mega-menu"
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -4 }}
