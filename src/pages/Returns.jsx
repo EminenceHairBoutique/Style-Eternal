@@ -40,7 +40,7 @@ export default function Returns() {
               {[
                 { icon: Truck, title: "Free Shipping", desc: "Orders over $150" },
                 { icon: Clock, title: "5\u20137 Days", desc: "Standard delivery" },
-                { icon: RotateCcw, title: "30-Day Returns", desc: "No questions asked" },
+                { icon: RotateCcw, title: "30-Day Returns", desc: "Terms & exclusions apply" },
                 { icon: Shield, title: "Secure Checkout", desc: "SSL encrypted" },
               ].map((item) => {
                 const ItemIcon = item.icon;
