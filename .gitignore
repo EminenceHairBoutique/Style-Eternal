@@ -39,3 +39,21 @@ playwright-report/
 
 # Merged backup directory
 merged/
+
+# Generated CSS
+src/output.css
+
+# Backup files
+*.backup.*
+*backup.js
+*backup.jsx
+
+# Archives
+*.zip
+
+# Misc root images (use public/assets/ for committed images)
+/*.jpg
+/*.jpeg
+/*.png
+/*.gif
+/*.webp

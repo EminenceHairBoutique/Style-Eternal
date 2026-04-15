@@ -30,7 +30,68 @@ const SITE_URL = String(
   process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.styleeternal.com"
 ).replace(/\/+$/, "");
 
-const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/se_og_banner.jpg`;
+async function fileExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function listImageFiles(dirPath) {
+  if (!(await fileExists(dirPath))) return [];
+
+  const entries = await fs.readdir(dirPath, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map(async (entry) => {
+      const fullPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        return listImageFiles(fullPath);
+      }
+
+      if (entry.isFile() && /\.(avif|gif|jpe?g|png|webp)$/i.test(entry.name)) {
+        return [fullPath];
+      }
+
+      return [];
+    })
+  );
+
+  return files.flat();
+}
+
+async function resolveDefaultOgImage() {
+  const preferredRelativePath = "/assets/se_og_banner.jpg";
+  const preferredDistPath = path.join(DIST_DIR, preferredRelativePath.replace(/^\//, ""));
+
+  if (await fileExists(preferredDistPath)) {
+    return `${SITE_URL}${preferredRelativePath}`;
+  }
+
+  const assetFiles = await listImageFiles(path.join(DIST_DIR, "assets"));
+  if (!assetFiles.length) return "";
+
+  const scoreAsset = (filePath) => {
+    const name = path.basename(filePath).toLowerCase();
+    if (/og|open-graph|social|share/.test(name)) return 4;
+    if (/banner/.test(name)) return 3;
+    if (/hero/.test(name)) return 2;
+    if (/logo/.test(name)) return 1;
+    return 0;
+  };
+
+  const [bestMatch] = [...assetFiles].sort((a, b) => {
+    const scoreDiff = scoreAsset(b) - scoreAsset(a);
+    if (scoreDiff !== 0) return scoreDiff;
+    return a.localeCompare(b);
+  });
+
+  const relativePath = path.relative(DIST_DIR, bestMatch).split(path.sep).join("/");
+  return `${SITE_URL}/${relativePath}`;
+}
+
+const DEFAULT_OG_IMAGE = await resolveDefaultOgImage();
 
 const SEO_BEGIN = "<!-- SEO:BEGIN -->";
 const SEO_END = "<!-- SEO:END -->";
