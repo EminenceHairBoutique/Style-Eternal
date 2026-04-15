@@ -292,7 +292,7 @@ export default function Home() {
                   THE FLAME<br />NEVER DIES.
                 </p>
                 <p
-                  className="font-signature text-se-gold/70 mt-5"
+                  className="font-accent italic text-se-gold/70 mt-5"
                   style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)" }}
                 >
                   Style Eternal
