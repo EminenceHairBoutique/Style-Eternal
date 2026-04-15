@@ -118,18 +118,19 @@ const Footer = () => {
               <Link to="/lookbook" className="block text-se-bone/60 hover:text-se-bone transition">Lookbook</Link>
               <Link to="/community" className="block text-se-bone/60 hover:text-se-bone transition">Community</Link>
               <Link to="/rewards" className="block text-se-bone/60 hover:text-se-bone transition">Rewards</Link>
-              <Link to="/contact" className="block text-se-bone/60 hover:text-se-bone transition">Contact</Link>
+              <Link to="/client-services" className="block text-se-bone/60 hover:text-se-bone transition">Contact</Link>
             </div>
           </div>
 
-          {/* Help */}
+          {/* Customer Care */}
           <div>
-            <p className="text-label text-se-steel mb-5">Help</p>
+            <p className="text-label text-se-steel mb-5">Customer Care</p>
             <div className="space-y-3 text-[13px]">
+              <Link to="/client-services" className="block text-se-bone/60 hover:text-se-bone transition">Client Services</Link>
               <Link to="/faqs" className="block text-se-bone/60 hover:text-se-bone transition">FAQ</Link>
-              <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Shipping & Returns</Link>
-              <Link to="/contact" className="block text-se-bone/60 hover:text-se-bone transition">Contact</Link>
-              <a href={`mailto:${BRAND.supportEmail}`} className="block text-se-bone/60 hover:text-se-bone transition">{BRAND.supportEmail}</a>
+              <Link to="/shipping" className="block text-se-bone/60 hover:text-se-bone transition">Shipping</Link>
+              <Link to="/returns" className="block text-se-bone/60 hover:text-se-bone transition">Returns & Exchanges</Link>
+              <Link to="/size-guide" className="block text-se-bone/60 hover:text-se-bone transition">Size Guide</Link>
               <Link to="/account" className="block text-se-bone/60 hover:text-se-bone transition">My Account</Link>
             </div>
           </div>

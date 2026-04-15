@@ -211,7 +211,7 @@ export default function AccountDashboard() {
 
             <div className="mt-8 flex gap-3">
               <Link to="/rewards" className="btn-gold text-[10px]">View Rewards</Link>
-              <Link to="/contact" className="btn-outline text-[10px]">Support</Link>
+              <Link to="/client-services" className="btn-outline text-[10px]">Support</Link>
               <Link to="/shop" className="btn-outline text-[10px]">Shop</Link>
             </div>
           </div>

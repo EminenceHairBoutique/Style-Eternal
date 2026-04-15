@@ -214,7 +214,7 @@ export default function Returns() {
               </div>
               <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3 max-w-lg">
                 <p>
-                  Received a damaged or incorrect item? <Link to="/contact" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">Contact us</Link> immediately with your order number and <strong className="text-se-bone/70">photos of the issue</strong>. We&apos;ll arrange a full replacement or refund — no return needed in most cases.
+                  Received a damaged or incorrect item? <Link to="/client-services" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">Contact us</Link> immediately with your order number and <strong className="text-se-bone/70">photos of the issue</strong>. We&apos;ll arrange a full replacement or refund — no return needed in most cases.
                 </p>
                 <p className="text-[13px] text-se-bone/40">
                   Please report any issues within 48 hours of delivery for fastest resolution.
@@ -257,7 +257,7 @@ export default function Returns() {
             <p className="section-eyebrow mb-4">Questions?</p>
             <h2 className="font-display text-[20px] md:text-[26px] tracking-[0.06em] mb-6">WE&apos;RE HERE TO HELP</h2>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/contact" className="btn-primary">Contact Support</Link>
+              <Link to="/client-services" className="btn-primary">Contact Support</Link>
               <Link to="/faqs" className="btn-outline">View FAQs</Link>
             </div>
           </div>
