@@ -4,7 +4,7 @@
 export const BRAND = {
   name: "Style Eternal",
   fullName: "Style Eternal",
-  tagline: "Born in Newark",
+  tagline: "Style That Outlives Trends",
   supportEmail: "info@styleeternal.com",
   origin: "Newark, NJ — North Ward",
   motto: "Style that outlives trends.",
@@ -12,10 +12,10 @@ export const BRAND = {
 };
 
 export const SOCIAL = {
-  instagram: "",
-  tiktok: "",
-  youtube: "",
-  twitter: "",
+  instagram: "https://instagram.com/styleeternal",
+  tiktok: "https://tiktok.com/@styleeternal",
+  youtube: "https://youtube.com/@styleeternal",
+  twitter: "https://x.com/styleeternal",
 };
 
 export const MICROCOPY = {

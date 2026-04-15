@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" fill="none">
+  <rect width="600" height="800" fill="#0A0A0A"/>
+  <defs>
+    <linearGradient id="haze" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#1A1A1A" stop-opacity="0.6"/>
+      <stop offset="0.5" stop-color="#0A0A0A" stop-opacity="0"/>
+      <stop offset="1" stop-color="#1A1A1A" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#haze)"/>
+  <rect x="24" y="32" width="552" height="736" stroke="#E8E4DE" stroke-width="0.5" fill="none" opacity="0.06"/>
+  <rect x="265" y="365" width="70" height="70" stroke="#E8E4DE" stroke-width="0.75" fill="none" opacity="0.12"/>
+  <text x="300" y="412" font-family="Arial Narrow, Helvetica Neue, sans-serif" font-weight="700" font-size="36" letter-spacing="0.04em" text-anchor="middle" fill="#E8E4DE" opacity="0.12">SE</text>
+</svg>

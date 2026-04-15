@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Crown, Receipt, Sparkles, Gift, LogOut, ChevronRight } from "lucide-react";
+import { motion as Motion } from "framer-motion";
+import { Crown, Receipt, Sparkles, Gift, LogOut, ChevronRight, Star, Zap } from "lucide-react";
 
 import { supabase } from "../../lib/supabaseClient";
 import { useUser } from "../../context/UserContext";
@@ -109,11 +110,16 @@ export default function AccountDashboard() {
     <div className="bg-se-black text-se-bone min-h-screen pt-28 pb-24">
       <div className="content-wide">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+        <Motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10"
+        >
           <div>
-            <p className="text-overline mb-3">My Account</p>
-            <h1 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.06em]">
-              {user?.email ? `WELCOME BACK` : "MY ACCOUNT"}
+            <p className="section-eyebrow mb-3">My Account</p>
+            <h1 className="font-display text-[clamp(1.8rem,5vw,3rem)] tracking-[0.04em]">
+              {user?.email ? "WELCOME BACK" : "MY ACCOUNT"}
             </h1>
             {user?.email && (
               <p className="text-[13px] text-se-steel font-accent mt-2">{user.email}</p>
@@ -128,7 +134,7 @@ export default function AccountDashboard() {
             <LogOut className="w-4 h-4" />
             Sign Out
           </button>
-        </div>
+        </Motion.div>
 
         {error && (
           <div className="mb-6 border border-red-500/30 bg-red-900/20 px-4 py-3 text-[13px] text-red-300">
@@ -157,8 +163,14 @@ export default function AccountDashboard() {
                   purchase bonus: <span className="text-se-bone">{LOYALTY.firstPurchaseBonusPoints}</span>.
                 </p>
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 border border-white/10 bg-se-asphalt text-[10px] font-accent tracking-[0.15em] uppercase">
-                <Gift className="w-3.5 h-3.5" /> {tier.name}
+              <div className={`tier-badge ${
+                tier.name === "Foundation" ? "tier-foundation" :
+                tier.name === "Established" ? "tier-established" :
+                tier.name === "Permanent" ? "tier-permanent" :
+                "tier-eternal"
+              }`}>
+                {tier.name === "Eternal" ? <Star className="w-3.5 h-3.5" /> : <Gift className="w-3.5 h-3.5" />}
+                {tier.name}
               </div>
             </div>
 
@@ -171,9 +183,9 @@ export default function AccountDashboard() {
                     </span>
                     <span>{money(nextTier.remainingCents)} to go</span>
                   </div>
-                  <div className="h-1.5 bg-se-asphalt overflow-hidden">
+                  <div className="progress-bar-track">
                     <div
-                      className="h-full bg-se-gold transition-all duration-500"
+                      className="progress-bar-fill"
                       style={{ width: `${Math.round(nextTier.progress * 100)}%` }}
                     />
                   </div>
@@ -187,10 +199,10 @@ export default function AccountDashboard() {
 
             <div className="mt-6">
               <p className="text-overline mb-3">Your Perks</p>
-              <ul className="space-y-2 text-[13px] text-se-bone/70">
+              <ul className="space-y-2.5 text-[13px] text-se-bone/70">
                 {tier.perks.map((perk) => (
-                  <li key={perk} className="flex items-start gap-2">
-                    <span className="mt-[7px] w-1.5 h-1.5 bg-se-gold shrink-0" />
+                  <li key={perk} className="flex items-start gap-2.5">
+                    <Zap size={12} className="text-se-gold mt-[3px] shrink-0" />
                     {perk}
                   </li>
                 ))}
@@ -257,17 +269,17 @@ export default function AccountDashboard() {
   );
 }
 
-function StatCard({ icon, label, value, sub, loading: isLoading }) {
-  const CardIcon = icon;
+function StatCard(props) {
+  const Icon = props.icon;
   return (
-    <div className="border border-white/5 bg-se-charcoal p-5">
+    <div className="stat-card-elevated">
       <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">
-        <CardIcon className="w-4 h-4" /> {label}
+        <Icon className="w-4 h-4" /> {props.label}
       </div>
-      <div className="mt-3 text-[18px] font-display tracking-[0.04em]">
-        {isLoading ? "—" : value}
+      <div className="mt-3 text-[22px] font-display tracking-[0.04em]">
+        {props.loading ? "—" : props.value}
       </div>
-      <div className="mt-1 text-[11px] text-se-steel font-accent">{sub}</div>
+      <div className="mt-1 text-[11px] text-se-steel font-accent">{props.sub}</div>
     </div>
   );
 }

@@ -66,11 +66,27 @@ export default function CollectionDetail() {
     );
   }
 
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+          { "@type": "ListItem", position: 2, name: "Collections", item: `${siteUrl}/collections` },
+          { "@type": "ListItem", position: 3, name: collection.name },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
       <SEO
         title={`${collection.name} — Style Eternal`}
         description={collection.description}
+        jsonLd={collectionJsonLd}
       />
 
       <div className="bg-se-black text-se-bone min-h-screen">

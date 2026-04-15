@@ -164,6 +164,15 @@ function renderJsonLd({ url, title, description, images, product }) {
 
   if (product) {
     graph.push(product);
+    // Add breadcrumb navigation for product pages
+    graph.push({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+        { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` },
+        { "@type": "ListItem", position: 3, name: product.name },
+      ],
+    });
   }
 
   return {

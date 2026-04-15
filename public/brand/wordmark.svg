@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 80" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500&amp;display=swap');
+    </style>
+  </defs>
+  <!-- STYLE ETERNAL primary wordmark — light on dark -->
+  <text
+    x="300" y="56"
+    font-family="'Oswald', 'Arial Narrow', sans-serif"
+    font-weight="500"
+    font-size="52"
+    letter-spacing="0.22em"
+    text-anchor="middle"
+    fill="#E8E4DE"
+  >STYLE ETERNAL</text>
+</svg>

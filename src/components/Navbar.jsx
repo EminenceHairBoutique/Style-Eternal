@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Search, Menu, X, User, ChevronRight } from "lucide-react";
+import { motion as Motion, AnimatePresence } from "framer-motion";
+import { ShoppingBag, Search, Menu, X, User, ChevronRight, Heart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
 import { BRAND } from "../config/brand";
@@ -15,6 +16,16 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef(null);
+  const [megaOpen, setMegaOpen] = useState(false);
+  const megaTimeout = useRef(null);
+
+  const openMega = () => {
+    clearTimeout(megaTimeout.current);
+    setMegaOpen(true);
+  };
+  const closeMega = () => {
+    megaTimeout.current = setTimeout(() => setMegaOpen(false), 150);
+  };
 
   // Close on navigation
   useEffect(() => {
@@ -56,9 +67,6 @@ export default function Navbar() {
     { label: "About", href: "/about" },
   ], []);
 
-  const [megaOpen, setMegaOpen] = useState(null);
-  const megaTimer = useRef(null);
-
   const mobileLinks = useMemo(() => [
     { label: "New Arrivals", href: "/shop?filter=new" },
     { label: "Shop All", href: "/shop" },
@@ -98,7 +106,7 @@ export default function Navbar() {
         {/* Announcement Bar */}
         <div className="bg-se-bone text-se-black text-center py-1.5">
           <p className="text-label text-[9px] tracking-[0.25em]">
-            Free shipping on orders over $150 — Born in Newark, shipped worldwide
+            Free shipping on orders over $150 — Premium streetwear, shipped worldwide
           </p>
         </div>
 
@@ -124,39 +132,80 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.2em] font-accent text-se-bone/70">
             {navLinks.map((link) =>
-              link.mega ? (
+              link.label === "Shop" ? (
                 <div
                   key={link.href}
                   className="relative"
-                  onMouseEnter={() => {
-                    clearTimeout(megaTimer.current);
-                    setMegaOpen(link.label);
+                  onMouseEnter={openMega}
+                  onMouseLeave={closeMega}
+                  onFocus={openMega}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      closeMega();
+                    }
                   }}
-                  onMouseLeave={() => {
-                    megaTimer.current = setTimeout(() => setMegaOpen(null), 150);
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      closeMega();
+                    }
                   }}
                 >
                   <Link
                     to={link.href}
                     className="link-hover hover:text-se-bone transition-colors duration-200"
+                    aria-haspopup="true"
+                    aria-expanded={megaOpen}
+                    aria-controls="desktop-shop-mega-menu"
                   >
                     {link.label}
                   </Link>
-                  {megaOpen === link.label && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50">
-                      <div className="bg-se-charcoal border border-white/8 p-5 min-w-[180px] animate-mega-drop">
-                        {link.mega.map((sub) => (
-                          <Link
-                            key={sub.href}
-                            to={sub.href}
-                            className="block py-2 text-[11px] tracking-[0.15em] text-se-bone/60 hover:text-se-bone hover:pl-1 transition-all duration-200"
-                          >
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {megaOpen && (
+                      <Motion.div
+                        id="desktop-shop-mega-menu"
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50"
+                        onMouseEnter={openMega}
+                        onMouseLeave={closeMega}
+                      >
+                        <div className="bg-se-charcoal/98 backdrop-blur-xl border border-white/8 p-6 min-w-[420px] mega-menu">
+                          <div className="grid grid-cols-2 gap-6">
+                            <div>
+                              <p className="text-[9px] tracking-[0.25em] text-se-gold font-accent mb-4">CATEGORIES</p>
+                              <div className="space-y-2.5">
+                                {["Tees", "Hoodies", "Outerwear", "Bottoms", "Headwear", "Accessories"].map((cat) => (
+                                  <Link
+                                    key={cat}
+                                    to={`/shop/${cat.toLowerCase()}`}
+                                    className="block text-[12px] text-se-bone/60 hover:text-se-bone transition-colors"
+                                  >
+                                    {cat}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-[9px] tracking-[0.25em] text-se-gold font-accent mb-4">CURATED</p>
+                              <div className="space-y-2.5">
+                                <Link to="/shop?filter=new" className="block text-[12px] text-se-bone/60 hover:text-se-bone transition-colors">New Arrivals</Link>
+                                <Link to="/shop?filter=limited" className="block text-[12px] text-se-bone/60 hover:text-se-bone transition-colors">Limited Edition</Link>
+                                <Link to="/collections" className="block text-[12px] text-se-bone/60 hover:text-se-bone transition-colors">All Collections</Link>
+                                <Link to="/drops" className="block text-[12px] text-se-bone/60 hover:text-se-bone transition-colors">Latest Drops</Link>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-5 pt-4 border-t border-white/5">
+                            <Link to="/shop" className="flex items-center gap-2 text-[10px] tracking-[0.2em] text-se-bone/40 hover:text-se-bone transition-colors">
+                              SHOP ALL PIECES <ChevronRight size={12} />
+                            </Link>
+                          </div>
+                        </div>
+                      </Motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
                 <Link
@@ -188,6 +237,14 @@ export default function Navbar() {
               <User size={18} className="text-se-bone/70" />
             </Link>
 
+            <Link
+              to="/account"
+              className="hidden lg:inline-flex p-2 rounded-full hover:bg-white/5 transition"
+              aria-label="Favorites"
+            >
+              <Heart size={18} className="text-se-bone/70" />
+            </Link>
+
             <button
               onClick={openCart}
               className="relative p-2 rounded-full hover:bg-white/5 transition"
@@ -211,7 +268,7 @@ export default function Navbar() {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute left-0 top-0 h-full w-[85%] max-w-[360px] bg-se-charcoal overflow-y-auto animate-dropdown-in">
+          <div className="absolute left-0 top-0 h-full w-[85%] max-w-[360px] bg-se-charcoal overflow-y-auto drawer-slide-in">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/5">
               <span className="font-display text-[16px] tracking-[0.15em] text-se-bone font-semibold">
@@ -245,9 +302,12 @@ export default function Navbar() {
             </nav>
 
             {/* Footer */}
-            <div className="p-6 border-t border-white/5">
+            <div className="p-6 border-t border-white/5 space-y-3">
               <p className="text-[10px] text-se-steel tracking-[0.15em] uppercase">
                 {BRAND.origin}
+              </p>
+              <p className="text-[9px] text-se-steel/50 tracking-[0.15em] uppercase">
+                Premium Streetwear — Est. {BRAND.founded}
               </p>
             </div>
           </div>
