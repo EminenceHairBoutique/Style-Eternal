@@ -8,7 +8,7 @@ test.describe("Homepage", () => {
   test("loads and renders the hero section", async ({ page }) => {
     await page.goto("/");
     // Page title should include brand name
-    await expect(page).toHaveTitle(/Eminence/i);
+    await expect(page).toHaveTitle(/Style Eternal/i);
     // Navbar should be visible
     await expect(page.locator("nav")).toBeVisible();
   });
@@ -21,9 +21,9 @@ test.describe("Homepage", () => {
 
   test("captures referral code from query string and stores in localStorage", async ({ page }) => {
     await page.goto("/?ref=TESTREF123");
-    // Check localStorage after navigation (key is eminence_referral, stored as JSON)
+    // Check localStorage after navigation (key is se_referral, stored as JSON)
     const stored = await page.evaluate(() => {
-      const raw = localStorage.getItem("eminence_referral");
+      const raw = localStorage.getItem("se_referral");
       if (!raw) return null;
       try { return JSON.parse(raw).code; } catch { return null; }
     });
