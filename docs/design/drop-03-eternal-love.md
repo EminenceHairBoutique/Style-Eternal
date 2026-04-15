@@ -1,272 +1,221 @@
-# Drop: Eternal Love — Design Direction
+# DROP 03 — ETERNAL LOVE
 
-> **Theme:** Romance after violence · Loyalty after chaos · Memory that survives · Tenderness with edge
-> **Season:** FW26
-> **Position:** The emotional counterpoint to Eternal Struggle — softness with weight
-> **Tagline candidates:** "Eternal Love" · "Love Never Leaves" · "Eternal Flame" · "Forbidden Love" · "Love Remains"
+## Design System
 
 ---
 
-## Drop Overview
+## Concept Line
+> "Love is the only fire that doesn't burn out."
 
-Eternal Love is the romantic outlaw chapter of the Style Eternal story. It follows the aggression of Eternal Struggle with **tenderness** — but tenderness that has been through something. This is not soft luxury. This is love that survived fire, loss, and distance.
-
-The visual language builds directly on the existing Love Never Dies collection (skeleton embrace, broken hearts, flames) but **evolves it one step cleaner** — more modern, more premium, more iconic. Less collage chaos, more singular symbolic impact.
-
-Every piece should feel like a love letter printed on heavyweight cotton. Emotional. Beautiful. Heavy.
+Eternal Love is the emotional counterpoint to Eternal Struggle. Where Drop 02 speaks to power and defiance, Drop 03 speaks to devotion, loyalty, and the romantic outlaw. This is not soft — it is love with weight. Romance after violence. Memory that survives.
 
 ---
 
-## Visual Language
+## Emotional Contrast to Drop 02
+| Drop 02: Eternal Struggle | Drop 03: Eternal Love |
+|---------------------------|----------------------|
+| Power | Devotion |
+| Rebellion | Loyalty |
+| Aggression (controlled) | Tenderness (with edge) |
+| Chrome/silver accents | Pink-red/gold accents |
+| Cracked crowns, broken scales | Flames, hearts, halos |
+| Unity through resistance | Unity through love |
+| Surveillance/awareness | Intimacy/closeness |
+| Smoke as atmosphere | Smoke as romance |
+
+---
+
+## Color Palette
+
+### Primary Garment Colors
+
+| Colorway | Hex | Notes |
+|----------|-----|-------|
+| Washed Black | `#1C1C1C` | Hero garment base |
+| Off Black | `#1A1917` | Secondary dark |
+| Off Brown | `#3D3028` | Warm alternative — crewneck, support pieces |
+| Light Brown | `#8B7D6B` | Contrast tone — limited use |
+
+### Graphic Print Colors
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Bone | `#E8E4DE` | Primary print color |
+| Red Bright | `#C43030` | Flame, heart accents — THE emotional color |
+| SE Red (Deep) | `#8B2020` | Deep red for shadows/depth in flame graphics |
+| SE Gold | `#C4A35A` | Premium accent — small marks, chrome hearts |
+| Rose/Dusty Pink | `#C4848A` | Subtle blush accent — limited use |
+| Cream | `#F5F2EC` | Highlight effects |
+
+### Avoid
+- Silver/chrome as primary (that's Drop 02)
+- Pure white (#FFFFFF)
+- Neon pink or hot pink
+- Orange tones
+- Overuse of red — it's an accent, not a flood
+
+---
+
+## Graphic Language
+
+### Style Direction
+The graphic language for Eternal Love should feel like:
+- A dark romantic film still translated into streetwear
+- Gothic valentine energy — not cute, not ironic
+- Flames that feel eternal, not aggressive
+- Hearts that feel heavy, not saccharine
+- Skeletons that feel devotional, not horror
+
+### Line Quality
+- Clean vector with slight hand-drawn character
+- Subtle anime/comic influence in character proportions
+- Delicate where needed (flame tips, halo edges)
+- Bold where needed (title text, central figures)
+
+---
+
+## Symbols
 
 ### Primary Symbols
 
-| Symbol | Meaning | Treatment |
-|---|---|---|
-| **Chrome Heart** | Love that endures — metallic, indestructible | Central motif; chrome/silver with pink-red reflections |
-| **Broken Halo** | Sanctity lost then found — imperfect devotion | Floating above figures or titles; gold ring with one fracture |
-| **Pink-Red Flames** | Passion, warmth, burning devotion | Rising from bottom; softer than Eternal Struggle's aggressive fire |
-| **Stars** | Constancy, navigation, hope | Scattered as supporting elements; small 5-point stars |
-| **Paired Silhouettes** | Two figures together — unity, partnership | Clean shadow forms, facing each other or standing together |
-| **Smoke** | Atmosphere, memory, what remains after fire | Soft gradient smoke behind central elements |
-| **Halo (intact)** | Grace, protection, elevation | Above titles or figures; thin gold ring |
-| **Skeleton Embrace** | Love beyond death — continuing the LND DNA | Two skeletons or skeleton holding a heart; simplified |
+| Symbol | Treatment | Notes |
+|--------|-----------|-------|
+| **Pink-Red Flames** | Rising from bottom edge, wrapping sleeves | THE signature element of this drop |
+| **Hearts** | Anatomical or stylized — never cartoon | Weighted, serious, sometimes cracked |
+| **Halos** | Thin gold or cream circles above figures | Sainthood, divinity of love |
+| **Broken Halo** | Cracked or incomplete halo | Love that's been tested |
+| **Stars** | Small 4-point or 6-point | Scattered as accent, never dominant |
+| **Chrome Heart Emblem** | SE-original heart with chrome effect | Collectible brand mark for this drop |
+| **Paired Silhouettes** | Two figures close together | Intimacy, devotion, partnership |
+| **Skeleton Figure** | Carrying/embracing something | Mortality + undying love |
+| **Atmospheric Smoke** | Pink-tinted smoke washes | Background texture, romantic haze |
 
-### Accent Color Palette
-
-| Color | Hex | Usage |
-|---|---|---|
-| Pink / Magenta | #D94480 | Primary accent — hearts, flames, title treatments |
-| Soft Red | #CC3344 | Secondary flame tones, romantic warmth |
-| Chrome / Silver | #C0C0C0 | Heart accents, metallic elements |
-| Lavender / Purple | #7B5EA7 | Smoke tones, depth, atmosphere |
-| Gold | #D4AF37 | Halo accents, brand marks |
-| Bone White | #F0EDE5 | Title text, outlines, contrast |
-| Deep Black | #0A0A0A | Garment base, shadow zones |
+### Supporting Accents
+- Rose vine line work (thin, architectural)
+- Teardrop shapes (abstract, not literal crying)
+- Candlelight / flame tip shapes
+- Old English or blackletter accent characters (single letters only)
 
 ---
 
-## Garment Concepts
+## Print Placement Logic
+
+### Hero Hoodies (3 Directions)
+
+#### Hoodie 1: "ETERNAL LOVE" — Skeleton Embrace (existing piece, evolve)
+- **Front:** "ETERNAL LOVE" chest title with small chrome heart emblem above
+- **Back:** Skeleton figure cradling/embracing form — central composition. Flames rising from bottom
+- **Sleeves:** Pink-red flame wraps on both sleeves (existing design language)
+- **Colorway:** Black
+- **Print:** Bone + red bright + gold accents
+- **Notes:** This evolves the existing Eternal Love Hoodie design
+
+#### Hoodie 2: "LOVE NEVER LEAVES" — Paired Silhouettes
+- **Front:** Small SE monogram left chest with broken halo above
+- **Back:** Two silhouettes standing close, shared halo above them. "LOVE NEVER LEAVES" title arching above. Stars scattered in background.
+- **Right Sleeve:** "STYLE ETERNAL" vertical in accent type
+- **Colorway:** Washed Black
+- **Print:** Bone + dusty pink accents + gold stars
+
+#### Hoodie 3: "ETERNAL FLAME" — Flame Graphic
+- **Front:** "ETERNAL FLAME" stacked title in condensed gothic, chest center
+- **Back:** Large single flame graphic with heart shape integrated into flame core. Abstract, not literal. Title "ETERNAL FLAME" integrated into base of flame.
+- **Hood:** Interior "SE" embroidery
+- **Colorway:** Off Black
+- **Print:** Red bright + bone + deep red shadows
+
+### Tees (2 Directions)
+
+#### Tee 1: "LOVE NEVER DIES" — Skeleton Graphic (existing piece, refine)
+- **Front:** Skeleton figure with "Love Never Dies" script. Speech bubble element.
+- **Back:** "STYLE ETERNAL — DROP 03" small at upper back
+- **Colorway:** Washed Black
+- **Print:** Bone + red accent
+- **Notes:** This is the existing LND tee — direction is to maintain and refine
+
+#### Tee 2: "FORBIDDEN LOVE" — Heart Graphic
+- **Front:** Large anatomical heart with "FORBIDDEN LOVE" title overlaid. Flames rising from bottom of heart. Stars scattered around.
+- **Back:** Small "LOVE IS ETERNAL, JUST LIKE STYLE" in accent type
+- **Colorway:** Off Brown
+- **Print:** Bone + red bright
+- **Notes:** Off Brown colorway for visual contrast within drop
+
+### Crewneck: "LOVE REMAINS" — Minimal
+- **Front:** "LOVE REMAINS" embroidered in condensed type, left chest area, 3" wide
+- **Back:** Chrome heart emblem small at upper back
+- **Colorway:** Light Brown
+- **Material:** 400gsm French terry
+- **Treatment:** Embroidery only — no screenprint
+- **Purpose:** Softer entry point, the "wear-anywhere" piece of the drop
+
+### Companion Pant: "ETERNAL" Fleece Jogger
+- **Right thigh:** Small flame embroidery (single tone, cream)
+- **Left ankle (above cuff):** "ETERNAL" in small condensed type
+- **Colorway:** Washed Black
+- **Material:** 360gsm French terry, elastic cuffs
+- **Details:** Minimal — matches any hoodie in the drop
+
+### Minimal Supporting Graphic: Chrome Heart Tonal Tee
+- **Front:** SE chrome heart emblem centered, tone-on-tone (charcoal on black)
+- **Back:** Clean — no graphics
+- **Colorway:** Off Black
+- **Print:** Tone-on-tone subtle puff or embossed effect
+- **Purpose:** Crossover piece — can be worn with any drop
 
 ---
 
-### HOODIE 01: "Eternal Love" Hero Hoodie
+## Hero Graphics System
 
-**Garment:** Pullover hoodie · Black · 400gsm French terry · Oversized
-**Concept:** The drop's emotional anchor. Back-print hero.
+### Composition Rules
+1. Title + flame/heart combination is the core formula
+2. Red accents should occupy no more than 20% of total print area
+3. Flame direction: always rising upward (hope, not destruction)
+4. Hearts should feel heavy and weighted, never bubbly or cute
+5. Skeleton figures should be dignified, not horror/death metal
+6. Paired silhouettes should be gender-ambiguous
+7. Grain overlay at 10–15% for depth
 
-**Back graphic:**
-- "ETERNAL LOVE" in massive distressed block letters across upper back
-- Below: chrome heart centered, radiating soft pink-red flames outward
-- Broken halo floating above the title
-- Scattered stars in the negative space
-- Bottom caption: "LOVE REMAINS · STYLE ETERNAL · EST. 2021"
-
-**Front graphic:**
-- Left chest: small chrome heart with intact halo, 3" wide, silver + pink ink
-
-**Sleeve detail:**
-- Left sleeve: "ETERNAL" in condensed type running downward
-- Right sleeve: small star cluster near cuff
-
-**Print technique:** Screenprint with metallic silver ink on heart, cracked finish on lettering, pink + white + silver ink
-**Mood:** Romantic. Premium. Heavy. The piece that defines the drop.
-**Why it fits:** Direct evolution of the Eternal Love hoodie from Drop 03 — same emotional weight, cleaner composition, stronger title dominance.
+### Color Balance in Prints
+- 60% Bone (primary text and linework)
+- 20% Red Bright (emotional accents — flames, hearts)
+- 10% Deep Red (shadows and depth)
+- 10% Gold/Chrome (premium accents, small marks)
 
 ---
 
-### HOODIE 02: "Love Never Leaves" Hoodie
+## What to Avoid
 
-**Garment:** Pullover hoodie · Washed Black · 400gsm French terry · Oversized
-**Concept:** Front-print dominant. Paired silhouettes — romantic loyalty.
-
-**Front graphic:**
-- "LOVE NEVER LEAVES" in stacked distressed uppercase across chest
-- Below: two paired silhouettes facing each other, smoke rising between them
-- Script overlay behind text: "even after everything" in restrained cursive
-- Small stars scattered above the silhouettes
-
-**Back graphic:**
-- Large broken halo, centered, gold ink
-- "STYLE ETERNAL" in condensed type below
-- "FW26" micro caption
-
-**Sleeve detail:**
-- Both sleeves: thin pink-red flame run from cuff to mid-forearm, softer gradient
-
-**Print technique:** Screenprint, cracked ink, gold + pink + bone white
-**Mood:** Loyal. Warm. The wearable love letter.
-**Why it fits:** Paired silhouettes evolve the skeleton embrace concept — same emotional content, simplified one step toward modern premium readability.
+- ❌ Cute/cartoon hearts or valentine aesthetics
+- ❌ Horror/death metal skeleton treatments
+- ❌ Literal romance imagery (kissing, holding hands)
+- ❌ Red as a garment base color
+- ❌ Full anime/manga figure drawing
+- ❌ Rose/floral patterns as primary (support accent only)
+- ❌ Chrome Hearts direct copies (original emblems only)
+- ❌ Neon pink or hot pink
+- ❌ Too many competing accents — keep compositions controlled
+- ❌ Repeat of Freedom Hoodie fist motif (that was a standalone statement)
+- ❌ Text-heavy compositions
+- ❌ Direct Newark references
+- ❌ Gendered messaging
 
 ---
 
-### HOODIE 03: "Forbidden Love" II Hoodie
+## Recommended Naming
 
-**Garment:** Pullover hoodie · Charcoal · 400gsm French terry · Oversized
-**Concept:** Direct sequel to the original Forbidden Love hoodie. Evolved composition.
-
-**Front graphic:**
-- "FORBIDDEN LOVE" in distressed block letters
-- Behind: skeleton embrace — two skeletons holding a chrome heart between them
-- Broken hearts scattered as secondary elements
-- Title dominates; figures are secondary — cleaner than the original
-
-**Back graphic:**
-- "LOVE IS ETERNAL JUST LIKE STYLE" in large condensed uppercase
-- Small broken halo above the text
-- "SE · EST. 2021" at bottom
-
-**Sleeve detail:**
-- Left sleeve: broken heart symbol near cuff
-- Right sleeve: "FORBIDDEN" in micro condensed type
-
-**Print technique:** Screenprint, heavy distressing, silver + pink + bone white ink
-**Mood:** Forbidden. Weighted. The sequel that earns its place.
-**Why it fits:** Honors the original Forbidden Love hoodie while evolving the composition toward cleaner premium expression.
+| Piece | Name |
+|-------|------|
+| Hero Hoodie 1 | Eternal Love Hoodie |
+| Hero Hoodie 2 | Love Never Leaves Hoodie |
+| Hero Hoodie 3 | Eternal Flame Hoodie |
+| Tee 1 | Love Never Dies Tee |
+| Tee 2 | Forbidden Love Tee |
+| Crewneck | Love Remains Crewneck |
+| Jogger | Eternal Fleece Jogger |
+| Tonal Tee | Chrome Heart Tee |
+| Full Drop | Eternal Love — Drop 03 |
 
 ---
 
-### TEE 01: "Eternal Flame" Tee
-
-**Garment:** T-shirt · Washed Black · 280gsm heavyweight cotton · Oversized
-**Concept:** Back-print hero tee. The fire piece.
-
-**Front graphic:**
-- Small left chest: single flame symbol in pink-red, 2.5" tall
-
-**Back graphic:**
-- "ETERNAL FLAME" in massive block letters, top third of back
-- Below: chrome heart engulfed in pink-red flames
-- Smoke rising above the title
-- Bottom caption: "THE FIRE THAT NEVER GOES OUT · SE"
-
-**Sleeve detail:** None — clean
-**Print technique:** Screenprint, cracked ink, pink + red + silver + white
-**Mood:** Passionate. Iconic. The daily-wear anchor.
-**Why it fits:** Clean title + singular central motif. The simplest, most wearable piece in the drop.
-
----
-
-### TEE 02: "Love Remains" Tee
-
-**Garment:** T-shirt · Bone (#E8E4DE) · 280gsm heavyweight cotton · Oversized
-**Concept:** Light-garment variant. Front-print, quieter.
-
-**Front graphic:**
-- "LOVE REMAINS" in stacked condensed uppercase, centered
-- Below: small broken halo, gold ink
-- Thin horizontal line detail separating title from halo
-- "STYLE ETERNAL" in micro caption below the halo
-
-**Back graphic:**
-- Clean — "SE · FW26" micro text between shoulder blades
-
-**Sleeve detail:** None
-**Print technique:** Screenprint, charcoal + gold + soft pink ink on bone garment
-**Mood:** Restrained. Beautiful. The quiet statement.
-**Why it fits:** Range piece — shows the drop isn't all maximalist. Premium and readable.
-
----
-
-### CREWNECK 01: "Eternal Love" Crewneck
-
-**Garment:** Crewneck sweatshirt · Washed Black · 400gsm French terry · Oversized
-**Concept:** Medium-weight graphic piece. Front-focused.
-
-**Front graphic:**
-- "ETERNAL LOVE" in medium-scale distressed block across chest
-- Chrome heart below the title, centered
-- Stars flanking the heart (2 per side)
-- Thin halo arcing above the title
-
-**Back graphic:**
-- "STYLE ETERNAL" tonal print, centered between shoulders
-
-**Sleeve detail:** None
-**Print technique:** Screenprint, silver metallic + pink + white ink, cracked finish
-**Mood:** Collectible. Wearable. The mid-tier hero.
-**Why it fits:** Bridges the gap between the hero hoodie and the quiet tee. Accessible entry point.
-
----
-
-### LONG SLEEVE 01: "Love Never Leaves" Long Sleeve
-
-**Garment:** Long sleeve tee · Black · 260gsm heavyweight cotton · Oversized
-**Concept:** Multi-print. Sleeve graphics carry the concept.
-
-**Front graphic:**
-- "LOVE NEVER LEAVES" in distressed block across upper chest
-- Small chrome heart below
-
-**Back graphic:**
-- Large broken halo centered
-- "STYLE ETERNAL" in script arcing above
-- Stars scattered around the halo
-- "EVEN AFTER EVERYTHING" in condensed caption below
-
-**Sleeve detail:**
-- Left sleeve: "LOVE" running wrist to elbow in condensed type
-- Right sleeve: "REMAINS" running wrist to elbow in condensed type
-- Both sleeves: small flame accent near cuff
-
-**Print technique:** Screenprint, full-sleeve print, pink + white + silver + gold ink
-**Mood:** Complete. The multi-print experience.
-**Why it fits:** Long sleeves are the brand's premium canvas. Sleeve word split creates a unique moment.
-
----
-
-### JOGGER / PANT 01: "Eternal Love" Companion Jogger
-
-**Garment:** Jogger / sweatpant · Black · 360gsm French terry · Relaxed · Elastic cuffs
-**Concept:** Set piece for the hoodies. Minimal graphic.
-
-**Left thigh:** Small chrome heart embroidered in silver thread
-**Right cuff area:** "ETERNAL" in micro condensed type, tonal print
-**Waistband label:** Woven "Style Eternal · EST. 2021" label
-
-**Print technique:** Embroidery (thigh) + tonal screenprint (cuff)
-**Mood:** Pairing piece. Elevates the set without competing.
-**Why it fits:** Every drop needs a bottom. Chrome heart ties it to the hoodie collection.
-
----
-
-### MINIMAL SUPPORTING GRAPHIC SYSTEM
-
-| Element | Description | Usage |
-|---|---|---|
-| Chrome Heart Mark | Simple heart in chrome/silver | Tags, stickers, left-chest marks |
-| Broken Halo Stamp | Gold ring with fracture | Hangtags, sleeve accents |
-| Star Cluster | 3–5 small stars in cluster | Supporting placements, packaging |
-| "LOVE REMAINS" Caption | Small condensed text strip | Bottom-edge garment prints, sticker strips |
-| Flame Icon | Single stylized flame | Social media, small-scale brand marks |
-| Drop Emblem | Chrome heart inside broken halo | Collector hangtag, lookbook cover |
-
----
-
-## Colorway Matrix
-
-| Garment | Colorway 1 | Colorway 2 | Colorway 3 |
-|---|---|---|---|
-| Hero Hoodie | Black | — | — |
-| Love Never Leaves Hoodie | Washed Black | — | — |
-| Forbidden Love II Hoodie | Charcoal | Washed Black | — |
-| Eternal Flame Tee | Washed Black | — | — |
-| Love Remains Tee | Bone | Washed Black | — |
-| Crewneck | Washed Black | Charcoal | — |
-| Long Sleeve | Black | — | — |
-| Jogger | Black | — | — |
-
----
-
-## Evolution from Drop 03 (Love Never Dies)
-
-| Aspect | Drop 03 (Love Never Dies) | Eternal Love (New) |
-|---|---|---|
-| **Central figures** | Skeleton carrying figure, skeleton embrace | Chrome hearts, paired silhouettes, simplified skeletons |
-| **Complexity** | Dense collage — many overlapping elements | Cleaner — title + 1 central motif + 2–3 supports |
-| **Color accents** | Red flames, mixed accents | Pink-red primary, silver/chrome secondary, gold tertiary |
-| **Typography** | Mixed — some pieces had competing text sizes | Title-dominant — clear hierarchy in every piece |
-| **Composition** | Sometimes crowded | Simplified one step toward premium readability |
-| **Emotion** | Raw, unfiltered | Still emotional — but more refined, more iconic |
-
-This evolution preserves the soul of Love Never Dies while making every piece feel more like a fashion house collectible.
+*Drop 03 Design System — Style Eternal Phase 2*
+*Version 1.0 — April 2026*
