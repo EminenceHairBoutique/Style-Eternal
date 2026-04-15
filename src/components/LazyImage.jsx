@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const PLACEHOLDER_STYLE = {
-  background: "linear-gradient(135deg, #F5EFE6 0%, #E8DDD0 100%)",
+  background: "linear-gradient(135deg, #1A1A1A 0%, #0A0A0A 100%)",
 };
 
 export default function LazyImage({ src, alt = "", className = "" }) {
@@ -28,7 +28,7 @@ export default function LazyImage({ src, alt = "", className = "" }) {
           aria-label={alt || "Image unavailable"}
         >
           <svg
-            className="w-10 h-10 text-neutral-300"
+            className="w-10 h-10 text-neutral-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

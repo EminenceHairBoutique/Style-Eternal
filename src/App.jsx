@@ -2,9 +2,12 @@ import React, { Suspense, lazy } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { useCart } from "./context/CartContext";
+import { useUser } from "./context/UserContext";
 import CookieBanner from "./components/legal/CookieBanner";
 import TrackingScripts from "./components/TrackingScripts";
 const CartDrawer = lazy(() => import("./components/CartDrawer"));
+const DiscountModal = lazy(() => import("./components/DiscountModal"));
+const EmailPopup = lazy(() => import("./components/EmailPopup"));
 import useRouteAnalytics from "./hooks/useRouteAnalytics";
 
 // Layout
@@ -48,6 +51,7 @@ export default function App() {
   useRouteAnalytics();
   const location = useLocation();
   const { isOpen: isCartOpen } = useCart();
+  const { user } = useUser();
 
   return (
     <>
@@ -55,17 +59,30 @@ export default function App() {
       <Suspense fallback={null}>
         <CartDrawer />
       </Suspense>
+      <Suspense fallback={null}>
+        <DiscountModal user={user} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <EmailPopup user={user} />
+      </Suspense>
 
       <div
         className={`transition-all duration-300 ${
           isCartOpen ? "blur-sm pointer-events-none select-none" : ""
         }`}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:bg-black focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm"
+        >
+          Skip to content
+        </a>
         <Navbar />
         <ScrollToTop />
 
         <ErrorBoundary>
-          <AnimatePresence mode="wait">
+          <div id="main-content" tabIndex={-1} role="main">
+            <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               {[
                 ["/", <Home />],
@@ -118,6 +135,7 @@ export default function App() {
               <Route path="/shipping-returns" element={<Navigate to="/returns" replace />} />
             </Routes>
           </AnimatePresence>
+          </div>
         </ErrorBoundary>
 
         <CookieBanner />

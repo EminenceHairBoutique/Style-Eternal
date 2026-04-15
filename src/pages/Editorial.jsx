@@ -20,7 +20,7 @@ const entries = [
     date: "Spring/Summer 2026",
     excerpt:
       "The inaugural campaign. Shot in the North Ward at dawn. Brick walls, iron gates, and sodium light. The clothes carry the texture of the neighborhood that raised us.",
-    image: "/assets/editorial/campaign-ss26.jpg",
+    image: "/assets/editorial/campaign-ss26.png",
     link: "/collections/north-ward",
     cta: "View Collection",
   },
@@ -31,7 +31,7 @@ const entries = [
     date: "Spring/Summer 2026",
     excerpt:
       "The Ironbound District. Portuguese bakeries. Iron fire escapes. Immigrant grit meeting modern aspiration. This lookbook captures the collision.",
-    image: "/assets/editorial/lookbook-iron-bound.jpg",
+    image: "/assets/editorial/lookbook-iron-bound.png",
     link: "/collections/iron-bound",
     cta: "View Collection",
   },
@@ -42,7 +42,7 @@ const entries = [
     date: "2026",
     excerpt:
       "Newark isn't just where we're from. It's what we're made of. A photo essay on the streets, storefronts, and silhouettes that define the North Ward.",
-    image: "/assets/editorial/journal-newark.jpg",
+    image: "/assets/editorial/journal-newark.png",
     link: "/community",
     cta: "Read More",
   },
@@ -53,7 +53,7 @@ const entries = [
     date: "2025",
     excerpt:
       "What does it mean to build something that lasts? A reflection on permanence in a world that celebrates disposability.",
-    image: "/assets/editorial/journal-legacy.jpg",
+    image: "/assets/editorial/journal-legacy.png",
     link: "/about",
     cta: "Read More",
   },

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" fill="none">
+  <rect width="800" height="1000" fill="#0A0A0A"/>
+  <defs>
+    <linearGradient id="haze" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#1A1A1A" stop-opacity="0.8"/>
+      <stop offset="0.4" stop-color="#0A0A0A" stop-opacity="0"/>
+      <stop offset="0.7" stop-color="#1A1A1A" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#0A0A0A" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0" stop-color="#0A0A0A" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0A0A0A" stop-opacity="0.4"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#haze)"/>
+  <rect width="800" height="1000" fill="url(#vignette)"/>
+  <!-- Thin border frame -->
+  <rect x="32.0" y="60.0" width="736.0" height="880.0" stroke="#E8E4DE" stroke-width="0.5" fill="none" opacity="0.08"/>
+  <!-- Title -->
+  <text x="400.0" y="492.0" font-family="Arial Narrow, Helvetica Neue, sans-serif" font-weight="700" font-size="42" letter-spacing="0.18em" text-anchor="middle" fill="#E8E4DE">JOURNAL</text>
+  
+  <text x="400.0" y="516.0" font-family="Helvetica Neue, Arial, sans-serif" font-weight="300" font-size="14" letter-spacing="0.35em" text-anchor="middle" fill="#6B6B6B">STYLE ETERNAL</text>
+
+  
+  <rect x="372.0" y="530.0" width="56" height="56" stroke="#E8E4DE" stroke-width="0.5" fill="none" opacity="0.15"/>
+  <text x="400.0" y="568.0" font-family="Arial Narrow, Helvetica Neue, sans-serif" font-weight="700" font-size="28" letter-spacing="0.04em" text-anchor="middle" fill="#E8E4DE" opacity="0.15">SE</text>
+
+</svg>
