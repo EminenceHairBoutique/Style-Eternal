@@ -69,7 +69,7 @@ A slim-profile utility jogger in stretch nylon. Cleaner than the hero pant, desi
 - Flat front presentation means no visible elastic gather when standing straight
 
 ### Silhouette Reference
-Closer to a dressed-up jogger than a cargo pant. Think: the pant you can wear to dinner and then ride your bike home in. Based on uploadedacksuit references for proportions.
+Closer to a dressed-up jogger than a cargo pant. Think: the pant you can wear to dinner and then ride your bike home in. Based on uploaded tracksuit references for proportions.
 
 ---
 
