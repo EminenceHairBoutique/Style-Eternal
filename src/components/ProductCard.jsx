@@ -29,6 +29,7 @@ const ProductCard = ({ product, featured = false }) => {
 
   const isSoldOut = product.releaseStatus === "sold-out";
   const isPreorder = product.releaseStatus === "preorder";
+  const isComingSoon = product.releaseStatus === "coming-soon";
 
   return (
     <Link
@@ -43,11 +44,11 @@ const ProductCard = ({ product, featured = false }) => {
               src={img}
               alt={product.name}
               className={`img-primary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out ${
-                isSoldOut ? "opacity-50 grayscale" : "group-hover:scale-[1.04]"
+                isSoldOut || isComingSoon ? "opacity-50 grayscale" : "group-hover:scale-[1.04]"
               }`}
               loading="lazy"
             />
-            {imgSecondary && !isSoldOut && (
+            {imgSecondary && !isSoldOut && !isComingSoon && (
               <img
                 src={imgSecondary}
                 alt={`${product.name} alternate view`}
@@ -57,9 +58,25 @@ const ProductCard = ({ product, featured = false }) => {
             )}
           </>
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-se-asphalt">
-            <span className="font-display text-[14px] tracking-[0.2em] text-se-steel">
-              SE
+          <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-se-charcoal to-se-asphalt">
+            <div className="text-center">
+              <span className="font-display text-[14px] tracking-[0.2em] text-se-steel/30 block">
+                {product.collection || "SE"}
+              </span>
+              {isComingSoon && (
+                <span className="font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/40 mt-2 block">
+                  Coming Soon
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Coming Soon Overlay */}
+        {isComingSoon && img && (
+          <div className="absolute inset-0 bg-se-black/40 flex items-center justify-center">
+            <span className="font-accent text-[10px] tracking-[0.25em] uppercase text-se-bone/80 border border-se-bone/20 px-4 py-2">
+              Coming Soon
             </span>
           </div>
         )}
@@ -70,14 +87,18 @@ const ProductCard = ({ product, featured = false }) => {
             product.badge === "Sold Out" ? "badge-sold-out" :
             product.badge === "Limited" ? "badge-limited" :
             product.badge === "Pre-Order" ? "badge-archive" :
+            product.badge === "Coming Soon" ? "badge-coming-soon" :
             "badge-new"
           }`}>
+            {product.badge === "Coming Soon" && (
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-se-steel animate-pulse mr-1.5" />
+            )}
             {product.badge}
           </div>
         )}
 
-        {/* Quick Add (desktop hover) */}
-        {!isSoldOut && (
+        {/* Quick Add (desktop hover) — only for available/preorder */}
+        {!isSoldOut && !isComingSoon && (
           <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
             <button
               onClick={handleQuickAdd}
@@ -86,6 +107,15 @@ const ProductCard = ({ product, featured = false }) => {
             >
               {isPreorder ? "Pre-Order" : "Quick Add"}
             </button>
+          </div>
+        )}
+
+        {/* Notify Me (for coming-soon products on hover) */}
+        {isComingSoon && (
+          <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+            <span className="block w-full py-3 bg-se-charcoal text-se-bone/70 text-[10px] font-accent font-medium tracking-[0.2em] uppercase text-center border-t border-white/10">
+              Notify Me
+            </span>
           </div>
         )}
       </div>
@@ -109,8 +139,8 @@ const ProductCard = ({ product, featured = false }) => {
               ${product.comparePrice}
             </span>
           )}
-          <span className={`text-[14px] font-medium ${isSoldOut ? "text-se-steel" : "text-se-bone"}`}>
-            {isSoldOut ? "Sold Out" : `$${product.price}`}
+          <span className={`text-[14px] font-medium ${isSoldOut || isComingSoon ? "text-se-steel" : "text-se-bone"}`}>
+            {isSoldOut ? "Sold Out" : isComingSoon ? `$${product.price}` : `$${product.price}`}
           </span>
         </div>
 
