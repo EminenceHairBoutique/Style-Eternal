@@ -292,8 +292,8 @@ Every concept must pass:
 | File | Contents |
 |---|---|
 | `docs/design/drop-design-system.md` | This document — master design system |
-| `docs/design/drop-02-eternal-struggle.md` | Drop "Eternal Struggle" full design direction |
-| `docs/design/drop-03-eternal-love.md` | Drop "Eternal Love" full design direction |
+| `docs/design/eternal-struggle.md` | Drop "Eternal Struggle" full design direction |
+| `docs/design/eternal-love.md` | Drop "Eternal Love" full design direction |
 | `docs/design/utility-capsule.md` | Utility / nylon capsule design direction |
 | `docs/design/garment-concept-matrix.md` | Full concept matrix — all garments across all drops |
 | `docs/design/drop-prompt-pack-openart.md` | External prompt pack for OpenArt AI generation |
