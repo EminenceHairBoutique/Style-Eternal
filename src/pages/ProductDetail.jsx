@@ -29,6 +29,7 @@ function Accordion({ title, children, defaultOpen = false }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
         className="flex w-full items-center justify-between py-5 text-left"
       >
         <span className="text-[13px] font-accent font-medium tracking-[0.08em] uppercase text-se-bone">
@@ -231,6 +232,43 @@ export default function ProductDetail() {
   /* ================================================================ */
   /*  RENDER                                                           */
   /* ================================================================ */
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
+  const productUrl = `${siteUrl}/products/${product.slug}`;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "@id": `${productUrl}#product`,
+        name: product.displayName || product.name,
+        description: product.description,
+        url: productUrl,
+        image: images.map((img) =>
+          String(img).startsWith("http") ? img : `${siteUrl}${img}`
+        ),
+        brand: { "@type": "Brand", name: "Style Eternal" },
+        ...(product.price
+          ? {
+              offers: {
+                "@type": "Offer",
+                price: product.price,
+                priceCurrency: "USD",
+                url: productUrl,
+              },
+            }
+          : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+          { "@type": "ListItem", position: 2, name: "Shop", item: `${siteUrl}/shop` },
+          { "@type": "ListItem", position: 3, name: product.displayName || product.name },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
       <SEO
@@ -238,6 +276,7 @@ export default function ProductDetail() {
         description={product.description}
         image={images[0]}
         type="product"
+        jsonLd={productJsonLd}
       />
 
       <main className="min-h-screen bg-se-black">
