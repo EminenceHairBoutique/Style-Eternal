@@ -41,6 +41,7 @@ const Returns = lazy(() => import("./pages/Returns"));
 const Rewards = lazy(() => import("./pages/Rewards"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 const SizeGuide = lazy(() => import("./pages/SizeGuide"));
+const Lookbook = lazy(() => import("./pages/Lookbook"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
@@ -92,6 +93,7 @@ export default function App() {
                 ["/rewards", <Rewards />],
                 ["/shipping", <Shipping />],
                 ["/size-guide", <SizeGuide />],
+                ["/lookbook", <Lookbook />],
                 ["*", <NotFound />],
               ].map(([path, element]) => (
                 <Route
