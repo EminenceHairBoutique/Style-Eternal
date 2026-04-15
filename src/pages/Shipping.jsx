@@ -30,7 +30,7 @@ export default function Shipping() {
                 SHIPPING
               </h1>
               <p className="text-[15px] text-se-bone/40 max-w-md">
-                Every order is handled with care. Packed, sealed, and shipped with care.
+                Every order is packed, sealed, and shipped with attention to detail.
               </p>
             </Motion.div>
           </div>
