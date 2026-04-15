@@ -307,7 +307,7 @@ async function main() {
   ).sort((a, b) => a.localeCompare(b));
 
   const COLLECTION_META = {
-    "style-eternal-essentials": {
+    essentials: {
       title: "Style Eternal Essentials",
       description:
         "A focused edit of the pieces our clients choose most — refined, realistic, and designed for everyday confidence.",
