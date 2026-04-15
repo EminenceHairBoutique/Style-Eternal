@@ -21,7 +21,7 @@ test.describe("Homepage", () => {
 
   test("captures referral code from query string and stores in localStorage", async ({ page }) => {
     await page.goto("/?ref=TESTREF123");
-    // Check localStorage after navigation (key is eminence_referral, stored as JSON)
+    // Check localStorage after navigation (key is se_referral, stored as JSON)
     const stored = await page.evaluate(() => {
       const raw = localStorage.getItem("se_referral");
       if (!raw) return null;
