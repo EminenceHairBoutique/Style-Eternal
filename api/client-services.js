@@ -69,9 +69,18 @@ export default async function handler(req, res) {
   const orderNumber = String(data.orderNumber || "").trim();
 
   try {
-    const typeLabel = inquiryType && inquiryType !== "general"
-      ? inquiryType.charAt(0).toUpperCase() + inquiryType.slice(1)
-      : "General";
+    const inquiryLabelMap = {
+      order: "Order Question",
+      return: "Return or Exchange",
+      product: "Product Question",
+      sizing: "Sizing & Fit",
+      shipping: "Shipping",
+      collab: "Collaboration",
+      press: "Press Inquiry",
+      other: "Other",
+    };
+
+    const typeLabel = inquiryLabelMap[inquiryType] || "General";
 
     await sendConciergeRequestEmail({
       type: "client_services",
