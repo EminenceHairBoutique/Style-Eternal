@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
+import { Instagram, Twitter, Mail } from "lucide-react";
 import SEO from "../components/SEO";
 import { subscribeEmail } from "../utils/subscribe";
 
@@ -15,6 +16,8 @@ const fadeUp = {
 export default function Community() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
+  const [joinEmail, setJoinEmail] = useState("");
+  const [joinStatus, setJoinStatus] = useState("idle");
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -29,11 +32,24 @@ export default function Community() {
     }
   };
 
+  const handleJoin = async (e) => {
+    e.preventDefault();
+    if (!joinEmail.trim() || joinStatus === "loading") return;
+    try {
+      setJoinStatus("loading");
+      await subscribeEmail({ email: joinEmail, source: "community_join" });
+      setJoinStatus("success");
+      setJoinEmail("");
+    } catch {
+      setJoinStatus("error");
+    }
+  };
+
   return (
     <>
       <SEO
         title="Community — Style Eternal"
-        description="Newark roots. North Ward culture. The community behind Style Eternal."
+        description="New Jersey roots. The community behind Style Eternal — EST. 2021."
       />
 
       <div className="bg-se-black text-se-bone">
@@ -41,19 +57,19 @@ export default function Community() {
         <section className="pt-32 pb-16 md:pt-40 md:pb-24 border-b border-white/5">
           <div className="content-wide">
             <Motion.div {...fadeUp}>
-              <p className="text-overline mb-4">Newark, NJ — North Ward</p>
+              <p className="text-overline mb-4">New Jersey — EST. 2021</p>
               <h1 className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-[0.9] tracking-[0.04em] mb-6">
                 COMMUNITY
               </h1>
               <p className="text-[15px] md:text-[17px] text-se-bone/50 max-w-lg leading-relaxed">
-                Style Eternal is a product of place. Newark's North Ward.
-                The culture, the concrete, the people who built something from nothing.
+                Style Eternal is a product of place. New Jersey grit, culture, and
+                the people who built something from nothing. EST. 2021.
               </p>
             </Motion.div>
           </div>
         </section>
 
-        {/* Newark Story */}
+        {/* Origin Story */}
         <section className="section-pad border-b border-white/5">
           <div className="content-wide">
             <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
@@ -62,23 +78,15 @@ export default function Community() {
                   Origin Story
                 </p>
                 <h2 className="font-display text-[clamp(1.8rem,5vw,3rem)] leading-[1] tracking-[0.04em] mb-8">
-                  THE NORTH WARD<br />MADE US
+                  WHERE WE<br />STARTED
                 </h2>
-                <div className="space-y-4 text-[15px] text-se-bone/50 leading-relaxed max-w-md">
+                <div className="text-[15px] text-se-bone/50 leading-relaxed max-w-md">
                   <p>
-                    The North Ward is brick rowhouses and steel gates. Corner stores
-                    that stayed open late. Basements where the music started. Stoops
-                    where conversations turned into plans.
-                  </p>
-                  <p>
-                    It's a neighborhood that teaches you to carry yourself with intention.
-                    To dress like you mean it. To build things that last, because nothing
-                    was ever handed to you.
-                  </p>
-                  <p>
-                    Style Eternal grew out of that texture. Not fashion for fashion's sake,
-                    but clothes as armor. As identity. As a record of where you've been and
-                    a statement about where you're going.
+                    Style Eternal grew out of New Jersey — the neighborhoods that teach
+                    you to carry yourself with intention, to dress like you mean it, and
+                    to build things that last. Not fashion for fashion&apos;s sake, but
+                    clothes as identity, as a record of where you&apos;ve been and a
+                    statement about where you&apos;re going.
                   </p>
                 </div>
               </Motion.div>
@@ -86,7 +94,7 @@ export default function Community() {
               <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt">
                 <div className="h-full w-full bg-gradient-to-t from-se-charcoal to-se-asphalt flex items-center justify-center">
                   <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/15">
-                    NORTH WARD
+                    EST. 2021
                   </span>
                 </div>
               </Motion.div>
@@ -139,39 +147,94 @@ export default function Community() {
           </div>
         </section>
 
-        {/* Culture section */}
+        {/* Featured Looks */}
         <section className="section-pad border-b border-white/5">
           <div className="content-wide">
-            <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-              <Motion.div {...fadeUp} className="order-2 md:order-1 aspect-[4/5] bg-se-asphalt">
-                <div className="h-full w-full bg-gradient-to-br from-se-charcoal to-se-asphalt flex items-center justify-center">
-                  <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/15">
-                    CULTURE
-                  </span>
-                </div>
-              </Motion.div>
+            <Motion.div {...fadeUp} className="mb-12">
+              <p className="text-overline mb-2">Community Picks</p>
+              <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.06em]">
+                FEATURED LOOKS
+              </h2>
+            </Motion.div>
 
-              <Motion.div {...fadeUp} className="order-1 md:order-2">
-                <p className="text-[9px] tracking-[0.25em] uppercase text-se-gold font-accent mb-6">
-                  Beyond Clothes
-                </p>
-                <h2 className="font-display text-[clamp(1.8rem,5vw,3rem)] leading-[1] tracking-[0.04em] mb-8">
-                  STYLE AS<br />IDENTITY
-                </h2>
-                <div className="space-y-4 text-[15px] text-se-bone/50 leading-relaxed max-w-md">
-                  <p>
-                    In the neighborhoods we come from, style was never optional.
-                    It was how you told the world you were here. How you showed you
-                    weren't defeated by the circumstances.
-                  </p>
-                  <p>
-                    A fresh fit on a Monday morning wasn't vanity — it was a declaration.
-                    Style Eternal carries that energy forward. Every piece is a statement
-                    that you take yourself seriously.
-                  </p>
-                </div>
-              </Motion.div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { label: "Drop 001", tag: "Archive" },
+                { label: "Drop 002", tag: "Limited" },
+                { label: "Drop 003", tag: "Coming Soon" },
+              ].map((card, i) => (
+                <Motion.div
+                  key={card.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.1, ease: [0.2, 0, 0, 1] }}
+                  className="border border-white/5 bg-se-charcoal overflow-hidden"
+                >
+                  <div className="aspect-[3/4] bg-gradient-to-b from-se-asphalt to-se-charcoal flex items-center justify-center">
+                    <span className="font-display text-[20px] tracking-[0.15em] text-se-steel/15">
+                      {card.label.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="p-6 flex items-center justify-between">
+                    <span className="font-display text-[13px] tracking-[0.1em]">
+                      {card.label.toUpperCase()}
+                    </span>
+                    <span className="text-[10px] font-accent tracking-[0.15em] uppercase text-se-gold">
+                      {card.tag}
+                    </span>
+                  </div>
+                </Motion.div>
+              ))}
             </div>
+          </div>
+        </section>
+
+        {/* Join the Community */}
+        <section className="section-pad border-b border-white/5">
+          <div className="content-wide">
+            <Motion.div {...fadeUp} className="max-w-2xl mx-auto text-center">
+              <p className="text-overline mb-4">Stay Connected</p>
+              <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.06em] mb-4">
+                JOIN THE COMMUNITY
+              </h2>
+              <p className="text-[14px] text-se-bone/40 mb-8 max-w-md mx-auto">
+                Drop alerts. Editorial features. Community events. Be the first to know.
+              </p>
+
+              <form onSubmit={handleJoin} className="flex max-w-md mx-auto gap-0 mb-8">
+                <input
+                  type="email"
+                  value={joinEmail}
+                  onChange={(e) => { setJoinEmail(e.target.value); setJoinStatus("idle"); }}
+                  placeholder="your@email.com"
+                  className="flex-1 px-4 py-3.5 bg-se-charcoal border border-white/10 text-se-bone text-[13px] font-accent placeholder:text-se-steel focus:outline-none focus:border-se-gold transition"
+                  required
+                />
+                <button type="submit" className="btn-primary px-6 py-3.5 text-[10px]">
+                  {joinStatus === "success" ? "Joined" : "Subscribe"}
+                </button>
+              </form>
+
+              {joinStatus === "success" && (
+                <p className="text-[12px] text-se-gold mb-6 font-accent">Welcome to the community.</p>
+              )}
+              {joinStatus === "error" && (
+                <p className="text-[12px] text-se-red-bright mb-6 font-accent">Something went wrong. Try again.</p>
+              )}
+
+              <div className="flex items-center justify-center gap-6">
+                <a href="https://instagram.com/styleeternal" target="_blank" rel="noopener noreferrer" className="text-se-steel hover:text-se-bone transition" aria-label="Instagram">
+                  <Instagram size={20} />
+                </a>
+                <a href="https://twitter.com/styleeternal" target="_blank" rel="noopener noreferrer" className="text-se-steel hover:text-se-bone transition" aria-label="Twitter">
+                  <Twitter size={20} />
+                </a>
+                <a href="mailto:info@styleeternal.com" className="text-se-steel hover:text-se-bone transition" aria-label="Email">
+                  <Mail size={20} />
+                </a>
+              </div>
+            </Motion.div>
           </div>
         </section>
 
@@ -179,12 +242,12 @@ export default function Community() {
         <section className="section-pad">
           <div className="content-wide">
             <Motion.div {...fadeUp} className="max-w-2xl mx-auto text-center">
-              <p className="text-overline mb-4">Join the Community</p>
+              <p className="text-overline mb-4">Never Miss a Drop</p>
               <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.06em] mb-4">
                 JOIN THE ARCHIVE
               </h2>
               <p className="text-[14px] text-se-bone/40 mb-8 max-w-md mx-auto">
-                Drop alerts. Editorial features. Community events. No noise.
+                Subscribe for early access, exclusive content, and drop notifications. No spam.
               </p>
 
               <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto gap-0">

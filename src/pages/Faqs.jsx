@@ -1,4 +1,4 @@
-// src/pages/Faqs.jsx — Style Eternal (Pass 2)
+// src/pages/Faqs.jsx — Style Eternal
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
@@ -9,46 +9,67 @@ const CATEGORY_ICONS = {
   "Orders & Shipping": "📦",
   "Products": "🏷️",
   "Returns & Exchanges": "↩️",
-  "Brand & Community": "✦",
+  "Drops & Collections": "🔥",
+  "Account & Rewards": "⭐",
+  "Brand": "✦",
 };
 
 const FAQS = [
   {
     category: "Orders & Shipping",
     items: [
-      { q: "How long does shipping take?", a: "Standard shipping is 5–7 business days within the US. Expedited (2–3 day) and overnight options are available at checkout. All orders ship from Newark, NJ." },
-      { q: "Do you ship internationally?", a: "Not currently. We ship to all 50 US states and territories. International shipping is coming soon — sign up for our newsletter to be notified." },
-      { q: "Can I change or cancel my order?", a: "Orders are processed quickly. Contact us within 1 hour of placing your order at info@styleeternal.com and we'll do our best to accommodate changes." },
-      { q: "How do I track my order?", a: "You'll receive a tracking email with carrier details once your order ships. You can also check order status from your account dashboard." },
-      { q: "Is shipping really free?", a: "Yes — free standard shipping on all orders over $150. No codes needed, applied automatically at checkout." },
+      { q: "How long does shipping take?", a: "Standard shipping is 5–7 business days. Expedited shipping delivers in 2–3 business days, and priority shipping arrives within 1–2 business days. Expedited and priority options are available at checkout." },
+      { q: "Do you ship internationally?", a: "Not yet — but we're working on it. International shipping is coming soon. Sign up for our newsletter to be the first to know when it launches." },
+      { q: "How do I track my order?", a: "You'll receive a tracking email with carrier details as soon as your order ships. You can also check order status anytime from your account dashboard." },
+      { q: "Can I change or cancel my order?", a: "Orders are processed quickly. Contact us within 1 hour of placing your order at info@styleeternal.com and we'll do our best to accommodate changes or cancellations." },
+      { q: "How long does processing take?", a: "Orders are processed within 1–3 business days before shipping. During high-volume drops, processing may take an additional day." },
+      { q: "Is there a free shipping threshold?", a: "Yes — free standard shipping on all orders over $150. No codes needed, it's applied automatically at checkout." },
     ],
   },
   {
     category: "Products",
     items: [
-      { q: "What sizes do you carry?", a: "Most pieces run S through XXL. Bottoms run 28–38. Check individual product pages for detailed size charts and fit notes specific to each piece." },
-      { q: "How do your pieces fit?", a: "Most pieces are oversized or relaxed fit — that's the Style Eternal signature. Check the fit note on each product page. When in doubt, size down for a less relaxed fit." },
-      { q: "Are your garments pre-shrunk?", a: "All garment-washed pieces are pre-shrunk. Follow the care instructions on the label to maintain the intended fit and feel." },
-      { q: "What does 'limited' mean?", a: "Limited pieces are produced in intentionally small quantities. Once they sell out, they move to the archive and are not restocked. This keeps each drop exclusive." },
-      { q: "What fabric weight do you use?", a: "Our tees are 300gsm+ heavyweight cotton. Hoodies are 400gsm+ French terry. We don't do thin basics — everything has substance." },
+      { q: "What sizes do you carry and how do they fit?", a: "Tops run S through XXL. Bottoms run 28–38. Most pieces are cut in an oversized or relaxed fit — that's the Style Eternal signature. Check the fit note on each product page. When in doubt, size down for a less relaxed silhouette." },
+      { q: "Are your garments pre-shrunk?", a: "All garment-washed pieces are pre-shrunk. Follow the care instructions on the label to maintain the intended fit and feel over time." },
+      { q: "What does 'Limited' mean?", a: "Limited pieces are produced in intentionally small quantities. Once they sell out, they're gone — no restocks. They move to the Archive as a permanent record of the drop." },
+      { q: "What fabric weights do you use?", a: "Our tees are 280gsm+ heavyweight cotton. Hoodies and outerwear are 400gsm+ French terry or fleece. We don't do thin basics — everything has real substance." },
+      { q: "How should I care for printed pieces?", a: "Turn the garment inside out and wash cold on a gentle cycle. Hang dry or tumble dry on low heat. Avoid ironing directly on prints to preserve the design." },
     ],
   },
   {
     category: "Returns & Exchanges",
     items: [
       { q: "What is your return policy?", a: "We accept returns on unworn items with tags attached within 30 days of delivery. Items must be in original condition — no wear, wash, or alterations." },
-      { q: "How do I start a return?", a: "Email info@styleeternal.com with your order number and reason. We'll send you a prepaid return label within 24 hours." },
-      { q: "Do you offer exchanges?", a: "Yes. Contact us and we'll help you swap sizes or colorways, subject to availability. First exchange is free." },
-      { q: "When will I get my refund?", a: "Refunds are processed within 5–7 business days after we receive and inspect the returned item. Original payment method is credited." },
+      { q: "How do I initiate a return?", a: "Email info@styleeternal.com with your order number and reason for the return. We'll send you a prepaid return label within 24 hours." },
+      { q: "How do exchanges work?", a: "Contact us and we'll help you swap sizes or colorways, subject to availability. Your first exchange on any order is free." },
+      { q: "What if my item arrives damaged?", a: "Contact us at info@styleeternal.com with photos of the damage. We'll arrange a full replacement or refund — no need to return the damaged item." },
+      { q: "How long until I receive my refund?", a: "Refunds are processed within 5–7 business days after we receive and inspect the returned item. Your original payment method will be credited." },
     ],
   },
   {
-    category: "Brand & Community",
+    category: "Drops & Collections",
     items: [
-      { q: "Where is Style Eternal based?", a: "Newark, New Jersey — the North Ward. Every piece is designed here. It's where we come from and it shows in everything we make." },
-      { q: "When is the next drop?", a: "Drop schedules are announced through our newsletter and Instagram first. Sign up for the archive to never miss a release." },
+      { q: "When is the next drop?", a: "Drop dates are announced through our newsletter and social channels first. Subscribe to get notified before anything goes live." },
+      { q: "How do I get notified about new releases?", a: "Sign up for the Style Eternal newsletter at styleeternal.com. Subscribers always get early access and first notice on upcoming drops." },
+      { q: "Will sold-out items ever restock?", a: "Limited drops don't restock — that's what makes them limited. Once they sell out, they move to the Archive as a permanent record. Core collection items may be replenished." },
+      { q: "What is the Archive?", a: "The Archive is a record of every past release. It preserves the history of each collection and drop, even after items have sold out." },
+    ],
+  },
+  {
+    category: "Account & Rewards",
+    items: [
+      { q: "How do I join the rewards program?", a: "Create an account on styleeternal.com and you're automatically enrolled. No extra steps — start earning from your first purchase." },
+      { q: "How do reward tiers work?", a: "There are four tiers based on total spend: Foundation, Established, Permanent, and Eternal. Each tier unlocks better perks, from early access to exclusive drops." },
+      { q: "Do my points expire?", a: "No — your points never expire. They stay in your account as long as it's active." },
+      { q: "How do I earn points?", a: "You earn 1 point for every dollar spent. Points accrue automatically with each completed order." },
+    ],
+  },
+  {
+    category: "Brand",
+    items: [
+      { q: "Where is Style Eternal based?", a: "New Jersey. Every piece is designed here. It's where we come from and it shows in everything we make." },
       { q: "Do you do collaborations?", a: "We're open to the right partnerships — artists, makers, and community voices that align with our values. Reach out via the contact page." },
-      { q: "What does 'Style Eternal' mean?", a: "It means style that outlasts trends. It's about permanence, legacy, and carrying yourself with intention. Not fast fashion — forever fashion." },
+      { q: "What does EST. 2021 mean?", a: "2021 is the year Style Eternal was founded. It marks the beginning of the brand and everything we've built since." },
     ],
   },
 ];

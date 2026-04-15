@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
-import { Truck, Clock, Globe, ShieldCheck } from "lucide-react";
+import { Truck, Clock, Globe, ShieldCheck, Package, MapPin, AlertTriangle } from "lucide-react";
 import SEO from "../components/SEO";
 
 const fadeUp = {
@@ -17,7 +17,7 @@ export default function Shipping() {
     <>
       <SEO
         title="Shipping — Style Eternal"
-        description="Shipping information, delivery times, and policies for Style Eternal orders."
+        description="Shipping rates, delivery times, and packaging details for Style Eternal streetwear. Free shipping on US orders over $150."
       />
 
       <div className="bg-se-black text-se-bone min-h-screen">
@@ -30,7 +30,7 @@ export default function Shipping() {
                 SHIPPING
               </h1>
               <p className="text-[15px] text-se-bone/40 max-w-md">
-                Every order is handled with care. Packed, sealed, and shipped from Newark.
+                Every order is handled with care — custom packed, sealed, and shipped to your door. Currently shipping within the United States only.
               </p>
             </Motion.div>
           </div>
@@ -40,7 +40,7 @@ export default function Shipping() {
         <section className="section-pad border-b border-white/5">
           <div className="content-wide">
             <Motion.div {...fadeUp} className="mb-12">
-              <p className="text-overline mb-2">Domestic</p>
+              <p className="text-overline mb-2">Domestic US</p>
               <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] tracking-[0.06em]">
                 SHIPPING OPTIONS
               </h2>
@@ -51,21 +51,21 @@ export default function Shipping() {
                 {
                   icon: Truck,
                   title: "Standard Shipping",
-                  time: "5–7 Business Days",
+                  time: "5\u20137 Business Days",
                   price: "Free on orders over $150",
                   priceSub: "$8.95 for orders under $150",
                 },
                 {
                   icon: Clock,
                   title: "Expedited Shipping",
-                  time: "2–3 Business Days",
+                  time: "2\u20133 Business Days",
                   price: "$14.95",
                   priceSub: "Available at checkout",
                 },
                 {
                   icon: ShieldCheck,
                   title: "Priority Shipping",
-                  time: "1–2 Business Days",
+                  time: "1\u20132 Business Days",
                   price: "$24.95",
                   priceSub: "Signature required on delivery",
                 },
@@ -109,12 +109,11 @@ export default function Shipping() {
               </h2>
               <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3">
                 <p>
-                  Orders are processed within <strong className="text-se-bone/70">1–2 business days</strong>.
+                  Orders are processed within <strong className="text-se-bone/70">1&ndash;3 business days</strong>.
                   You will receive a confirmation email with tracking information once your order ships.
                 </p>
                 <p>
-                  Orders placed after 2:00 PM EST or on weekends/holidays will begin processing
-                  the next business day.
+                  Orders placed after <strong className="text-se-bone/70">2:00 PM EST</strong> or on weekends and holidays will begin processing the next business day.
                 </p>
               </div>
             </Motion.div>
@@ -127,15 +126,62 @@ export default function Shipping() {
               </h2>
               <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3">
                 <p>
-                  Once your order ships, you will receive an email with a tracking number
-                  and a link to track your package.
+                  Once your order ships, you will receive an email with a <strong className="text-se-bone/70">tracking number</strong> and a link to follow your package in real time.
                 </p>
                 <p>
-                  You can also check order status from your{" "}
+                  You can also check order status anytime from your{" "}
                   <Link to="/account" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">
                     account page
                   </Link>.
                 </p>
+              </div>
+            </Motion.div>
+
+            <div className="divider" />
+
+            <Motion.div {...fadeUp}>
+              <div className="flex items-start gap-4">
+                <Package className="w-5 h-5 text-se-gold mt-0.5 shrink-0" />
+                <div>
+                  <h2 className="font-display text-[16px] tracking-[0.12em] mb-4">
+                    PACKAGING
+                  </h2>
+                  <p className="text-[14px] text-se-bone/50 leading-relaxed">
+                    Every order is packed in custom branded packaging — tissue-wrapped, sealed, and shipped in reinforced mailers or boxes to ensure your pieces arrive in pristine condition.
+                  </p>
+                </div>
+              </div>
+            </Motion.div>
+
+            <div className="divider" />
+
+            <Motion.div {...fadeUp}>
+              <h2 className="font-display text-[16px] tracking-[0.12em] mb-4">
+                PRE-ORDERS
+              </h2>
+              <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3">
+                <p>
+                  Pre-order items ship within the lead time stated on the product page. You will receive a shipping confirmation with tracking once your pre-order item is dispatched.
+                </p>
+                <p className="text-[13px] text-se-bone/40">
+                  If your order contains both in-stock and pre-order items, they may ship separately at no additional cost.
+                </p>
+              </div>
+            </Motion.div>
+
+            <div className="divider" />
+
+            <Motion.div {...fadeUp}>
+              <div className="flex items-start gap-4">
+                <MapPin className="w-5 h-5 text-se-gold mt-0.5 shrink-0" />
+                <div>
+                  <h2 className="font-display text-[16px] tracking-[0.12em] mb-4">
+                    P.O. BOXES
+                  </h2>
+                  <p className="text-[14px] text-se-bone/50 leading-relaxed">
+                    We do ship to P.O. boxes — however, only <strong className="text-se-bone/70">standard shipping</strong> is available for P.O. box addresses. Expedited and priority shipping require a physical street address.
+                  </p>
+                </div>
               </div>
             </Motion.div>
 
@@ -153,8 +199,7 @@ export default function Shipping() {
                       Style Eternal currently ships within the <strong className="text-se-bone/70">United States only</strong>.
                     </p>
                     <p>
-                      International shipping is coming soon. Sign up for our newsletter to be the
-                      first to know when we expand.
+                      International shipping is coming soon. Sign up for our newsletter to be the first to know when we expand.
                     </p>
                   </div>
                 </div>
@@ -164,30 +209,22 @@ export default function Shipping() {
             <div className="divider" />
 
             <Motion.div {...fadeUp}>
-              <h2 className="font-display text-[16px] tracking-[0.12em] mb-4">
-                PACKAGING
-              </h2>
-              <p className="text-[14px] text-se-bone/50 leading-relaxed">
-                Every order is packed in custom branded packaging. Tissue-wrapped, sealed,
-                and shipped in reinforced mailers or boxes to ensure your pieces arrive in
-                pristine condition.
-              </p>
-            </Motion.div>
-
-            <div className="divider" />
-
-            <Motion.div {...fadeUp}>
-              <h2 className="font-display text-[16px] tracking-[0.12em] mb-4">
-                LOST OR DAMAGED PACKAGES
-              </h2>
-              <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3">
-                <p>
-                  If your package is lost, stolen, or arrives damaged,{" "}
-                  <Link to="/contact" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">
-                    contact us
-                  </Link>{" "}
-                  immediately with your order number. We&apos;ll investigate and make it right.
-                </p>
+              <div className="flex items-start gap-4">
+                <AlertTriangle className="w-5 h-5 text-se-gold mt-0.5 shrink-0" />
+                <div>
+                  <h2 className="font-display text-[16px] tracking-[0.12em] mb-4">
+                    LOST OR DAMAGED PACKAGES
+                  </h2>
+                  <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3">
+                    <p>
+                      If your package is lost, stolen, or arrives damaged,{" "}
+                      <Link to="/contact" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">
+                        contact us
+                      </Link>{" "}
+                      immediately with your order number. We&apos;ll open an investigation and work to resolve the issue as quickly as possible — whether that means reshipping your order or issuing a full refund.
+                    </p>
+                  </div>
+                </div>
               </div>
             </Motion.div>
 
