@@ -147,7 +147,7 @@ export default function Faqs() {
               </h1>
               <p className="text-[15px] text-se-bone/40 max-w-lg mb-8">
                 {totalQuestions} answers to the most common questions. Can&apos;t find yours?{" "}
-                <Link to="/contact" className="text-se-bone/60 underline underline-offset-4 hover:text-se-bone transition">Talk to us</Link>.
+                <Link to="/client-services" className="text-se-bone/60 underline underline-offset-4 hover:text-se-bone transition">Talk to us</Link>.
               </p>
 
               {/* Search */}
@@ -172,7 +172,7 @@ export default function Faqs() {
               <div className="text-center py-16">
                 <HelpCircle size={32} className="mx-auto text-se-steel/30 mb-4" />
                 <p className="text-[15px] text-se-bone/40 mb-2">No results for &ldquo;{searchQuery}&rdquo;</p>
-                <p className="text-[13px] text-se-steel">Try a different search or <Link to="/contact" className="text-se-bone/60 underline underline-offset-4">contact us</Link>.</p>
+                <p className="text-[13px] text-se-steel">Try a different search or <Link to="/client-services" className="text-se-bone/60 underline underline-offset-4">contact us</Link>.</p>
               </div>
             ) : (
               filteredFaqs.map((section, si) => (
@@ -222,7 +222,7 @@ export default function Faqs() {
                 Our team responds within 24 hours. For urgent order issues, include your order number.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
+                <Link to="/client-services" className="btn-primary inline-flex items-center gap-2">
                   <MessageCircle size={14} /> Contact Support
                 </Link>
                 <a href="mailto:info@styleeternal.com" className="btn-outline inline-flex items-center gap-2">

@@ -218,7 +218,7 @@ export default function Shipping() {
                   <div className="text-[14px] text-se-bone/50 leading-relaxed space-y-3">
                     <p>
                       If your package is lost, stolen, or arrives damaged,{" "}
-                      <Link to="/contact" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">
+                      <Link to="/client-services" className="text-se-bone/70 underline underline-offset-4 hover:text-se-bone transition">
                         contact us
                       </Link>{" "}
                       immediately with your order number. We&apos;ll open an investigation and work to resolve the issue as quickly as possible — whether that means reshipping your order or issuing a full refund.
@@ -230,7 +230,7 @@ export default function Shipping() {
 
             <div className="mt-12 pt-8 border-t border-white/5 text-center">
               <Link to="/returns" className="btn-outline mr-4">Returns Policy</Link>
-              <Link to="/contact" className="btn-outline">Contact Support</Link>
+              <Link to="/client-services" className="btn-outline">Contact Support</Link>
             </div>
           </div>
         </section>

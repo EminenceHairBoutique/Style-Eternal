@@ -242,7 +242,7 @@ export default function SizeGuide() {
             <h2 className="font-display text-[20px] tracking-[0.08em] mb-6">
               WE&apos;RE HERE TO HELP
             </h2>
-            <Link to="/contact" className="btn-outline">Contact Us</Link>
+            <Link to="/client-services" className="btn-outline">Contact Us</Link>
           </div>
         </section>
       </div>

@@ -35,7 +35,7 @@ const Cart = lazy(() => import("./pages/Cart"));
 const Success = lazy(() => import("./pages/Success"));
 const Cancel = lazy(() => import("./pages/Cancel"));
 const Account = lazy(() => import("./pages/Account"));
-const Contact = lazy(() => import("./pages/Contact"));
+const ClientServices = lazy(() => import("./pages/ClientServices"));
 const Faqs = lazy(() => import("./pages/Faqs"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const PrivacyChoices = lazy(() => import("./pages/PrivacyChoices"));
@@ -101,7 +101,7 @@ export default function App() {
                 ["/success", <Success />],
                 ["/cancel", <Cancel />],
                 ["/account", <Account />],
-                ["/contact", <Contact />],
+                ["/client-services", <ClientServices />],
                 ["/faqs", <Faqs />],
                 ["/privacy", <Privacy />],
                 ["/terms", <Terms />],
@@ -131,6 +131,7 @@ export default function App() {
                 />
               ))}
               <Route path="/new-arrivals" element={<Navigate to="/shop?filter=new" replace />} />
+              <Route path="/contact" element={<Navigate to="/client-services" replace />} />
               <Route path="/help" element={<Navigate to="/faqs" replace />} />
               <Route path="/shipping-returns" element={<Navigate to="/returns" replace />} />
             </Routes>

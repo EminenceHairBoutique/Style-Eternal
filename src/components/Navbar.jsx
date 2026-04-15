@@ -85,7 +85,7 @@ export default function Navbar() {
     { divider: true },
     { label: "Account", href: "/account" },
     { label: "Rewards", href: "/rewards" },
-    { label: "Contact", href: "/contact" },
+    { label: "Client Services", href: "/client-services" },
     { label: "FAQ", href: "/faqs" },
     { label: "Shipping", href: "/shipping" },
     { label: "Size Guide", href: "/size-guide" },
