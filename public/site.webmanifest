@@ -1,0 +1,16 @@
+{
+  "name": "Style Eternal",
+  "short_name": "Style Eternal",
+  "description": "Premium streetwear rooted in Newark's North Ward.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -92,6 +92,7 @@ const Footer = () => {
             <div className="space-y-3 text-[13px]">
               <Link to="/about" className="block text-se-bone/60 hover:text-se-bone transition">Our Story</Link>
               <Link to="/editorial" className="block text-se-bone/60 hover:text-se-bone transition">Editorial</Link>
+              <Link to="/lookbook" className="block text-se-bone/60 hover:text-se-bone transition">Lookbook</Link>
               <Link to="/community" className="block text-se-bone/60 hover:text-se-bone transition">Community</Link>
               <Link to="/rewards" className="block text-se-bone/60 hover:text-se-bone transition">Rewards</Link>
               <Link to="/contact" className="block text-se-bone/60 hover:text-se-bone transition">Contact</Link>

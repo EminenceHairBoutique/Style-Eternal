@@ -52,6 +52,7 @@ export default function Navbar() {
     { label: "Drops", href: "/drops" },
     { label: "Collections", href: "/collections" },
     { label: "Editorial", href: "/editorial" },
+    { label: "Lookbook", href: "/lookbook" },
     { label: "About", href: "/about" },
   ], []);
 

@@ -57,7 +57,7 @@ test.describe("Cart and checkout flow", () => {
     await page.goto("/");
     await page.evaluate(() => {
       localStorage.setItem(
-        "eminence_referral",
+        "se_referral",
         JSON.stringify({ code: "E2E-REFTEST", timestamp: Date.now() })
       );
     });
