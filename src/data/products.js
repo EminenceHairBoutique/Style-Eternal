@@ -1083,28 +1083,20 @@ export const collections = [
     slug: "love-never-dies",
     name: "Love Never Dies",
     tagline: "Some things outlast everything.",
-    description: "Drop 03. Five pieces. A skeleton tee, two heavyweight hoodies, a statement graphic, and an all-over long sleeve. The Love Never Dies collection is the realest thing we've made.",
+    description: "Drop 01. Five pieces. A skeleton tee, three heavyweight hoodies, and an all-over long sleeve. The Love Never Dies collection is the realest thing we've made.",
     season: "SS26",
-    drop: "drop-03",
+    drop: "drop-01",
     image: "/assets/products/love-never-dies-tee/01.jpg",
   },
   {
-    slug: "north-ward",
-    name: "North Ward",
-    tagline: "Where it started.",
-    description: "The North Ward collection draws from the streets, storefronts, and brick of Newark's most storied neighborhood. Heavyweight pieces built for presence.",
-    season: "SS26",
-    drop: "drop-01",
-    image: "/assets/collections/north-ward-hero.jpg",
-  },
-  {
-    slug: "iron-bound",
-    name: "Iron Bound",
-    tagline: "Old world. New uniform.",
-    description: "Named for the Ironbound District. Where immigrant grit meets modern streetwear. Garment-washed. Utility-driven.",
-    season: "SS26",
+    slug: "eternal-flame",
+    name: "Eternal Flame",
+    tagline: "Burn eternal.",
+    description: "Drop 02. Anime-inspired halos, distressed medallions, split-panel angels. 400gsm heavyweight hoodies and a statement tee. FW26.",
+    season: "FW26",
     drop: "drop-02",
-    image: "/assets/collections/iron-bound-hero.jpg",
+    image: "/assets/collections/eternal-flame-hero.jpg",
+    comingSoon: true,
   },
   {
     slug: "essentials",
@@ -1114,24 +1106,7 @@ export const collections = [
     season: "Core",
     drop: "essentials",
     image: "/assets/collections/essentials-hero.jpg",
-  },
-  {
-    slug: "legacy",
-    name: "Legacy",
-    tagline: "Built, not inherited.",
-    description: "Limited capsule pieces that define the brand's premium tier. Varsity jackets, fitted caps, and statement items.",
-    season: "FW25",
-    drop: "capsule-legacy",
-    image: "/assets/collections/legacy-hero.jpg",
-  },
-  {
-    slug: "graphics",
-    name: "Graphics",
-    tagline: "Every print tells a story.",
-    description: "Graphic-forward pieces. Screenprinted, distressed, layered. Each design carries a narrative from the neighborhood.",
-    season: "SS26",
-    drop: "drop-01",
-    image: "/assets/collections/graphics-hero.jpg",
+    comingSoon: true,
   },
   {
     slug: "archive",
@@ -1183,3 +1158,20 @@ export const getNewArrivals = () =>
 
 export const getLimitedProducts = () =>
   products.filter((p) => p.limited && p.releaseStatus === "available");
+
+// ═══════════════════════════════════════════════════════════════════════
+// DROPS ROADMAP
+// ═══════════════════════════════════════════════════════════════════════
+
+export const DROPS_ROADMAP = [
+  { number: "01", title: "Love Never Dies", status: "available", season: "SS26" },
+  { number: "02", title: "Eternal Flame", status: "coming-soon", season: "FW26" },
+  { number: "03", title: "Eternal Unity", status: "future", season: "TBA" },
+  { number: "04", title: "Love (Still) Remains", status: "future", season: "TBA" },
+  { number: "05", title: "Eternal Flame II", status: "future", season: "TBA" },
+  { number: "06", title: "Forbidden Love 2.0", status: "future", season: "TBA" },
+  { number: "07", title: "Eternal Nights", status: "future", season: "TBA" },
+  { number: "08", title: "Eternity", status: "future", season: "TBA" },
+  { number: "09", title: "Love Never Leaves", status: "future", season: "TBA" },
+  { number: "10", title: "Eternal Reaper", status: "future", season: "TBA" },
+];
