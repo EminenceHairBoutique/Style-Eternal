@@ -91,21 +91,21 @@ const ProductCard = ({ product, featured = false }) => {
       </div>
 
       {/* Info */}
-      <div className="px-1 pt-4 pb-2">
+      <div className="px-1 pt-4 pb-3">
         {/* Collection label */}
         {product.collection && (
-          <p className="text-[9px] tracking-[0.25em] uppercase text-se-steel font-accent mb-1">
+          <p className="text-[8px] tracking-[0.28em] uppercase text-se-gold/60 font-accent mb-1.5">
             {product.collection}
           </p>
         )}
 
-        <h3 className="text-[13px] text-se-bone/90 font-accent font-medium mb-1 line-clamp-1">
+        <h3 className="text-[13px] text-se-bone/90 font-accent font-medium mb-1.5 line-clamp-1">
           {product.displayName || product.name}
         </h3>
 
         <div className="flex items-center gap-3">
           {product.comparePrice && (
-            <span className="text-[13px] text-se-steel line-through">
+            <span className="text-[12px] text-se-steel line-through">
               ${product.comparePrice}
             </span>
           )}
@@ -116,7 +116,7 @@ const ProductCard = ({ product, featured = false }) => {
 
         {/* Colorway */}
         {product.colorway && (
-          <p className="text-[10px] text-se-steel mt-1">{product.colorway}</p>
+          <p className="text-[10px] text-se-steel/70 mt-1.5 font-accent">{product.colorway}</p>
         )}
       </div>
     </Link>

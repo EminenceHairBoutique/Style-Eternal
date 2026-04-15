@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
 import { useNavigate, Link } from "react-router-dom";
+import { motion as Motion } from "framer-motion";
+import { Star } from "lucide-react";
 import AccountDashboard from "../components/account/AccountDashboard";
 import SEO from "../components/SEO";
 
@@ -88,12 +90,19 @@ export default function Account() {
 
       <div className="bg-se-black text-se-bone min-h-screen pt-28 pb-24">
         <div className="max-w-md mx-auto px-6">
-          <div className="mb-8 text-center">
-            <p className="text-overline mb-3">Account</p>
-            <h1 className="font-display text-[clamp(1.8rem,4vw,2.5rem)] tracking-[0.06em]">
+          <Motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
+            className="mb-10 text-center"
+          >
+            <Star size={24} className="mx-auto text-se-gold mb-4" />
+            <p className="section-eyebrow mb-3">Account</p>
+            <h1 className="font-display text-[clamp(2rem,5vw,3rem)] tracking-[0.04em] mb-3">
               WELCOME
             </h1>
-          </div>
+            <p className="text-[13px] text-se-bone/40 font-accent">Sign in to access your orders, rewards, and exclusive drops.</p>
+          </Motion.div>
 
           <div className="flex justify-center gap-6 mb-8">
             <TabButton active={tab === "signin"} onClick={() => setTab("signin")}>
@@ -104,7 +113,7 @@ export default function Account() {
             </TabButton>
           </div>
 
-          <div className="border border-white/10 bg-se-charcoal p-8 space-y-5">
+          <div className="auth-panel p-8 space-y-5">
             {tab === "signin" && (
               <>
                 <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
