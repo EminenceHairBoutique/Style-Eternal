@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600&amp;display=swap');
+    </style>
+  </defs>
+  <!-- SE Monogram — dark variant for light backgrounds -->
+  <rect width="120" height="120" fill="none"/>
+  <rect x="4" y="4" width="112" height="112" stroke="#0A0A0A" stroke-width="1.5" fill="none"/>
+  <text
+    x="60" y="78"
+    font-family="'Oswald', 'Arial Narrow', sans-serif"
+    font-weight="600"
+    font-size="64"
+    letter-spacing="0.08em"
+    text-anchor="middle"
+    fill="#0A0A0A"
+  >SE</text>
+</svg>

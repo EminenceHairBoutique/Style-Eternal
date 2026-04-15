@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 const SITE_NAME = "Style Eternal";
 const DEFAULT_DESCRIPTION =
   "Premium streetwear rooted in Newark's North Ward. Pieces with weight. Style that outlives trends.";
-const DEFAULT_IMAGE_PATH = "/assets/se_og_banner.jpg";
+const DEFAULT_IMAGE_PATH = "/assets/se_og_banner.png";
 
 function getSiteUrl() {
   const raw = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
