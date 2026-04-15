@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 600" fill="none">
+  <title>Eternal Utility — Campaign Banner</title>
+  <defs>
+    <linearGradient id="util-banner-bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="50%" stop-color="#121212"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1440" height="600" fill="url(#util-banner-bg)"/>
+  <!-- Technical grid -->
+  <line x1="360" y1="0" x2="360" y2="600" stroke="#1A1A1A" stroke-width="0.5" opacity="0.4"/>
+  <line x1="720" y1="0" x2="720" y2="600" stroke="#1A1A1A" stroke-width="0.5" opacity="0.4"/>
+  <line x1="1080" y1="0" x2="1080" y2="600" stroke="#1A1A1A" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="200" x2="1440" y2="200" stroke="#1A1A1A" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="400" x2="1440" y2="400" stroke="#1A1A1A" stroke-width="0.5" opacity="0.4"/>
+  <!-- Gold accent -->
+  <line x1="560" y1="250" x2="880" y2="250" stroke="#C4A35A" stroke-width="1" opacity="0.45"/>
+  <!-- Main title -->
+  <text x="720" y="310" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="72" letter-spacing="0.12em" fill="#E8E4DE">ETERNAL UTILITY</text>
+  <!-- Subtitle -->
+  <text x="720" y="360" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="14" letter-spacing="0.4em" fill="#E8E4DE" opacity="0.35">NYLON CAPSULE — TECHNICAL. LIMITED.</text>
+  <!-- Gold accent bottom -->
+  <line x1="560" y1="385" x2="880" y2="385" stroke="#C4A35A" stroke-width="1" opacity="0.45"/>
+  <!-- Brand -->
+  <text x="720" y="550" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="10" letter-spacing="0.3em" fill="#E8E4DE" opacity="0.2">STYLE ETERNAL — SS26</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <title>Style Eternal — Cracked Crown Symbol</title>
+  <!-- Crown shape -->
+  <path d="M50 120 L70 60 L100 90 L130 50 L160 90 L180 60 L200 120" stroke="#E8E4DE" stroke-width="2.5" fill="none" transform="translate(-25, 30)"/>
+  <!-- Crown base -->
+  <line x1="25" y1="150" x2="175" y2="150" stroke="#E8E4DE" stroke-width="2.5"/>
+  <!-- Crack down center -->
+  <path d="M100 50 L98 70 L103 85 L97 100 L102 115 L99 130 L101 150" stroke="#C4A35A" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <!-- Fragment lines -->
+  <line x1="97" y1="85" x2="85" y2="95" stroke="#C4A35A" stroke-width="0.75" opacity="0.4"/>
+  <line x1="102" y1="115" x2="115" y2="125" stroke="#C4A35A" stroke-width="0.75" opacity="0.4"/>
+</svg>
