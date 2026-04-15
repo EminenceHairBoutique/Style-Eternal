@@ -36,7 +36,6 @@ const Success = lazy(() => import("./pages/Success"));
 const Cancel = lazy(() => import("./pages/Cancel"));
 const Account = lazy(() => import("./pages/Account"));
 const ClientServices = lazy(() => import("./pages/ClientServices"));
-const Contact = lazy(() => import("./pages/Contact"));
 const Faqs = lazy(() => import("./pages/Faqs"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const PrivacyChoices = lazy(() => import("./pages/PrivacyChoices"));
