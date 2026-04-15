@@ -30,7 +30,7 @@ export default {
         display: ["Oswald", "sans-serif"],
         body: ["Inter", "sans-serif"],
         accent: ["Space Grotesk", "sans-serif"],
-        signature: ["Great Vibes", "cursive"],
+        signature: ["Oswald", "sans-serif"],
       },
       boxShadow: {
         goldGlow: "0 0 25px rgba(196,163,90,0.25)",

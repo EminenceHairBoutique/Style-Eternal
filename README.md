@@ -1,6 +1,6 @@
 # Style Eternal
 
-**Premium streetwear rooted in Newark's North Ward.**
+**Premium streetwear built on permanence, emotion, and legacy. Style that outlives trends.**
 
 ## Stack
 

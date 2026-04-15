@@ -53,7 +53,7 @@ export async function sendOrderConfirmationEmail({
 
         <p style="font-size: 12px; color: #6B6B6B;">
           Style Eternal<br />
-          Born in Newark · Built to Last
+          Style Eternal · Built to Last
         </p>
 
         <p style="font-size: 12px; color: #6B6B6B;">
