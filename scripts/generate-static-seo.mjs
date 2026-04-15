@@ -22,15 +22,15 @@ import { pathToFileURL } from "node:url";
 const ROOT = process.cwd();
 const DIST_DIR = path.join(ROOT, "dist");
 
-const SITE_NAME = "Eminence Hair Boutique";
+const SITE_NAME = "Style Eternal";
 const DEFAULT_DESCRIPTION =
-  "100% raw Cambodian and Burmese hair. HD lace. Elevate your game with true luxury.";
+  "Premium streetwear. Limited drops. Timeless design. Shop tees, hoodies, outerwear, and more.";
 
 const SITE_URL = String(
-  process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.eminenceluxuryhair.com"
+  process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.styleeternal.com"
 ).replace(/\/+$/, "");
 
-const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/eminence_og_banner.jpg`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/se_og_banner.jpg`;
 
 const SEO_BEGIN = "<!-- SEO:BEGIN -->";
 const SEO_END = "<!-- SEO:END -->";
@@ -247,142 +247,137 @@ async function main() {
   ).sort((a, b) => a.localeCompare(b));
 
   const COLLECTION_META = {
-    "eminence-essentials": {
-      title: "Eminence Essentials",
+    "north-ward": {
+      title: "North Ward",
       description:
-        "A focused edit of the pieces our clients choose most — refined, realistic, and designed for everyday confidence.",
+        "Utility-driven streetwear rooted in grit and resilience — heavyweight pieces built for the everyday.",
     },
-    natural: {
-      title: "Colorway Natural",
+    "iron-bound": {
+      title: "Iron Bound",
       description:
-        "Our natural edit — timeless tones with soft dimension, created to blend seamlessly and wear beautifully.",
+        "Industrial-inspired silhouettes and bold graphics — forged in concrete and steel.",
     },
-    "613": {
-      title: "Colorway 613",
-      description: "Bright, luxe blonde — crafted for clean color and high-shine movement.",
+    essentials: {
+      title: "Essentials",
+      description:
+        "Core staples designed for daily rotation — clean lines, premium fabrics, timeless fit.",
     },
-    textures: {
-      title: "Texture Studies",
-      description: "Macro detail and pattern references to help you choose your ideal texture.",
+    legacy: {
+      title: "Legacy",
+      description:
+        "Heritage pieces that define the brand — iconic cuts and signature details.",
+    },
+    graphics: {
+      title: "Graphics",
+      description:
+        "Statement graphic tees and hoodies — wearable art with a streetwear edge.",
+    },
+    "love-never-dies": {
+      title: "Love Never Dies",
+      description:
+        "A capsule celebrating devotion — romantic motifs meet raw streetwear energy.",
+    },
+    archive: {
+      title: "Archive",
+      description:
+        "Past drops and limited editions — once they're gone, they're gone.",
     },
   };
 
   const staticRoutes = [
     {
       pathname: "/",
-      title: "Luxury Raw Hair & HD Lace Wigs",
+      title: "Premium Streetwear — Limited Drops",
       description:
-        "Eminence Hair Boutique — ethically sourced Cambodian & Myanmar hair crafted like couture.",
+        "Style Eternal — premium streetwear designed for those who move with intention. Shop tees, hoodies, outerwear, and more.",
       ogType: "website",
     },
     {
       pathname: "/shop",
-      title: "Shop Luxury Wigs, Bundles & Closures",
-      description: "Shop luxury wigs, bundles, and textures by Eminence Hair Boutique.",
+      title: "Shop All",
+      description: "Browse the full Style Eternal collection — tees, hoodies, outerwear, bottoms, headwear, and accessories.",
       ogType: "website",
     },
 
     {
-      pathname: "/shop/wigs",
-      title: "Shop Wigs",
-      description: "Shop luxury wigs from Eminence Hair Boutique.",
+      pathname: "/shop/tees",
+      title: "Shop Tees",
+      description: "Premium graphic and essential tees from Style Eternal.",
       ogType: "website",
     },
     {
-      pathname: "/shop/bundles",
-      title: "Shop Bundles",
-      description: "Shop raw bundles from Eminence Hair Boutique.",
+      pathname: "/shop/hoodies",
+      title: "Shop Hoodies",
+      description: "Heavyweight hoodies and pullovers from Style Eternal.",
       ogType: "website",
     },
     {
-      pathname: "/shop/closures",
-      title: "Shop Closures",
-      description: "Shop closures from Eminence Hair Boutique.",
+      pathname: "/shop/outerwear",
+      title: "Shop Outerwear",
+      description: "Jackets, coaches, and layering pieces from Style Eternal.",
+      ogType: "website",
+    },
+    {
+      pathname: "/shop/bottoms",
+      title: "Shop Bottoms",
+      description: "Joggers, cargos, and essential bottoms from Style Eternal.",
+      ogType: "website",
+    },
+    {
+      pathname: "/shop/headwear",
+      title: "Shop Headwear",
+      description: "Caps, beanies, and headwear from Style Eternal.",
+      ogType: "website",
+    },
+    {
+      pathname: "/shop/accessories",
+      title: "Shop Accessories",
+      description: "Bags, socks, and accessories from Style Eternal.",
       ogType: "website",
     },
     {
       pathname: "/shop/preorders",
-      title: "Pre-Order — Factory-Direct Luxury Hair",
-      description: "Shop pre-order bundles and wigs factory drop-shipped directly from our partner atelier. Raw Vietnamese, Double Drawn, Super Double Drawn, and more.",
+      title: "Pre-Orders",
+      description: "Upcoming drops available for pre-order. Secure yours before they sell out.",
+      ogType: "website",
+    },
+
+    {
+      pathname: "/drops",
+      title: "Drops",
+      description: "Upcoming and past limited releases from Style Eternal. Stay ahead of every drop.",
+      ogType: "website",
+    },
+    {
+      pathname: "/editorial",
+      title: "Editorial",
+      description: "Lookbooks, campaigns, and visual stories from Style Eternal.",
+      ogType: "website",
+    },
+    {
+      pathname: "/community",
+      title: "Community",
+      description: "Join the Style Eternal community — events, features, and culture.",
       ogType: "website",
     },
 
     {
       pathname: "/collections",
       title: "Collections",
-      description: "Explore curated collections of Eminence luxury hair.",
+      description: "Explore curated collections from Style Eternal.",
       ogType: "website",
     },
 
-    {
-      pathname: "/collections/fw-2025",
-      title: "F/W 2025 Collection Lookbook",
-      description:
-        "Editorial silhouettes and couture textures curated for Fall/Winter 2025 — a refined lookbook for your next transformation.",
-      ogType: "website",
-    },
-
-    {
-      pathname: "/gallery",
-      title: "Gallery",
-      description: "Explore editorial imagery and real-life texture studies.",
-      ogType: "website",
-    },
-    {
-      pathname: "/authenticity",
-      title: "Authenticity & Verification",
-      description: "Learn how Eminence verifies hair quality and authenticity.",
-      ogType: "website",
-    },
-    {
-      pathname: "/care",
-      title: "Care Guide",
-      description: "How to care for your Eminence hair for longevity and luster.",
-      ogType: "website",
-    },
-    {
-      pathname: "/medical-hair",
-      title: "Medical Hair (HSA/FSA)",
-      description:
-        "Information for clients purchasing wigs as cranial prosthesis for potential HSA/FSA reimbursement.",
-      ogType: "website",
-    },
-    {
-      pathname: "/faqs",
-      title: "FAQs",
-      description: "Shipping, returns, authenticity, and product questions.",
-      ogType: "website",
-    },
-    {
-      pathname: "/private-consult",
-      title: "Private Consultation",
-      description:
-        "Book a private virtual consult to choose the right texture, length, density, and lace.",
-      ogType: "website",
-    },
-    {
-      pathname: "/custom-orders",
-      title: "Custom Orders",
-      description: "Request a custom unit tailored to your preferences.",
-      ogType: "website",
-    },
-    {
-      pathname: "/custom-atelier",
-      title: "Custom Atelier",
-      description:
-        "Build a guided custom request (texture, color, length, lace, and fit) with concierge confirmation.",
-      ogType: "website",
-    },
     {
       pathname: "/about",
       title: "About",
-      description: "The story behind Eminence Hair Boutique and our quality standards.",
+      description: "The story behind Style Eternal and our commitment to premium streetwear.",
       ogType: "website",
     },
     {
       pathname: "/contact",
       title: "Contact",
-      description: "Contact Eminence Hair Boutique for support and inquiries.",
+      description: "Get in touch with Style Eternal for support and inquiries.",
       ogType: "website",
     },
     {
@@ -413,30 +408,29 @@ async function main() {
       ogType: "website",
     },
     {
+      pathname: "/faqs",
+      title: "FAQs",
+      description: "Shipping, returns, sizing, and product questions.",
+      ogType: "website",
+    },
+    {
       pathname: "/privacy",
       title: "Privacy Policy",
-      description: "Read how Eminence Hair Boutique handles your data.",
+      description: "Read how Style Eternal handles your data.",
       ogType: "website",
     },
 
     {
       pathname: "/privacy-choices",
       title: "Your Privacy Choices",
-      description: "Manage your privacy preferences and cookie settings for Eminence Hair Boutique.",
+      description: "Manage your privacy preferences and cookie settings for Style Eternal.",
       ogType: "website",
     },
 
     {
       pathname: "/terms",
       title: "Terms & Conditions",
-      description: "Terms and conditions for shopping with Eminence Hair Boutique.",
-      ogType: "website",
-    },
-    {
-      pathname: "/atelier/try-on",
-      title: "Virtual Try-On",
-      description:
-        "Try on Eminence Hair wigs virtually using AI face detection. Upload a photo and see how you look.",
+      description: "Terms and conditions for shopping with Style Eternal.",
       ogType: "website",
     },
 
@@ -444,14 +438,14 @@ async function main() {
     {
       pathname: "/checkout",
       title: "Secure Checkout",
-      description: "Encrypted checkout with discreet packaging and verified luxury hair.",
+      description: "Encrypted checkout with premium packaging.",
       ogType: "website",
       noindex: true,
     },
     {
       pathname: "/success",
       title: "Order Confirmed",
-      description: "Your Eminence Hair order has been successfully placed.",
+      description: "Your Style Eternal order has been successfully placed.",
       ogType: "website",
       noindex: true,
     },
@@ -465,7 +459,7 @@ async function main() {
     {
       pathname: "/account",
       title: "My Account",
-      description: "Manage your Eminence Hair account, orders, and preferences.",
+      description: "Manage your Style Eternal account, orders, and preferences.",
       ogType: "website",
       noindex: true,
     },
@@ -491,7 +485,7 @@ async function main() {
       title: `${title} | Collections`,
       description:
         meta?.description ||
-        "An Eminence collection crafted for softness, realism, and longevity — luxury that performs beautifully in real life.",
+        "A Style Eternal collection — premium streetwear designed for those who move with intention.",
       ogType: "website",
     };
   });

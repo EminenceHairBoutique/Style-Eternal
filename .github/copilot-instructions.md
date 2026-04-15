@@ -1,8 +1,14 @@
-# Copilot Instructions for Eminence Hair Boutique
+# Copilot Instructions for Style Eternal
 
 ## Project Overview
 
-Eminence Hair Boutique is a luxury e-commerce SPA with a B2B partner portal and AR try-on capabilities. The stack is React 19 + Vite + Tailwind CSS deployed on Vercel with Node.js/Express serverless API functions.
+Style Eternal is a premium streetwear e-commerce SPA with a B2B partner portal and drop-based release model. The stack is React 19 + Vite + Tailwind CSS deployed on Vercel with Node.js/Express serverless API functions.
+
+**Product categories:** Tees, hoodies, long sleeves, crewnecks, outerwear, bottoms, headwear, accessories.
+
+**Collections:** North Ward, Iron Bound, Love Never Dies, Essentials, Legacy, Graphics, Archive.
+
+**Pricing model:** Flat pricing per product (no variant matrices). Drop-based limited releases.
 
 ## Tech Stack
 
@@ -14,7 +20,6 @@ Eminence Hair Boutique is a luxury e-commerce SPA with a B2B partner portal and 
 - **Database:** Supabase (PostgreSQL) — browser client at `src/lib/supabaseClient.js`, server client at `lib/supabaseServer.js`
 - **Payments:** Stripe (`/api/create-checkout-session.js` creates sessions; prices are always re-validated server-side)
 - **Email/SMS:** Resend (email), Twilio (SMS OTP)
-- **AR Try-On:** MediaPipe Tasks Vision (`src/lib/tryon/`)
 - **Language:** JavaScript (ES Modules, no TypeScript)
 
 ## Commands
@@ -36,14 +41,14 @@ npm run test:e2e      # Playwright end-to-end tests (headless Chromium)
 
 ```
 src/
-  App.jsx              # 42 lazy-loaded routes defined here
+  App.jsx              # Lazy-loaded routes defined here
   main.jsx             # Entry point — BrowserRouter > UserProvider > CartProvider > App
   pages/               # Route-level components (PascalCase .jsx)
   components/          # Reusable UI (PascalCase .jsx); ui/ for headless primitives
   context/             # CartContext, UserContext, ToastContext (React Context, no Redux)
   hooks/               # Custom hooks (camelCase, use* prefix)
   utils/               # Pure helpers — pricing, filtering, formatting, tracking (camelCase .js)
-  lib/                 # Supabase clients, email templates, AR try-on helpers
+  lib/                 # Supabase clients, email templates
   data/products.js     # Complete product catalog (source of truth for prices/descriptions)
   ui/motionPresets.js  # Shared Framer Motion variants (fadeUp, staggerContainer, etc.)
   assets/              # Images, videos, badges
@@ -52,7 +57,6 @@ api/                   # Vercel serverless functions (Node.js)
   _utils/              # Shared server helpers
   admin/               # Admin endpoints (protected by ADMIN_EMAILS env var server-side)
   partners/            # Partner application endpoint
-  atelier/             # Signed upload URL endpoint
 
 lib/                   # Server-only utilities (supabaseServer.js)
 scripts/               # Build/dev scripts (.mjs)
@@ -87,7 +91,7 @@ import SEO from "../components/SEO";
 import { formatPrice } from "../utils/format";
 
 // 5. Assets
-import heroImage from "../assets/hero.jpg.png";
+import heroImage from "../assets/hero.jpg";
 ```
 
 ### Framer Motion Alias — Important
@@ -128,23 +132,21 @@ Every page must:
 
 ### Brand Colors (Tailwind tokens)
 ```
-gold:      #D4AF37   (primary brand accent)
-ivory:     #FAF8F5   (page background)
-charcoal:  #1B1B1B   (body text)
-softGray:  #EAE8E3   (borders, muted elements)
+se-black:    #0A0A0A   (primary background)
+se-charcoal: #1A1A1A   (cards, elevated surfaces)
+se-graphite: #2A2A2A   (borders, subtle contrast)
+se-steel:    #4A4A4A   (muted text, secondary)
+se-ash:      #8A8A8A   (placeholder text)
+se-silver:   #C0C0C0   (light text on dark)
+se-bone:     #E8E4DE   (light backgrounds, contrast text)
+gold:        #C4A35A   (primary brand accent)
 ```
 
 ### Typography
 ```
-font-header:   Playfair Display, serif   (headings, hero text)
-font-body:     Poppins, system-ui        (body copy, UI)
-font-cursive:  Allura, cursive           (decorative accents)
-```
-
-### Shadows & Radius
-```
-shadow-goldGlow:  0 0 25px rgba(212,175,55,0.25)
-rounded-card:     1rem
+font-header:   Oswald, sans-serif         (headings, hero text)
+font-body:     Inter, system-ui           (body copy, UI)
+font-mono:     Space Grotesk, monospace   (accents, product codes)
 ```
 
 Always use Tailwind utility classes. Do not add inline `style` objects except for dynamic values that cannot be expressed as utilities.
@@ -153,7 +155,7 @@ Always use Tailwind utility classes. Do not add inline `style` objects except fo
 
 State is managed with **React Context only** — no Redux, Zustand, or other external stores.
 
-- **CartContext** — cart items, drawer open/close state, localStorage persistence (`eminence_cart` key)
+- **CartContext** — cart items, drawer open/close state, localStorage persistence (`se_cart` key)
 - **UserContext** — authenticated user, profile from Supabase `profiles` table, account tier
 - **ToastContext** — notification/toast system
 
@@ -176,11 +178,11 @@ All API endpoints live in `/api/` and are deployed as Vercel serverless function
 
 ## Product Catalog
 
-`src/data/products.js` is the single source of truth for all product data (prices, descriptions, collections, images, density/length options).
+`src/data/products.js` is the single source of truth for all product data (prices, descriptions, collections, images).
 
-- Wig prices use a 2D matrix `[length][density]` → price; custom densities use linear interpolation
-- Lace upcharges are applied via the `LACE_UPCHARGE` lookup in `utils/pricing.js`
-- Price re-validation in `api/create-checkout-session.js` uses `applyCustomPricing()` — keep this in sync with the product catalog
+- Flat pricing model — each product has a single price (no variant matrices)
+- Price re-validation in `api/create-checkout-session.js` verifies prices server-side
+- Products are organized into collections and categories (tees, hoodies, outerwear, bottoms, headwear, accessories)
 
 ### Product Image Convention
 Images can be declared explicitly per product (`images: []`) or follow the folder convention:

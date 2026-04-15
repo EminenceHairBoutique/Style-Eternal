@@ -1,4 +1,4 @@
-# Eminence Hair — Launch Checklist (Vercel + SEO + Conversion)
+# Style Eternal — Launch Checklist (Vercel + SEO + Conversion)
 
 ## 1) Vercel deployment settings
 - **Framework Preset:** Vite
@@ -27,7 +27,7 @@ Set these in **Production** (and Preview if desired):
 - `SUPABASE_SERVICE_ROLE_KEY` (server)
 
 ### SEO + Social previews
-- `VITE_SITE_URL` = `https://www.eminenceluxuryhair.com`
+- `VITE_SITE_URL` = `https://www.styleeternal.com`
 
 ### Analytics / pixels (optional)
 - `VITE_GA_MEASUREMENT_ID` (GA4)
@@ -62,7 +62,7 @@ If you don’t want to store in Supabase yet, the endpoint will still work (and 
 ## 4) Google indexing
 1. Create/verify your property in **Google Search Console**.
 2. Submit your sitemap:
-   - `https://www.eminenceluxuryhair.com/sitemap.xml`
+   - `https://www.styleeternal.com/sitemap.xml`
 3. Request indexing for:
    - Homepage
    - A few category pages (Collections, Shop)

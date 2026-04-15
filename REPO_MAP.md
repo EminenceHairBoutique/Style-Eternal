@@ -1,4 +1,4 @@
-# Phase 0 — Repo Recon: Eminence Hair Boutique
+# Phase 0 — Repo Recon: Style Eternal
 
 > **Status:** Mapping only — no feature code written. Confirm plan before implementation.
 
