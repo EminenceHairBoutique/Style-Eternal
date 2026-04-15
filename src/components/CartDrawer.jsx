@@ -51,7 +51,7 @@ export default function CartDrawer() {
           <p className="text-[11px] font-accent tracking-[0.22em] uppercase text-se-bone">
             Shopping Bag
           </p>
-          <button onClick={closeCart} aria-label="Close cart" className="text-se-steel hover:text-se-bone transition">
+          <button type="button" onClick={closeCart} aria-label="Close cart" className="text-se-steel hover:text-se-bone transition">
             <X className="w-5 h-5" />
           </button>
         </div>
