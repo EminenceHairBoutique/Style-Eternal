@@ -4,7 +4,7 @@ export function Tabs({ value, onValueChange, children, className="" }) {
   return (
     <div className={className}>
       {React.Children.map(children, (child) =>
-        React.cloneElement(child, { value, onValueChange })
+        React.cloneElement(child, { activeValue: value, onValueChange })
       )}
     </div>
   );
@@ -18,12 +18,12 @@ export function TabsList({ children, className="" }) {
   );
 }
 
-export function TabsTrigger({ children, value, onValueChange, className="", ...props }) {
-  const myValue = props.value;
-  const active = myValue === value;
+export function TabsTrigger({ children, value, activeValue, onValueChange, className="" }) {
+  const active = value === activeValue;
   return (
     <button
-      onClick={() => onValueChange(myValue)}
+      type="button"
+      onClick={() => onValueChange(value)}
       className={
         "px-3 py-1.5 text-xs font-medium rounded " +
         (active ? "bg-black text-white" : "text-black hover:bg-black/5") +

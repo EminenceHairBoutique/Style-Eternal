@@ -150,6 +150,7 @@ export default function AdminPartners() {
               Show pending only
             </label>
             <button
+              type="button"
               onClick={fetchApps}
               className="inline-flex items-center justify-center rounded-full px-6 py-2.5 text-[11px] uppercase tracking-[0.26em] border border-black/15 text-neutral-900 hover:border-black/30 transition"
             >

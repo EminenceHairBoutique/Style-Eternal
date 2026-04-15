@@ -222,6 +222,7 @@ export default function Navbar() {
           {/* Right controls */}
           <div className="flex items-center gap-1">
             <button
+              type="button"
               onClick={() => setSearchOpen(true)}
               className="hidden sm:inline-flex p-2 rounded-full hover:bg-white/5 transition"
               aria-label="Search"
@@ -246,6 +247,7 @@ export default function Navbar() {
             </Link>
 
             <button
+              type="button"
               onClick={openCart}
               className="relative p-2 rounded-full hover:bg-white/5 transition"
               aria-label="Open cart"
@@ -275,6 +277,7 @@ export default function Navbar() {
                 {BRAND.name.toUpperCase()}
               </span>
               <button
+                type="button"
                 onClick={() => setMobileOpen(false)}
                 className="p-2 -mr-2"
                 aria-label="Close menu"
