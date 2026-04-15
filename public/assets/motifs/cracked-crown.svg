@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" fill="none">
+  <!-- Style Eternal — Cracked Crown Motif -->
+  <g stroke="#D4AF37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Crown base -->
+    <path d="M20 75 L20 40 L40 55 L60 30 L80 55 L100 40 L100 75 Z" fill="none"/>
+    <!-- Crown base bar -->
+    <line x1="18" y1="75" x2="102" y2="75"/>
+    <!-- Crack line running through crown -->
+    <path d="M55 30 L52 42 L58 50 L53 62 L56 75" stroke="#1A1A1A" stroke-width="3"/>
+    <path d="M55 30 L52 42 L58 50 L53 62 L56 75" stroke="#D4AF37" stroke-width="1" stroke-dasharray="2 3" opacity="0.6"/>
+    <!-- Small shard fragments -->
+    <path d="M48 38 L44 34 L47 42" fill="#D4AF37" opacity="0.5"/>
+    <path d="M62 45 L67 41 L64 48" fill="#D4AF37" opacity="0.5"/>
+  </g>
+</svg>
