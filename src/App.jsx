@@ -62,7 +62,7 @@ export default function App() {
         <DiscountModal user={user} />
       </Suspense>
       <Suspense fallback={null}>
-        <EmailPopup />
+        <EmailPopup user={user} />
       </Suspense>
 
       <div
@@ -80,7 +80,7 @@ export default function App() {
         <ScrollToTop />
 
         <ErrorBoundary>
-          <div id="main-content">
+          <div id="main-content" tabIndex={-1} role="main">
             <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               {[

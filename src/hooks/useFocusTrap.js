@@ -6,6 +6,7 @@ export default function useFocusTrap(active) {
   useEffect(() => {
     if (!active || !ref.current) return;
     const container = ref.current;
+    const previouslyFocused = document.activeElement;
     const focusable = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
@@ -25,7 +26,12 @@ export default function useFocusTrap(active) {
 
     first.focus();
     container.addEventListener("keydown", trap);
-    return () => container.removeEventListener("keydown", trap);
+    return () => {
+      container.removeEventListener("keydown", trap);
+      if (previouslyFocused && typeof previouslyFocused.focus === "function") {
+        previouslyFocused.focus();
+      }
+    };
   }, [active]);
 
   return ref;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { subscribeEmail } from "../utils/subscribe";
@@ -7,16 +7,16 @@ import useFocusTrap from "../hooks/useFocusTrap";
 const STORAGE_KEY = "se_email_popup_dismissed";
 const CONSENT_KEY = "se_cookie_consent";
 
-export default function EmailPopup() {
+export default function EmailPopup({ user }) {
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
   const trapRef = useFocusTrap(visible);
 
-  const dismiss = () => {
+  const dismiss = useCallback(() => {
     setVisible(false);
     try { localStorage.setItem(STORAGE_KEY, "true"); } catch { /* ignore */ }
-  };
+  }, []);
 
   // Dismiss on Escape key
   useEffect(() => {
@@ -24,16 +24,17 @@ export default function EmailPopup() {
     const onKey = (e) => { if (e.key === "Escape") dismiss(); };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  });
+  }, [visible, dismiss]);
 
   useEffect(() => {
+    if (user) return;
     try {
       if (localStorage.getItem(STORAGE_KEY)) return;
     } catch {
       return;
     }
 
-    const DELAY = 45000; // 45 seconds after consent resolved
+    const DELAY = 45000; // 45 seconds after discount modal dismissed
     let timer;
 
     const startTimer = () => {
@@ -46,21 +47,15 @@ export default function EmailPopup() {
       }, DELAY);
     };
 
-    try {
-      if (localStorage.getItem(CONSENT_KEY)) {
-        startTimer();
-        return () => clearTimeout(timer);
-      }
-    } catch { /* ignore */ }
-
-    const onConsent = () => startTimer();
-    window.addEventListener("se_consent_resolved", onConsent, { once: true });
+    // Wait for discount modal to be dismissed before starting timer
+    const onDismiss = () => startTimer();
+    window.addEventListener("se_discount_dismissed", onDismiss, { once: true });
 
     return () => {
-      window.removeEventListener("se_consent_resolved", onConsent);
+      window.removeEventListener("se_discount_dismissed", onDismiss);
       clearTimeout(timer);
     };
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

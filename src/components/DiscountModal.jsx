@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
@@ -11,10 +11,10 @@ export default function DiscountModal({ user }) {
   const location = useLocation();
   const trapRef = useFocusTrap(open);
 
-  const dismiss = () => {
+  const dismiss = useCallback(() => {
     setOpen(false);
     try { window.dispatchEvent(new Event("se_discount_dismissed")); } catch { /* ignore */ }
-  };
+  }, []);
 
   // Dismiss on Escape key
   useEffect(() => {
@@ -22,13 +22,17 @@ export default function DiscountModal({ user }) {
     const onKey = (e) => { if (e.key === "Escape") dismiss(); };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  });
+  }, [open, dismiss]);
 
   useEffect(() => {
     if (user) return;
     if (location.pathname.includes("checkout")) return;
-    if (sessionStorage.getItem("se_discount_seen")) return;
-    if (localStorage.getItem("se_sms_verified") === "true") return;
+    try {
+      if (sessionStorage.getItem("se_discount_seen")) return;
+    } catch { /* ignore */ }
+    try {
+      if (localStorage.getItem("se_sms_verified") === "true") return;
+    } catch { /* ignore */ }
 
     const DELAY = 30000; // 30 seconds after consent resolved
     let timer;
@@ -36,7 +40,7 @@ export default function DiscountModal({ user }) {
     const startTimer = () => {
       timer = setTimeout(() => {
         setOpen(true);
-        sessionStorage.setItem("se_discount_seen", "true");
+        try { sessionStorage.setItem("se_discount_seen", "true"); } catch { /* ignore */ }
       }, DELAY);
     };
 
