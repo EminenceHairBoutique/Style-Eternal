@@ -34,7 +34,7 @@ const drops = [
     description:
       "The inaugural collection. Heavyweight garments, washed finishes, and graphics pulled from the streets of Newark's North Ward. Every piece carries the texture of brick and iron.",
     status: "Available Now",
-    image: "/assets/collections/north-ward-hero.jpg",
+    image: "/assets/collections/north-ward-hero.png",
   },
   {
     id: "drop-02",
@@ -45,7 +45,7 @@ const drops = [
     description:
       "Named for the Ironbound District. Where immigrant grit meets modern streetwear. Garment-washed pieces with utility-driven details.",
     status: "Available Now",
-    image: "/assets/collections/iron-bound-hero.jpg",
+    image: "/assets/collections/iron-bound-hero.png",
   },
   {
     id: "capsule-legacy",
@@ -56,7 +56,7 @@ const drops = [
     description:
       "Limited capsule of premium pieces. Varsity jackets in wool and leather. Fitted caps. Statement items that define the top tier.",
     status: "Limited",
-    image: "/assets/collections/legacy-hero.jpg",
+    image: "/assets/collections/legacy-hero.png",
   },
 ];
 

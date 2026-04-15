@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600&amp;display=swap');
+    </style>
+  </defs>
+  <!-- SE Monogram — premium house mark -->
+  <rect width="120" height="120" fill="none"/>
+  <!-- Outer frame — thin premium border -->
+  <rect x="4" y="4" width="112" height="112" stroke="#E8E4DE" stroke-width="1.5" fill="none"/>
+  <!-- Inner letters -->
+  <text
+    x="60" y="78"
+    font-family="'Oswald', 'Arial Narrow', sans-serif"
+    font-weight="600"
+    font-size="64"
+    letter-spacing="0.08em"
+    text-anchor="middle"
+    fill="#E8E4DE"
+  >SE</text>
+</svg>
