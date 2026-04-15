@@ -240,7 +240,7 @@ export default function Navbar() {
             <Link
               to="/account"
               className="hidden lg:inline-flex p-2 rounded-full hover:bg-white/5 transition"
-              aria-label="Wishlist"
+              aria-label="Favorites"
             >
               <Heart size={18} className="text-se-bone/70" />
             </Link>
