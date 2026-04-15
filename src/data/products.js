@@ -8,6 +8,7 @@
  * id            - unique identifier
  * slug          - URL slug
  * name          - product name
+ * type          - garment type shorthand: tee | hoodie | longsleeve | crewneck | sweatpant | jacket | cap | beanie | tote | cargo
  * displayName   - display title
  * category      - tees | hoodies | long-sleeves | crewnecks | outerwear | bottoms | headwear | accessories
  * garmentType   - specific garment (t-shirt, pullover-hoodie, zip-hoodie, etc.)
