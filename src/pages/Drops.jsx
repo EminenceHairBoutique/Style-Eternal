@@ -23,7 +23,7 @@ const drops = [
     season: "SS26",
     pieces: 5,
     description:
-      "Five pieces. A skeleton tee, two heavyweight hoodies, a statement graphic, and an all-over long sleeve. The realest thing we've made. Love Never Dies.",
+      "Five pieces. A skeleton tee, three heavyweight hoodies, and an all-over long sleeve. The realest thing we've made. Love Never Dies.",
     status: "available",
     image: "/assets/products/love-never-dies-tee/01.jpg",
   },
