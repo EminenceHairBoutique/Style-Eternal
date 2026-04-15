@@ -1,4 +1,4 @@
-# Phase 0 — Repo Recon: Eminence Hair Boutique
+# Phase 0 — Repo Recon: Style Eternal
 
 > **Status:** Mapping only — no feature code written. Confirm plan before implementation.
 
@@ -115,7 +115,7 @@
 
 - **Entry:** `src/pages/Checkout.jsx` at route `/checkout`
 - Uses `useCart()` (items, total) and `useUser()` (user id + email for Stripe metadata).
-- On "Continue to Payment" click: saves `eminence_checkout_snapshot` to `localStorage`, fires GA4/Meta `trackBeginCheckout`, POSTs to `/api/create-checkout-session`.
+- On "Continue to Payment" click: saves `se_checkout_snapshot` to `localStorage`, fires GA4/Meta `trackBeginCheckout`, POSTs to `/api/create-checkout-session`.
 - **Stripe session endpoint:** `api/create-checkout-session.js`
   - Accepts `{ items, userId, customerEmail }`.
   - Looks up product from `src/data/products.js` by `id` or `slug`.
