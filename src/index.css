@@ -2,7 +2,7 @@
 
 /* ═══════════════════════════════════════════════════════════════════════
    STYLE ETERNAL — Design System
-   Premium Streetwear / Newark, NJ — North Ward
+   Premium Streetwear — Permanence, Emotion, Legacy
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ─── Design Tokens (CSS Custom Properties) ──────────────────────────── */
@@ -27,7 +27,7 @@
   --font-display: 'Oswald', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-accent: 'Space Grotesk', sans-serif;
-  --font-signature: 'Great Vibes', cursive;
+  --font-signature: 'Oswald', sans-serif;
 
   /* Spacing rhythm */
   --section-gap: clamp(4rem, 8vw, 8rem);

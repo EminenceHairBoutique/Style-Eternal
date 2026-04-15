@@ -106,7 +106,7 @@ export default function Navbar() {
         {/* Announcement Bar */}
         <div className="bg-se-bone text-se-black text-center py-1.5">
           <p className="text-label text-[9px] tracking-[0.25em]">
-            Free shipping on orders over $150 — Born in Newark, shipped worldwide
+            Free shipping on orders over $150 — Premium streetwear, shipped worldwide
           </p>
         </div>
 

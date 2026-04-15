@@ -4,7 +4,7 @@
 export const BRAND = {
   name: "Style Eternal",
   fullName: "Style Eternal",
-  tagline: "Born in Newark",
+  tagline: "Style That Outlives Trends",
   supportEmail: "info@styleeternal.com",
   origin: "Newark, NJ — North Ward",
   motto: "Style that outlives trends.",

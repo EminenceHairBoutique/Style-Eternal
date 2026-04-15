@@ -47,8 +47,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Style Eternal — Born in Newark"
-        description="Premium streetwear rooted in Newark's North Ward. Pieces with weight. Style that outlives trends."
+        title="Style Eternal — Premium Streetwear"
+        description="Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends."
       />
 
       <div className="bg-se-black text-se-bone">
@@ -353,7 +353,7 @@ export default function Home() {
                   "◆",
                   "GARMENT-WASHED",
                   "◆",
-                  "BORN IN NEWARK",
+                  "STYLE IS ETERNAL",
                   "◆",
                   "STYLE IS MEMORY",
                   "◆",
@@ -517,7 +517,7 @@ export default function Home() {
                 <span className="text-se-gold/80">IT&apos;S WHAT YOU<br />SURVIVE IN.</span>
               </h2>
               <p className="text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed mb-4 max-w-xl mx-auto">
-                Born in Newark&apos;s North Ward, Style Eternal is a record of where we come from. Every stitch holds a story.
+                Style Eternal is a record of where we come from. Every stitch holds a story.
                 Every piece is made to endure — like the people who wear them.
               </p>
               <p className="text-[16px] md:text-[18px] text-se-bone/60 leading-relaxed mb-10 max-w-xl mx-auto font-accent tracking-wide">

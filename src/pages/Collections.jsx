@@ -18,7 +18,7 @@ export default function Collections() {
     <>
       <SEO
         title="Collections — Style Eternal"
-        description="Explore every collection from Style Eternal. North Ward, Iron Bound, Essentials, Legacy, Graphics, and the Archive."
+        description="Explore every collection from Style Eternal. Premium streetwear across all drops, essentials, and the archive."
       />
 
       <div className="bg-se-black text-se-bone">

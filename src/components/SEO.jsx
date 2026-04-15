@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 const SITE_NAME = "Style Eternal";
 const DEFAULT_DESCRIPTION =
-  "Premium streetwear rooted in Newark's North Ward. Pieces with weight. Style that outlives trends.";
+  "Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends.";
 const DEFAULT_IMAGE_PATH = "/assets/se_og_banner.png";
 
 function getSiteUrl() {
