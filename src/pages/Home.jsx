@@ -86,7 +86,7 @@ export default function Home() {
                 </h1>
 
                 <p className="font-accent text-[9px] tracking-[0.28em] uppercase text-se-bone/50 mb-2">
-                  NEWARK, NEW JERSEY — NORTH WARD
+                  EST. 2024 — PREMIUM STREETWEAR
                 </p>
 
                 <div className="divider-gold w-12 mb-5" />
@@ -166,7 +166,7 @@ export default function Home() {
                   </h1>
 
                   <p className="font-accent text-[9px] md:text-[10px] tracking-[0.28em] uppercase text-se-bone/50 mb-2 leading-relaxed">
-                    NEWARK, NEW JERSEY<br className="md:hidden" /> <span className="hidden md:inline">— </span>NORTH WARD
+                    EST. 2024<br className="md:hidden" /> <span className="hidden md:inline">— </span>PREMIUM STREETWEAR
                   </p>
 
                   <div className="divider-gold w-12 mb-5" />
@@ -331,19 +331,19 @@ export default function Home() {
                 {[
                   "HEAVYWEIGHT COTTON",
                   "◆",
-                  "BORN IN NEWARK",
+                  "PREMIUM STREETWEAR",
                   "◆",
                   "SCREEN-PRINTED GRAPHICS",
                   "◆",
                   "GARMENT-WASHED",
                   "◆",
-                  "PREMIUM STREETWEAR",
-                  "◆",
-                  "NORTH WARD",
+                  "BORN IN NEWARK",
                   "◆",
                   "STYLE IS MEMORY",
                   "◆",
                   "LIMITED RELEASES",
+                  "◆",
+                  "BUILT TO LAST",
                   "◆",
                 ].map((text, i) => (
                   <span
@@ -590,34 +590,36 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            SECTION 8: NEWARK / NORTH WARD STORY
+            SECTION 8: DROP 02 TEASER — ETERNAL STRUGGLE
         ═══════════════════════════════════════════════════════════════ */}
         <section className="section-pad border-t border-white/5">
           <div className="content-wide">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <Motion.div {...fadeUp}>
-                <p className="text-overline mb-4">Newark, NJ — North Ward</p>
+                <p className="text-overline mb-4">Coming Soon</p>
                 <h2 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] tracking-[0.04em] mb-6">
-                  WHERE THE<br />CONCRETE<br />SPEAKS
+                  DROP 02<br />ETERNAL<br />STRUGGLE
                 </h2>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-4 max-w-md">
-                  The North Ward is brick and iron. Corner stores with steel gates.
-                  Wet pavement under sodium lights. Basements where the music started.
-                  Stoops where the conversations never ended.
+                  The Iron Bound collection. Named for Newark&apos;s Ironbound District — where
+                  immigrant grit meets modern streetwear. Garment-washed. Utility-driven.
+                  Built for the ones who earn it.
                 </p>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-8 max-w-md">
-                  Style Eternal is a product of that texture. We build clothes the way
-                  the neighborhood builds character — heavy, deliberate, and built to
-                  endure whatever comes next.
+                  New silhouettes. Heavier fabrics. A different kind of weight.
+                  Sign up to be the first to know.
                 </p>
-                <Link to="/community" className="btn-outline">
-                  Explore Community
+                <Link to="/drops" className="btn-outline">
+                  View All Drops
                 </Link>
               </Motion.div>
 
-              <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt">
-                <div className="h-full w-full bg-gradient-to-t from-se-charcoal to-se-asphalt flex items-center justify-center">
-                  <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/20">NORTH WARD</span>
+              <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt overflow-hidden">
+                <div className="h-full w-full bg-gradient-to-br from-se-charcoal via-se-asphalt to-se-black flex items-center justify-center">
+                  <div className="text-center">
+                    <span className="font-display text-[32px] tracking-[0.2em] text-se-steel/20 block">DROP 02</span>
+                    <span className="font-accent text-[10px] tracking-[0.25em] uppercase text-se-gold/30 mt-3 block">Coming Soon</span>
+                  </div>
                 </div>
               </Motion.div>
             </div>

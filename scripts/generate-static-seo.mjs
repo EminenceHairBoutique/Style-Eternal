@@ -377,6 +377,13 @@ async function main() {
       ogType: "website",
     },
     {
+      pathname: "/lookbook",
+      title: "Lookbook",
+      description:
+        "Editorial lookbook by Style Eternal. Premium streetwear styled with intention.",
+      ogType: "website",
+    },
+    {
       pathname: "/privacy",
       title: "Privacy Policy",
       description: "Read how Style Eternal handles your data and protects your privacy.",
