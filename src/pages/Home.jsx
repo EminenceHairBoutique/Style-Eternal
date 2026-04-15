@@ -235,7 +235,7 @@ export default function Home() {
                   NORTH<br />WARD
                 </p>
                 <p className="font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/60 mt-2">
-                  Newark, NJ
+                  New Jersey
                 </p>
               </div>
             </div>
@@ -328,7 +328,7 @@ export default function Home() {
               { text: "Free Shipping $150+" },
               { text: "Heavyweight Premium" },
               { text: "30-Day Returns" },
-              { text: "Newark, NJ Made" },
+              { text: "NJ Made" },
             ].map(({ text }) => (
               <span key={text} className="text-[9px] font-accent tracking-[0.25em] uppercase text-se-steel/70">
                 ✦ {text}
@@ -662,7 +662,7 @@ export default function Home() {
                 <div className="grid grid-cols-3 gap-6 md:gap-12 mb-12 max-w-lg mx-auto">
                   {[
                     { stat: "300gsm+", label: "Fabric Weight" },
-                    { stat: "Newark", label: "Designed In" },
+                    { stat: "NJ", label: "Designed In" },
                     { stat: "Limited", label: "Every Drop" },
                   ].map(({ stat, label }) => (
                     <div key={label}>

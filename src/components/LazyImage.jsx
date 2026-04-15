@@ -9,9 +9,6 @@ export default function LazyImage({ src, alt = "", className = "" }) {
   const [errored, setErrored] = useState(false);
 
   const handleError = () => {
-    if (import.meta.env.DEV && src) {
-      console.warn(`[LazyImage] Missing image: ${src}`);
-    }
     setErrored(true);
     setLoaded(true);
   };

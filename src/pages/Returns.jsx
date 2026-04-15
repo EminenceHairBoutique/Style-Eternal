@@ -82,7 +82,7 @@ export default function Returns() {
               </div>
 
               <p className="text-[13px] text-se-bone/40 leading-relaxed">
-                All orders ship from Newark, NJ. You&apos;ll receive tracking info via email once your order ships.
+                All orders ship from our fulfillment center. You&apos;ll receive tracking info via email once your order ships.
                 Currently US shipping only — international is coming soon.
               </p>
             </Motion.div>

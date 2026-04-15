@@ -16,7 +16,7 @@ const FAQS = [
   {
     category: "Orders & Shipping",
     items: [
-      { q: "How long does shipping take?", a: "Standard shipping is 5–7 business days within the US. Expedited (2–3 day) and overnight options are available at checkout. All orders ship from Newark, NJ." },
+      { q: "How long does shipping take?", a: "Standard shipping is 5–7 business days within the US. Expedited (2–3 day) and overnight options are available at checkout. All orders ship from our warehouse." },
       { q: "Do you ship internationally?", a: "Not currently. We ship to all 50 US states and territories. International shipping is coming soon — sign up for our newsletter to be notified." },
       { q: "Can I change or cancel my order?", a: "Orders are processed quickly. Contact us within 1 hour of placing your order at info@styleeternal.com and we'll do our best to accommodate changes." },
       { q: "How do I track my order?", a: "You'll receive a tracking email with carrier details once your order ships. You can also check order status from your account dashboard." },
@@ -45,7 +45,7 @@ const FAQS = [
   {
     category: "Brand & Community",
     items: [
-      { q: "Where is Style Eternal based?", a: "Newark, New Jersey — the North Ward. Every piece is designed here. It's where we come from and it shows in everything we make." },
+      { q: "Where is Style Eternal based?", a: "We're a New Jersey-based brand. Every piece is designed with intention and purpose — that's what sets us apart." },
       { q: "When is the next drop?", a: "Drop schedules are announced through our newsletter and Instagram first. Sign up for the archive to never miss a release." },
       { q: "Do you do collaborations?", a: "We're open to the right partnerships — artists, makers, and community voices that align with our values. Reach out via the contact page." },
       { q: "What does 'Style Eternal' mean?", a: "It means style that outlasts trends. It's about permanence, legacy, and carrying yourself with intention. Not fast fashion — forever fashion." },
