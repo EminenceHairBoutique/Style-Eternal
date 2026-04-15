@@ -48,7 +48,7 @@ From the existing catalog (Drop 01: North Ward, Drop 02: Iron Bound, Drop 03: Lo
 | **Drop 05** | **Eternal Love** | Romance after violence, loyalty after chaos | **FW26** | **Design phase** |
 | **Utility Capsule** | **Eternal Utility** | Technical luxury, seam architecture | **FW26** | **Design phase** |
 
-> Note: The problem statement refers to these as Drop 2 and Drop 3, but the product catalog already has Drop 02 (Iron Bound) and Drop 03 (Love Never Dies). The new drops "Eternal Struggle" and "Eternal Love" are treated as the next major drops in the pipeline.
+> Note: The product catalog already has Drop 02 (Iron Bound) and Drop 03 (Love Never Dies). "Eternal Struggle" and "Eternal Love" are the next major drops in the pipeline and are sequenced as Drop 04 and Drop 05 respectively.
 
 ---
 
