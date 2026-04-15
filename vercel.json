@@ -20,7 +20,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' *.stripe.com js.stripe.com *.google-analytics.com *.googletagmanager.com connect.facebook.net *.facebook.net client.crisp.chat analytics.tiktok.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com client.crisp.chat; font-src 'self' data: fonts.gstatic.com; img-src 'self' data: blob: https:; frame-src js.stripe.com *.stripe.com game.crisp.chat *.crisp.chat; connect-src 'self' *.supabase.co wss://*.supabase.co *.stripe.com *.google-analytics.com *.analytics.google.com *.googletagmanager.com *.facebook.com graph.facebook.com cdn.jsdelivr.net *.crisp.chat wss://*.crisp.chat analytics.tiktok.com; worker-src blob:; object-src 'none'; base-uri 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' *.stripe.com js.stripe.com *.google-analytics.com *.googletagmanager.com connect.facebook.net *.facebook.net client.crisp.chat analytics.tiktok.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com client.crisp.chat; font-src 'self' data: fonts.gstatic.com; img-src 'self' data: blob: https:; frame-src js.stripe.com *.stripe.com game.crisp.chat *.crisp.chat; connect-src 'self' *.supabase.co wss://*.supabase.co *.stripe.com *.google-analytics.com *.analytics.google.com *.googletagmanager.com *.facebook.com graph.facebook.com cdn.jsdelivr.net *.crisp.chat wss://*.crisp.chat analytics.tiktok.com; worker-src blob:; object-src 'none'; base-uri 'self';"
         }
       ]
     },
