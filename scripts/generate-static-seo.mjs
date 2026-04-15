@@ -24,7 +24,7 @@ const DIST_DIR = path.join(ROOT, "dist");
 
 const SITE_NAME = "Style Eternal";
 const DEFAULT_DESCRIPTION =
-  "Premium streetwear rooted in Newark’s North Ward. Pieces with weight. Style that outlives trends.";
+  "Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends.";
 
 const SITE_URL = String(
   process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.styleeternal.com"
@@ -285,40 +285,45 @@ async function main() {
   ).sort((a, b) => a.localeCompare(b));
 
   const COLLECTION_META = {
-    "north-ward": {
-      title: "North Ward",
-      description:
-        "The North Ward collection draws from Newark's most storied neighborhood. Heavyweight streetwear built for presence.",
-    },
-    "iron-bound": {
-      title: "Iron Bound",
-      description:
-        "Named for the Ironbound District. Where immigrant grit meets modern streetwear. Garment-washed. Utility-driven.",
-    },
     "love-never-dies": {
       title: "Love Never Dies",
       description:
-        "Drop 03. Five pieces. Skeleton tees, heavyweight hoodies, statement graphics. The realest collection yet.",
+        "Drop 01. Five pieces. Skeleton tees, heavyweight hoodies, statement graphics. Love is eternal. Style is eternal.",
+    },
+    "eternal-flame": {
+      title: "Eternal Flame",
+      description:
+        "Drop 02. Anime-inspired halos, distressed medallions, split-panel angels. 400gsm heavyweight. Coming FW26.",
     },
     essentials: {
       title: "Essentials",
       description:
         "Core pieces that anchor every rotation. Minimal branding. Maximum quality. Built to be worn on repeat.",
     },
+    archive: {
+      title: "Archive",
+      description:
+        "Previous releases preserved. Once sold out, they live here. Collector's territory.",
+    },
+    "north-ward": {
+      title: "North Ward",
+      description:
+        "The North Ward collection. Heavyweight streetwear built for presence. Coming soon.",
+    },
+    "iron-bound": {
+      title: "Iron Bound",
+      description:
+        "Where grit meets modern streetwear. Garment-washed. Utility-driven. Coming soon.",
+    },
     legacy: {
       title: "Legacy",
       description:
-        "Limited capsule pieces that define the brand's premium tier. Varsity jackets, fitted caps, and statement items.",
+        "Limited capsule pieces. Varsity jackets, fitted caps, and statement items.",
     },
     graphics: {
       title: "Graphics",
       description:
         "Graphic-forward pieces. Screenprinted, distressed, layered. Each design carries a narrative.",
-    },
-    archive: {
-      title: "Archive",
-      description:
-        "Previous releases preserved. Once sold out, they live here. Collector's territory.",
     },
     accessories: {
       title: "Accessories",
@@ -330,9 +335,9 @@ async function main() {
   const staticRoutes = [
     {
       pathname: "/",
-      title: "Style Eternal — Born in Newark",
+      title: "Style Eternal — Premium Streetwear",
       description:
-        "Premium streetwear rooted in Newark\u2019s North Ward. Pieces with weight. Style that outlives trends.",
+        "Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends.",
       ogType: "website",
     },
     {
@@ -398,13 +403,13 @@ async function main() {
     {
       pathname: "/community",
       title: "Community",
-      description: "The Style Eternal community. From Newark to the world.",
+      description: "The Style Eternal community. Join us.",
       ogType: "website",
     },
     {
       pathname: "/about",
       title: "About",
-      description: "The story behind Style Eternal. Born in Newark. Built to last.",
+      description: "The story behind Style Eternal. EST. 2021. Built to last.",
       ogType: "website",
     },
     {

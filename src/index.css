@@ -56,6 +56,15 @@
 }
 
 /* ─── Base Styles ────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
 body {
   background-color: var(--se-black);
   color: var(--se-bone);
@@ -237,6 +246,13 @@ body {
   background: transparent;
   border: 1px solid var(--se-steel);
   color: var(--se-steel);
+}
+.badge-coming-soon {
+  background: transparent;
+  border: 1px solid var(--se-steel);
+  color: var(--se-steel);
+  display: flex;
+  align-items: center;
 }
 
 /* ─── Dividers ───────────────────────────────────────────────────────── */

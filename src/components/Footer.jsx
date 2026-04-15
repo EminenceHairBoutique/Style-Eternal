@@ -101,10 +101,9 @@ const Footer = () => {
           <div>
             <p className="text-label text-se-steel mb-5">Collections</p>
             <div className="space-y-3 text-[13px]">
-              <Link to="/collections/north-ward" className="block text-se-bone/60 hover:text-se-bone transition">North Ward</Link>
-              <Link to="/collections/iron-bound" className="block text-se-bone/60 hover:text-se-bone transition">Iron Bound</Link>
+              <Link to="/collections/love-never-dies" className="block text-se-bone/60 hover:text-se-bone transition">Love Never Dies</Link>
+              <Link to="/collections/eternal-flame" className="block text-se-bone/60 hover:text-se-bone transition">Eternal Flame</Link>
               <Link to="/collections/essentials" className="block text-se-bone/60 hover:text-se-bone transition">Essentials</Link>
-              <Link to="/collections/legacy" className="block text-se-bone/60 hover:text-se-bone transition">Legacy</Link>
               <Link to="/collections/archive" className="block text-se-bone/60 hover:text-se-bone transition">Archive</Link>
               <Link to="/drops" className="block text-se-bone/60 hover:text-se-bone transition">All Drops</Link>
             </div>
@@ -178,6 +177,11 @@ const Footer = () => {
               {BRAND.origin}
             </span>
           </div>
+
+          {/* Brand Statement */}
+          <p className="text-[9px] font-accent tracking-[0.2em] uppercase text-se-steel/50 hidden md:block">
+            Love is Eternal. Style is Eternal.
+          </p>
 
           {/* Legal */}
           <div className="flex flex-wrap gap-6 text-[11px] text-se-steel">

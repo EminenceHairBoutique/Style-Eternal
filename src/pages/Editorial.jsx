@@ -14,46 +14,35 @@ const fadeUp = {
 
 const entries = [
   {
-    id: "campaign-ss26",
+    id: "lnd-editorial",
     type: "Campaign",
-    title: "Style Is Memory",
-    date: "Spring/Summer 2026",
+    title: "Love Never Dies — The First Drop",
+    date: "Spring 2026",
     excerpt:
-      "The inaugural campaign. Shot in the North Ward at dawn. Brick walls, iron gates, and sodium light. The clothes carry the texture of the neighborhood that raised us.",
-    image: "/assets/editorial/campaign-ss26.png",
-    link: "/collections/north-ward",
+      "Five pieces. Skeleton graphics. All-over flames. A statement hoodie that says what needs to be said. The Love Never Dies collection marks the beginning.",
+    image: "/assets/products/love-never-dies-tee/01.jpg",
+    link: "/collections/love-never-dies",
     cta: "View Collection",
   },
   {
-    id: "lookbook-iron-bound",
+    id: "worldwide-campaign",
     type: "Lookbook",
-    title: "Iron Bound — Old World, New Uniform",
-    date: "Spring/Summer 2026",
+    title: "Style Eternal SS26 Campaign",
+    date: "Spring 2026",
     excerpt:
-      "The Ironbound District. Portuguese bakeries. Iron fire escapes. Immigrant grit meeting modern aspiration. This lookbook captures the collision.",
-    image: "/assets/editorial/lookbook-iron-bound.png",
-    link: "/collections/iron-bound",
-    cta: "View Collection",
+      "The SE Worldwide Long Sleeve. All-over print. Front crest, back medallion, sleeve stars. From New Jersey to everywhere.",
+    image: "/assets/products/se-worldwide-longsleeve/01.jpg",
+    link: "/shop",
+    cta: "View Lookbook",
   },
   {
-    id: "journal-newark",
+    id: "behind-graphics",
     type: "Journal",
-    title: "The Concrete Speaks",
+    title: "Behind the Graphics",
     date: "2026",
     excerpt:
-      "This is where we're from. This is what we're made of. A photo essay on the streets, storefronts, and silhouettes that define the North Ward.",
-    image: "/assets/editorial/journal-newark.png",
-    link: "/community",
-    cta: "Read More",
-  },
-  {
-    id: "journal-legacy",
-    type: "Journal",
-    title: "Legacy Over Trend",
-    date: "2025",
-    excerpt:
-      "What does it mean to build something that lasts? A reflection on permanence in a world that celebrates disposability.",
-    image: "/assets/editorial/journal-legacy.png",
+      "The design language of Style Eternal. Skeletons, flames, halos, love, death. Every graphic carries emotional weight. This is how they're made.",
+    image: "/assets/products/forbidden-love-hoodie/01.jpg",
     link: "/about",
     cta: "Read More",
   },
@@ -97,6 +86,7 @@ export default function Editorial() {
                         alt={entries[0].title}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                         loading="lazy"
+                        onError={(e) => { e.currentTarget.style.display = "none"; }}
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-se-charcoal to-se-asphalt">
@@ -129,7 +119,7 @@ export default function Editorial() {
         {/* Rest of entries */}
         <section className="section-pad">
           <div className="content-wide">
-            <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
               {entries.slice(1).map((entry, i) => (
                 <Motion.div
                   key={entry.id}
@@ -146,6 +136,7 @@ export default function Editorial() {
                           alt={entry.title}
                           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                           loading="lazy"
+                          onError={(e) => { e.currentTarget.style.display = "none"; }}
                         />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-se-charcoal to-se-asphalt">

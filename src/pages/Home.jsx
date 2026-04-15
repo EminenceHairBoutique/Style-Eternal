@@ -86,13 +86,13 @@ export default function Home() {
                 </h1>
 
                 <p className="font-accent text-[9px] tracking-[0.28em] uppercase text-se-bone/50 mb-2">
-                  EST. 2024 — PREMIUM STREETWEAR
+                  EST. 2021 — PREMIUM STREETWEAR
                 </p>
 
                 <div className="divider-gold w-12 mb-5" />
 
                 <p className="font-accent text-[10px] tracking-[0.18em] uppercase text-se-bone/60 leading-[1.8] mb-8">
-                  STYLE IS MEMORY.<br />LEGACY IS FOREVER.
+                  LOVE IS ETERNAL.<br />STYLE IS ETERNAL.
                 </p>
 
                 <Link
@@ -166,13 +166,13 @@ export default function Home() {
                   </h1>
 
                   <p className="font-accent text-[9px] md:text-[10px] tracking-[0.28em] uppercase text-se-bone/50 mb-2 leading-relaxed">
-                    EST. 2024<br className="md:hidden" /> <span className="hidden md:inline">— </span>PREMIUM STREETWEAR
+                    EST. 2021<br className="md:hidden" /> <span className="hidden md:inline">— </span>PREMIUM STREETWEAR
                   </p>
 
                   <div className="divider-gold w-12 mb-5" />
 
                   <p className="font-accent text-[10px] md:text-[11px] tracking-[0.18em] uppercase text-se-bone/60 leading-[1.8] mb-8">
-                    STYLE IS MEMORY.<br />LEGACY IS FOREVER.
+                    LOVE IS ETERNAL.<br />STYLE IS ETERNAL.
                   </p>
 
                   <Link
@@ -212,12 +212,12 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* ── PANEL 3: Top-right — North Ward editorial ── */}
+            {/* ── PANEL 3: Top-right — Editorial / Brand ── */}
             <div className="relative overflow-hidden bg-[#110A04] group">
               {/* Editorial photo slot */}
               <img
                 src="/assets/editorial/north-ward-street.jpg"
-                alt="North Ward editorial"
+                alt="Style Eternal Editorial"
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-70 transition-transform duration-700 group-hover:scale-[1.03]"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -232,10 +232,10 @@ export default function Home() {
                   className="font-display text-se-bone/70 leading-[0.9] tracking-[0.08em]"
                   style={{ fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)" }}
                 >
-                  NORTH<br />WARD
+                  THE<br />FLAME
                 </p>
                 <p className="font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/60 mt-2">
-                  New Jersey
+                  Never Dies
                 </p>
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function Home() {
                 className="absolute bottom-0 left-0 right-0 p-4 md:p-5 flex items-end justify-between"
               >
                 <div>
-                  <span className="block font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/70">Drop 03</span>
+                  <span className="block font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/70">Drop 01</span>
                   <span className="block font-accent text-[9px] tracking-[0.15em] uppercase text-se-bone/50 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Love Never Dies Tee</span>
                 </div>
                 <ChevronRight size={12} className="text-se-bone/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -287,12 +287,12 @@ export default function Home() {
                   className="font-display text-se-bone/80 leading-[1.25] tracking-[0.08em]"
                   style={{ fontSize: "clamp(0.85rem, 2vw, 1.35rem)" }}
                 >
-                  THE CITY<br />MAKES YOU.<br />
-                  THE STRUGGLE<br />SHAPES YOU.<br />
-                  THE STYLE<br />REMAINS.
+                  LOVE IS<br />ETERNAL.<br />
+                  STYLE IS<br />ETERNAL.<br />
+                  THE FLAME<br />NEVER DIES.
                 </p>
                 <p
-                  className="font-signature text-se-gold/70 mt-5"
+                  className="font-accent italic text-se-gold/70 mt-5"
                   style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)" }}
                 >
                   Style Eternal
@@ -306,7 +306,7 @@ export default function Home() {
           <div className="hidden md:grid h-[52px] border-t border-white/8 grid-cols-3 divide-x divide-white/8 bg-se-black">
             {[
               { label: "New Arrivals", to: "/shop?filter=new" },
-              { label: "Drop 03",      to: "/collections/love-never-dies" },
+              { label: "Drop 01",      to: "/collections/love-never-dies" },
               { label: "Editorial",    to: "/editorial" },
             ].map(({ label, to }) => (
               <Link
@@ -328,7 +328,7 @@ export default function Home() {
               { text: "Free Shipping $150+" },
               { text: "Heavyweight Premium" },
               { text: "30-Day Returns" },
-              { text: "NJ Made" },
+              { text: "EST. 2021" },
             ].map(({ text }) => (
               <span key={text} className="text-[9px] font-accent tracking-[0.25em] uppercase text-se-steel/70">
                 ✦ {text}
@@ -426,7 +426,7 @@ export default function Home() {
               <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt overflow-hidden mb-8 md:mb-0">
                 <img
                   src="/assets/products/love-never-dies-tee/01.jpg"
-                  alt="Drop 03: Love Never Dies"
+                  alt="Drop 01: Love Never Dies"
                   className="h-full w-full object-cover"
                   onError={(e) => {
                     e.target.style.display = "none";
@@ -438,7 +438,7 @@ export default function Home() {
 
               {/* Copy */}
               <Motion.div {...fadeUp} className="md:pl-4">
-                <p className="text-overline mb-4">Drop 03 — SS26</p>
+                <p className="text-overline mb-4">Drop 01 — SS26</p>
                 <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-[0.04em] mb-6">
                   LOVE<br />NEVER<br />DIES
                 </h2>
@@ -451,7 +451,7 @@ export default function Home() {
                   Once it's gone, it's gone.
                 </p>
                 <Link to="/collections/love-never-dies" className="btn-primary">
-                  Explore Drop 03
+                  Explore Drop 01
                 </Link>
               </Motion.div>
             </div>
@@ -512,16 +512,17 @@ export default function Home() {
               <p className="section-eyebrow mb-6">The Philosophy</p>
               <div className="divider-gold mb-10 mx-auto w-24" />
               <h2 className="font-display text-[clamp(2rem,6vw,4rem)] leading-[1] tracking-[0.02em] mb-10">
-                STYLE IS NOT<br />WHAT YOU WEAR.
+                LOVE IS<br />ETERNAL.
                 <br />
-                <span className="text-se-gold/80">IT&apos;S WHAT YOU<br />SURVIVE IN.</span>
+                <span className="text-se-gold/80">STYLE IS<br />ETERNAL.</span>
               </h2>
               <p className="text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed mb-4 max-w-xl mx-auto">
-                Style Eternal is a record of where we come from. Every stitch holds a story.
-                Every piece is made to endure — like the people who wear them.
+                Every piece is a statement of permanence. Crafted with heavyweight fabrics, 
+                garment-washed for character, screen-printed for legacy. Built to outlast 
+                every season and every trend.
               </p>
               <p className="text-[16px] md:text-[18px] text-se-bone/60 leading-relaxed mb-10 max-w-xl mx-auto font-accent tracking-wide">
-                We don&apos;t chase trends. We outlast them.
+                The flame never dies.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <Link to="/about" className="btn-primary">
@@ -620,16 +621,15 @@ export default function Home() {
               <Motion.div {...fadeUp}>
                 <p className="text-overline mb-4">Coming Soon</p>
                 <h2 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] tracking-[0.04em] mb-6">
-                  DROP 02<br />ETERNAL<br />STRUGGLE
+                  DROP 02<br />ETERNAL<br />FLAME
                 </h2>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-4 max-w-md">
-                  The Iron Bound collection. Where immigrant grit meets modern
-                  streetwear. Garment-washed. Utility-driven. Built for the ones who
-                  earn it.
+                  Burn eternal. Anime-inspired halos, distressed medallions, and
+                  split-panel angel graphics. 400gsm heavyweight hoodies.
+                  Limited to 100 units per style.
                 </p>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-8 max-w-md">
-                  New silhouettes. Heavier fabrics. A different kind of weight.
-                  Sign up to be the first to know.
+                  FW26. Sign up to be the first to know.
                 </p>
                 <Link to="/drops" className="btn-outline">
                   View All Drops
