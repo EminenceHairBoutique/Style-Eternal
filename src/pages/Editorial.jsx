@@ -41,7 +41,7 @@ const entries = [
     title: "The Concrete Speaks",
     date: "2026",
     excerpt:
-      "Newark isn't just where we're from. It's what we're made of. A photo essay on the streets, storefronts, and silhouettes that define the North Ward.",
+      "This is where we're from. This is what we're made of. A photo essay on the streets, storefronts, and silhouettes that define the North Ward.",
     image: "/assets/editorial/journal-newark.png",
     link: "/community",
     cta: "Read More",

@@ -32,7 +32,7 @@ const drops = [
     tagline: "Where it started.",
     season: "SS26",
     description:
-      "The inaugural collection. Heavyweight garments, washed finishes, and graphics pulled from the streets of Newark's North Ward. Every piece carries the texture of brick and iron.",
+      "The inaugural collection. Heavyweight garments, washed finishes, and graphics pulled from the streets of the North Ward. Every piece carries the texture of brick and iron.",
     status: "Available Now",
     image: "/assets/collections/north-ward-hero.png",
   },

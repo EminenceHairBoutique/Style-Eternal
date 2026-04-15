@@ -217,7 +217,7 @@ export default function Home() {
               {/* Editorial photo slot */}
               <img
                 src="/assets/editorial/north-ward-street.jpg"
-                alt="North Ward, Newark"
+                alt="North Ward editorial"
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-70 transition-transform duration-700 group-hover:scale-[1.03]"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -623,9 +623,9 @@ export default function Home() {
                   DROP 02<br />ETERNAL<br />STRUGGLE
                 </h2>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-4 max-w-md">
-                  The Iron Bound collection. Named for Newark&apos;s Ironbound District — where
-                  immigrant grit meets modern streetwear. Garment-washed. Utility-driven.
-                  Built for the ones who earn it.
+                  The Iron Bound collection. Where immigrant grit meets modern
+                  streetwear. Garment-washed. Utility-driven. Built for the ones who
+                  earn it.
                 </p>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-8 max-w-md">
                   New silhouettes. Heavier fabrics. A different kind of weight.
