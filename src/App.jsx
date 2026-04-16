@@ -45,6 +45,7 @@ const Rewards = lazy(() => import("./pages/Rewards"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 const SizeGuide = lazy(() => import("./pages/SizeGuide"));
 const Lookbook = lazy(() => import("./pages/Lookbook"));
+const AdminPartners = lazy(() => import("./pages/AdminPartners"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
@@ -130,6 +131,7 @@ export default function App() {
                   }
                 />
               ))}
+              <Route path="/admin/partners" element={<AdminRoute><Suspense fallback={<RouteSkeleton />}><AdminPartners /></Suspense></AdminRoute>} />
               <Route path="/new-arrivals" element={<Navigate to="/shop?filter=new" replace />} />
               <Route path="/contact" element={<Navigate to="/client-services" replace />} />
               <Route path="/help" element={<Navigate to="/faqs" replace />} />
