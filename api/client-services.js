@@ -75,6 +75,7 @@ export default async function handler(req, res) {
       product: "Product Question",
       sizing: "Sizing & Fit",
       shipping: "Shipping",
+      consultation: "Product Consultation",
       collab: "Collaboration",
       press: "Press Inquiry",
       other: "Other",
