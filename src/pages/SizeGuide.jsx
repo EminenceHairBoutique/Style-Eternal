@@ -59,7 +59,7 @@ const CATEGORIES = [
     key: "headwear",
     label: "Headwear",
     fit: "Adjustable / One Size",
-    note: "Most caps feature adjustable straps or snapback closures. Fitted caps are true to size.",
+    note: "Most caps feature adjustable straps or snapback clasps. Fitted caps are true to size.",
     headers: ["Type", "Circumference", "Crown Height", "Brim"],
     rows: [
       ["Snapback", '22–24"', '4.5"', '2.75"'],

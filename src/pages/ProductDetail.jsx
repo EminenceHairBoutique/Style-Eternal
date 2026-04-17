@@ -232,7 +232,7 @@ export default function ProductDetail() {
   /* ================================================================ */
   /*  RENDER                                                           */
   /* ================================================================ */
-  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://shopstyleeternal.com";
   const productUrl = `${siteUrl}/products/${product.slug}`;
   const productJsonLd = {
     "@context": "https://schema.org",

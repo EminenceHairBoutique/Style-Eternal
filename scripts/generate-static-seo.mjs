@@ -27,7 +27,7 @@ const DEFAULT_DESCRIPTION =
   "Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends.";
 
 const SITE_URL = String(
-  process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.styleeternal.com"
+  process.env.VITE_SITE_URL || process.env.SITE_URL || "https://shopstyleeternal.com"
 ).replace(/\/+$/, "");
 
 async function fileExists(filePath) {

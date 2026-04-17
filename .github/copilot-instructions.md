@@ -1,8 +1,8 @@
-# Copilot Instructions for Eminence Hair Boutique
+# Copilot Instructions for Style Eternal
 
 ## Project Overview
 
-Eminence Hair Boutique is a luxury e-commerce SPA with a B2B partner portal and AR try-on capabilities. The stack is React 19 + Vite + Tailwind CSS deployed on Vercel with Node.js/Express serverless API functions.
+Style Eternal is a luxury e-commerce SPA with a B2B partner portal and AR try-on capabilities. The stack is React 19 + Vite + Tailwind CSS deployed on Vercel with Node.js/Express serverless API functions.
 
 ## Tech Stack
 
@@ -153,7 +153,7 @@ Always use Tailwind utility classes. Do not add inline `style` objects except fo
 
 State is managed with **React Context only** — no Redux, Zustand, or other external stores.
 
-- **CartContext** — cart items, drawer open/close state, localStorage persistence (`eminence_cart` key)
+- **CartContext** — cart items, drawer open/close state, localStorage persistence (`se_cart` key)
 - **UserContext** — authenticated user, profile from Supabase `profiles` table, account tier
 - **ToastContext** — notification/toast system
 

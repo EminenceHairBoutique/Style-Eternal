@@ -180,7 +180,7 @@ export default function Terms() {
               <h2 className="font-display text-[16px] tracking-[0.12em] mb-4 text-se-bone/80">8. RETURNS & EXCHANGES</h2>
               <p className="mb-3">
                 We offer a thirty (30) day return policy from the date of delivery. To be eligible for a
-                return, items must be unworn, unwashed, free of odors and pet hair, and in their original
+                return, items must be unworn, unwashed, free of odors and pet dander, and in their original
                 condition with all tags attached. Items must be returned in the original packaging where
                 provided.
               </p>

@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   build: {
     // Raise the warning threshold slightly — individual route chunks are fine,
-    // and the main vendor bundles will be well under 500kB after splitting.
+    // and the main vendor chunks will be well under 500kB after splitting.
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {

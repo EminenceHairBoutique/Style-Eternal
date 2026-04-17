@@ -7,7 +7,7 @@
  * Scans products.js entries and verifies that every referenced image path
  * exists in the /public directory. Outputs a report of:
  *   - Missing images (path listed in products.js but not found on disk)
- *   - Unused images (found in /public/assets/wigs but not referenced in products.js)
+ *   - Unused images (found in /public/assets/products but not referenced in products.js)
  *   - Products with no images
  *   - Products with missing required fields (id, slug, name, type)
  *
@@ -71,7 +71,7 @@ for (const imgPath of referencedPaths) {
 }
 
 // ---------------------------------------------------------------------------
-// Find all webp/jpg/png/gif images in /public/assets/wigs (and root public)
+// Find all webp/jpg/png/gif images in /public/assets/products (and root public)
 // ---------------------------------------------------------------------------
 
 function walkPublic(dir, found = []) {
