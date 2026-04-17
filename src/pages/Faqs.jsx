@@ -50,7 +50,7 @@ const FAQS = [
     category: "Drops & Collections",
     items: [
       { q: "When is the next drop?", a: "Drop dates are announced through our newsletter and social channels first. Subscribe to get notified before anything goes live." },
-      { q: "How do I get notified about new releases?", a: "Sign up for the Style Eternal newsletter at styleeternal.com. Subscribers always get early access and first notice on upcoming drops." },
+      { q: "How do I get notified about new releases?", a: "Sign up for the Style Eternal newsletter at shopstyleeternal.com. Subscribers always get early access and first notice on upcoming drops." },
       { q: "Will sold-out items ever restock?", a: "Limited drops don't restock — that's what makes them limited. Once they sell out, they move to the Archive as a permanent record. Core collection items may be replenished." },
       { q: "What is the Archive?", a: "The Archive is a record of every past release. It preserves the history of each collection and drop, even after items have sold out." },
     ],
@@ -58,7 +58,7 @@ const FAQS = [
   {
     category: "Account & Rewards",
     items: [
-      { q: "How do I join the rewards program?", a: "Create an account on styleeternal.com and you're automatically enrolled. No extra steps — start earning from your first purchase." },
+      { q: "How do I join the rewards program?", a: "Create an account on shopstyleeternal.com and you're automatically enrolled. No extra steps — start earning from your first purchase." },
       { q: "How do reward tiers work?", a: "There are four tiers based on total spend: Foundation, Established, Permanent, and Eternal. Each tier unlocks better perks, from early access to exclusive drops." },
       { q: "Do my points expire?", a: "No — your points never expire. They stay in your account as long as it's active." },
       { q: "How do I earn points?", a: "You earn 1 point for every dollar spent. Points accrue automatically with each completed order." },

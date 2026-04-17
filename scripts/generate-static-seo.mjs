@@ -27,7 +27,7 @@ const DEFAULT_DESCRIPTION =
   "Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends.";
 
 const SITE_URL = String(
-  process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.styleeternal.com"
+  process.env.VITE_SITE_URL || process.env.SITE_URL || "https://www.shopstyleeternal.com"
 ).replace(/\/+$/, "");
 
 async function fileExists(filePath) {
@@ -62,7 +62,7 @@ async function listImageFiles(dirPath) {
 }
 
 async function resolveDefaultOgImage() {
-  const preferredRelativePath = "/assets/se_og_banner.jpg";
+  const preferredRelativePath = "/assets/se_og_banner.png";
   const preferredDistPath = path.join(DIST_DIR, preferredRelativePath.replace(/^\//, ""));
 
   if (await fileExists(preferredDistPath)) {
@@ -456,6 +456,13 @@ async function main() {
       title: "Lookbook",
       description:
         "Editorial lookbook by Style Eternal. Premium streetwear styled with intention.",
+      ogType: "website",
+    },
+    {
+      pathname: "/client-services",
+      title: "Client Services",
+      description:
+        "Contact Style Eternal — shipping questions, returns, order issues, and more.",
       ogType: "website",
     },
     {

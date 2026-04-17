@@ -66,7 +66,7 @@ export default function CollectionDetail() {
     );
   }
 
-  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.shopstyleeternal.com";
   const collectionJsonLd = {
     "@context": "https://schema.org",
     "@graph": [

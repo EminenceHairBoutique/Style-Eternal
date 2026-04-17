@@ -27,7 +27,7 @@ Set these in **Production** (and Preview if desired):
 - `SUPABASE_SERVICE_ROLE_KEY` (server)
 
 ### SEO + Social previews
-- `VITE_SITE_URL` = `https://www.styleeternal.com`
+- `VITE_SITE_URL` = `https://www.shopstyleeternal.com`
 
 ### Analytics / pixels (optional)
 - `VITE_GA_MEASUREMENT_ID` (GA4)
@@ -63,7 +63,7 @@ If you don’t want to store in Supabase yet, the endpoint will still work (and 
 ## 4) Google indexing
 1. Create/verify your property in **Google Search Console**.
 2. Submit your sitemap:
-   - `https://www.styleeternal.com/sitemap.xml`
+   - `https://www.shopstyleeternal.com/sitemap.xml`
 3. Request indexing for:
    - Homepage
    - A few category pages (Collections, Shop)

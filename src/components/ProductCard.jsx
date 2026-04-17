@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { resolveProductImages } from "../utils/productMedia";
+import ComingSoonOverlay from "./ComingSoonOverlay";
 
 const ProductCard = ({ product, featured = false }) => {
   const { addToCart, openCart } = useCart();
@@ -58,27 +59,30 @@ const ProductCard = ({ product, featured = false }) => {
             )}
           </>
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-se-charcoal to-se-asphalt">
-            <div className="text-center">
-              <span className="font-display text-[14px] tracking-[0.2em] text-se-steel/30 block">
-                {product.collection || "SE"}
-              </span>
-              {isComingSoon && (
-                <span className="font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/40 mt-2 block">
+          <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-se-charcoal to-se-asphalt">
+            <span className="font-display text-[28px] tracking-[0.15em] text-se-gold/15 block select-none">
+              SE
+            </span>
+            <span className="font-accent text-[8px] tracking-[0.22em] uppercase text-se-steel/40 mt-2 block px-4 text-center">
+              {product.collection || "Style Eternal"}
+            </span>
+            {isComingSoon && (
+              <span className="mt-3 inline-flex items-center gap-1.5 border border-se-bone/10 px-2.5 py-1">
+                <span className="inline-block w-1 h-1 rounded-full bg-se-gold/50 animate-pulse" />
+                <span className="font-accent text-[7px] tracking-[0.2em] uppercase text-se-bone/50">
                   Coming Soon
                 </span>
-              )}
-            </div>
+              </span>
+            )}
           </div>
         )}
 
         {/* Coming Soon Overlay */}
         {isComingSoon && img && (
-          <div className="absolute inset-0 bg-se-black/40 flex items-center justify-center">
-            <span className="font-accent text-[10px] tracking-[0.25em] uppercase text-se-bone/80 border border-se-bone/20 px-4 py-2">
-              Coming Soon
-            </span>
-          </div>
+          <ComingSoonOverlay
+            dropName={product.drop ? product.drop.replace("drop-", "Drop ").replace(/\b\w/g, c => c.toUpperCase()) : null}
+            season={product.season}
+          />
         )}
 
         {/* Badge */}

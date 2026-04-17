@@ -27,7 +27,6 @@
   --font-display: 'Oswald', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-accent: 'Space Grotesk', sans-serif;
-  --font-signature: 'Oswald', sans-serif;
 
   /* Spacing rhythm */
   --section-gap: clamp(4rem, 8vw, 8rem);
@@ -87,10 +86,6 @@ body {
 
 .font-accent {
   font-family: var(--font-accent);
-}
-
-.font-signature {
-  font-family: var(--font-signature);
 }
 
 .text-label {

@@ -16,6 +16,7 @@ import { products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
+import NotifyMeForm from "../components/NotifyMeForm";
 import { resolveProductImages } from "../utils/productMedia";
 
 /* ------------------------------------------------------------------ */
@@ -232,7 +233,7 @@ export default function ProductDetail() {
   /* ================================================================ */
   /*  RENDER                                                           */
   /* ================================================================ */
-  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.shopstyleeternal.com";
   const productUrl = `${siteUrl}/products/${product.slug}`;
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -439,11 +440,11 @@ export default function ProductDetail() {
                           setSelectedSize(size);
                           setSizeError(false);
                         }}
-                        disabled={isSoldOut}
+                        disabled={isSoldOut || isComingSoon}
                         className={`py-2.5 text-[12px] font-accent font-medium tracking-[0.1em] uppercase rounded-sm border transition-all duration-200 ${
                           selectedSize === size
                             ? "bg-se-bone text-se-black border-se-bone"
-                            : isSoldOut
+                            : isSoldOut || isComingSoon
                             ? "border-white/[0.06] text-se-steel/40 cursor-not-allowed"
                             : "border-white/[0.1] text-se-bone/70 hover:border-se-bone/40 hover:text-se-bone"
                         }`}
@@ -507,13 +508,18 @@ export default function ProductDetail() {
                     Sold Out
                   </button>
                 ) : isComingSoon ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full py-4 bg-se-asphalt text-se-steel text-[12px] font-accent font-semibold tracking-[0.2em] uppercase rounded-sm cursor-not-allowed"
-                  >
-                    Coming Soon
-                  </button>
+                  <div>
+                    <p className="text-[11px] font-accent text-se-steel tracking-[0.1em] uppercase mb-3">
+                      Drop notifier — be first in line
+                    </p>
+                    <NotifyMeForm
+                      source="coming_soon_notify"
+                      productId={product.id}
+                      dropId={product.drop || ""}
+                      ctaText="Notify Me"
+                      className="w-full"
+                    />
+                  </div>
                 ) : (
                   <button
                     type="button"
