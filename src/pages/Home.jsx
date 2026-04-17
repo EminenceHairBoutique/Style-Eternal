@@ -8,6 +8,8 @@ import { collections, getNewArrivals, getLimitedProducts } from "../data/product
 import ProductCard from "../components/ProductCard";
 import BrandPromise from "../components/BrandPromise";
 import SEO from "../components/SEO";
+import HeroVideo from "../components/HeroVideo";
+import NotifyMeForm from "../components/NotifyMeForm";
 import { subscribeEmail } from "../utils/subscribe";
 
 const fadeUp = {
@@ -377,6 +379,11 @@ export default function Home() {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
+            SECTION 1.6: BRAND VIDEO
+        ═══════════════════════════════════════════════════════════════ */}
+        <HeroVideo />
+
+        {/* ═══════════════════════════════════════════════════════════════
             SECTION 2: NEW ARRIVALS
         ═══════════════════════════════════════════════════════════════ */}
         <section className="section-pad">
@@ -631,9 +638,17 @@ export default function Home() {
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-8 max-w-md">
                   FW26. Sign up to be the first to know.
                 </p>
-                <Link to="/drops" className="btn-outline">
-                  View All Drops
-                </Link>
+                <NotifyMeForm
+                  source="drop_02_teaser"
+                  dropId="drop-02"
+                  ctaText="Get Notified"
+                  className="max-w-sm"
+                />
+                <div className="mt-6">
+                  <Link to="/drops" className="btn-outline">
+                    View All Drops
+                  </Link>
+                </div>
               </Motion.div>
 
               <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt overflow-hidden">

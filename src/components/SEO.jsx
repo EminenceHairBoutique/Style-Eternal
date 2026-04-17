@@ -7,7 +7,7 @@ const DEFAULT_DESCRIPTION =
 const DEFAULT_IMAGE_PATH = "/assets/se_og_banner.png";
 
 function getSiteUrl() {
-  const raw = import.meta?.env?.VITE_SITE_URL || "https://www.styleeternal.com";
+  const raw = import.meta?.env?.VITE_SITE_URL || "https://www.shopstyleeternal.com";
   return String(raw).replace(/\/+$/, "");
 }
 

@@ -14,7 +14,7 @@ const fadeUp = {
 export default function Privacy() {
   return (
     <>
-      <SEO title="Privacy Policy — Style Eternal" description="How Style Eternal collects, uses, and protects your personal information when you visit styleeternal.com." />
+      <SEO title="Privacy Policy — Style Eternal" description="How Style Eternal collects, uses, and protects your personal information when you visit shopstyleeternal.com." />
 
       <div className="bg-se-black text-se-bone min-h-screen">
         <section className="pt-32 pb-16 md:pt-40 md:pb-24 border-b border-white/5">
@@ -39,7 +39,7 @@ export default function Privacy() {
                 Style Eternal LLC (&ldquo;Style Eternal,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo;
                 or &ldquo;our&rdquo;) respects your privacy and is committed to protecting the personal
                 information you share with us. This Privacy Policy explains how we collect, use, disclose,
-                and safeguard your information when you visit styleeternal.com (the &ldquo;Site&rdquo;),
+                and safeguard your information when you visit shopstyleeternal.com (the &ldquo;Site&rdquo;),
                 create an account, make a purchase, or interact with us. By using the Site, you consent to
                 the practices described in this policy.
               </p>

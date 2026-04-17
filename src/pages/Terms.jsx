@@ -14,7 +14,7 @@ const fadeUp = {
 export default function Terms() {
   return (
     <>
-      <SEO title="Terms & Conditions — Style Eternal" description="Terms and conditions governing your use of styleeternal.com and all purchases from Style Eternal." />
+      <SEO title="Terms & Conditions — Style Eternal" description="Terms and conditions governing your use of shopstyleeternal.com and all purchases from Style Eternal." />
 
       <div className="bg-se-black text-se-bone min-h-screen">
         <section className="pt-32 pb-16 md:pt-40 md:pb-24 border-b border-white/5">
@@ -36,7 +36,7 @@ export default function Terms() {
             <div>
               <h2 className="font-display text-[16px] tracking-[0.12em] mb-4 text-se-bone/80">1. ACCEPTANCE OF TERMS</h2>
               <p>
-                Welcome to styleeternal.com (the &ldquo;Site&rdquo;), operated by Style Eternal LLC
+                Welcome to shopstyleeternal.com (the &ldquo;Site&rdquo;), operated by Style Eternal LLC
                 (&ldquo;Style Eternal,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;).
                 By accessing or using the Site, creating an account, or placing an order, you agree to be
                 bound by these Terms &amp; Conditions (&ldquo;Terms&rdquo;). If you do not agree with any
