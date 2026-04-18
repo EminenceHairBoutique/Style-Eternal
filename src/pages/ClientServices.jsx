@@ -117,6 +117,8 @@ const INQUIRY_TYPES = [
 function FaqItem({ q, a, isOpen, onToggle, index }) {
   const contentRef = useRef(null);
   const [height, setHeight] = useState(0);
+  const buttonId = `faq-button-${index}`;
+  const panelId = `faq-panel-${index}`;
 
   useEffect(() => {
     if (contentRef.current) {
@@ -127,10 +129,12 @@ function FaqItem({ q, a, isOpen, onToggle, index }) {
   return (
     <div className="border-b border-white/[0.06]">
       <button
+        id={buttonId}
         type="button"
         onClick={onToggle}
         className="w-full flex items-center justify-between gap-4 py-5 md:py-6 text-left group"
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         <div className="flex items-start gap-4">
           <span className="text-[11px] font-accent text-se-steel/40 mt-0.5 tabular-nums select-none">
@@ -153,6 +157,9 @@ function FaqItem({ q, a, isOpen, onToggle, index }) {
         />
       </button>
       <div
+        id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
         style={{ height: isOpen ? height : 0 }}
         className="overflow-hidden transition-[height] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
       >
