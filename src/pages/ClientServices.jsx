@@ -16,6 +16,14 @@ import {
 import SEO from "../components/SEO";
 import { BRAND } from "../config/brand";
 
+const QUICK_LINKS = [
+  { label: "Frequently Asked Questions", href: "/faqs" },
+  { label: "Returns & Exchanges", href: "/returns" },
+  { label: "Shipping Information", href: "/shipping" },
+  { label: "Size Guide", href: "/size-guide" },
+  { label: "Track My Order", href: "/account" },
+];
+
 /* ─── Animation ──────────────────────────────────────────────────────── */
 
 const ease = [0.2, 0, 0, 1];
@@ -576,13 +584,7 @@ export default function ClientServices() {
                 <div>
                   <p className={labelClass}>Quick Links</p>
                   <div className="space-y-3.5 mt-4">
-                    {[
-                      { label: "Frequently Asked Questions", href: "/faqs" },
-                      { label: "Returns & Exchanges", href: "/returns" },
-                      { label: "Shipping Information", href: "/shipping" },
-                      { label: "Size Guide", href: "/size-guide" },
-                      { label: "Track My Order", href: "/account" },
-                    ].map((link) => (
+                    {QUICK_LINKS.map((link) => (
                       <Link
                         key={link.href}
                         to={link.href}
