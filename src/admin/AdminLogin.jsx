@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+// Import supabase directly — UserContext has its own loading state that can
+// race with a freshly issued session, and AdminLogin should not depend on it.
 import { supabase } from "../lib/supabaseClient";
 import "./admin.css";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,8 +23,9 @@ export default function AdminLogin() {
     try {
       const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
       if (signInErr) throw signInErr;
-      const from = location.state?.from || "/admin";
-      navigate(from, { replace: true });
+      // Always send the user to /admin on success — do not depend on
+      // AdminRoute or any redirect state to land them in the right place.
+      navigate("/admin", { replace: true });
     } catch (err) {
       setError(err.message || "Sign-in failed. Check your credentials.");
     } finally {
