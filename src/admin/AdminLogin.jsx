@@ -20,32 +20,14 @@ export default function AdminLogin() {
     setSubmitting(true);
 
     try {
-      // signInWithPassword resolves with the session in its result — no need to
-      // poll getSession() afterwards (that risks supabase-js auth-lock contention).
-      // Race against a 15s timeout so a paused/unreachable project fails visibly
-      // instead of leaving the button stuck on "Signing in…".
-      const { data, error: signInErr } = await Promise.race([
-        supabase.auth.signInWithPassword({ email, password }),
-        new Promise((_, reject) =>
-          setTimeout(
-            () =>
-              reject(
-                new Error(
-                  "Sign-in timed out. The Supabase project may be paused — open the Supabase dashboard to resume it, then try again."
-                )
-              ),
-            15_000
-          )
-        ),
-      ]);
-
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       if (signInErr) throw signInErr;
-      if (!data?.session) {
-        throw new Error("Signed in but no session was returned. Please try again.");
-      }
-
-      // Session is confirmed present. AdminRoute will independently pick it up
-      // via onAuthStateChange, so a plain navigate is safe and race-free.
+      // Session is now stored by supabase-js. UserContext will pick it up via
+      // its own onAuthStateChange subscription. AdminRoute's grace period covers
+      // the brief window while UserContext's async fetchAccountAccess runs.
       navigate("/admin", { replace: true });
     } catch (err) {
       console.error("[AdminLogin] sign-in failed:", err);
