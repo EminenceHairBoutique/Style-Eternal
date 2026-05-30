@@ -4,11 +4,70 @@
 -- Plus: RLS policies (admin-write, public-read where relevant), storage bucket
 -- ============================================================================
 
--- ---------- profiles.is_admin ------------------------------------------------
--- The profiles table is assumed to already exist (referenced by UserContext).
--- We add is_admin idempotently.
-ALTER TABLE IF EXISTS public.profiles
-  ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
+-- ---------- profiles ---------------------------------------------------------
+-- Mirrors auth.users 1:1, with the extra app-level fields the storefront and
+-- admin panel read. Idempotent so re-running this migration is safe.
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id              UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email           TEXT,
+  full_name       TEXT,
+  account_tier    TEXT DEFAULT 'customer',
+  partner_status  TEXT DEFAULT 'none',
+  partner_tier    TEXT,
+  is_admin        BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Backfill any columns the code reads, in case an older profiles table exists.
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email          TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS full_name      TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS account_tier   TEXT DEFAULT 'customer';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS partner_status TEXT DEFAULT 'none';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS partner_tier   TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_admin       BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+-- Auto-create a profile row whenever a new auth user signs up.
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', '')
+  )
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- Backfill rows for any auth users created before this migration ran.
+INSERT INTO public.profiles (id, email)
+SELECT u.id, u.email FROM auth.users u
+ON CONFLICT (id) DO NOTHING;
+
+-- RLS for profiles: a user can read/update their own row; admins can do anything.
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS profiles_self_read ON public.profiles;
+CREATE POLICY profiles_self_read ON public.profiles
+  FOR SELECT USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS profiles_self_update ON public.profiles;
+CREATE POLICY profiles_self_update ON public.profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS profiles_admin_all ON public.profiles;
+CREATE POLICY profiles_admin_all ON public.profiles
+  FOR ALL
+  USING (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.is_admin = TRUE))
+  WITH CHECK (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.is_admin = TRUE));
 
 -- ---------- products ---------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.products (
