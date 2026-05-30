@@ -43,10 +43,23 @@ const Shipping = lazy(() => import("./pages/Shipping"));
 const SizeGuide = lazy(() => import("./pages/SizeGuide"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// Admin panel (lazy — never loaded for storefront visitors)
+const AdminLayout = lazy(() => import("./admin/AdminLayout"));
+const AdminLogin = lazy(() => import("./admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("./admin/AdminDashboard"));
+const AdminProducts = lazy(() => import("./admin/AdminProducts"));
+const AdminProductForm = lazy(() => import("./admin/AdminProductForm"));
+const AdminOrders = lazy(() => import("./admin/AdminOrders"));
+const AdminOrderDetail = lazy(() => import("./admin/AdminOrderDetail"));
+const AdminCustomers = lazy(() => import("./admin/AdminCustomers"));
+const AdminCustomerDetail = lazy(() => import("./admin/AdminCustomerDetail"));
+const AdminDiscounts = lazy(() => import("./admin/AdminDiscounts"));
+
 export default function App() {
   useRouteAnalytics();
   const location = useLocation();
   const { isOpen: isCartOpen } = useCart();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
@@ -60,7 +73,7 @@ export default function App() {
           isCartOpen ? "blur-sm pointer-events-none select-none" : ""
         }`}
       >
-        <Navbar />
+        {!isAdminRoute && <Navbar />}
         <ScrollToTop />
 
         <ErrorBoundary>
@@ -114,12 +127,44 @@ export default function App() {
               <Route path="/new-arrivals" element={<Navigate to="/shop?filter=new" replace />} />
               <Route path="/help" element={<Navigate to="/faqs" replace />} />
               <Route path="/shipping-returns" element={<Navigate to="/returns" replace />} />
+
+              {/* Admin login — no auth guard (the login page itself handles it) */}
+              <Route
+                path="/admin/login"
+                element={
+                  <Suspense fallback={<RouteSkeleton />}>
+                    <AdminLogin />
+                  </Suspense>
+                }
+              />
+
+              {/* Admin panel — all nested routes guarded by AdminRoute + AdminLayout shell */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute redirectTo="/admin/login">
+                    <Suspense fallback={<RouteSkeleton />}>
+                      <AdminLayout />
+                    </Suspense>
+                  </AdminRoute>
+                }
+              >
+                <Route index element={<Suspense fallback={null}><AdminDashboard /></Suspense>} />
+                <Route path="products" element={<Suspense fallback={null}><AdminProducts /></Suspense>} />
+                <Route path="products/new" element={<Suspense fallback={null}><AdminProductForm /></Suspense>} />
+                <Route path="products/:id" element={<Suspense fallback={null}><AdminProductForm /></Suspense>} />
+                <Route path="orders" element={<Suspense fallback={null}><AdminOrders /></Suspense>} />
+                <Route path="orders/:id" element={<Suspense fallback={null}><AdminOrderDetail /></Suspense>} />
+                <Route path="customers" element={<Suspense fallback={null}><AdminCustomers /></Suspense>} />
+                <Route path="customers/:id" element={<Suspense fallback={null}><AdminCustomerDetail /></Suspense>} />
+                <Route path="discounts" element={<Suspense fallback={null}><AdminDiscounts /></Suspense>} />
+              </Route>
             </Routes>
           </AnimatePresence>
         </ErrorBoundary>
 
-        <CookieBanner />
-        <Footer />
+        {!isAdminRoute && <CookieBanner />}
+        {!isAdminRoute && <Footer />}
       </div>
     </>
   );
