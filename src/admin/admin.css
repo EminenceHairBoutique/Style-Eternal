@@ -1,0 +1,74 @@
+/* ============================================================================
+   Admin panel — isolated styles
+   Kept separate from the storefront so changes never leak into customer UI.
+   ============================================================================ */
+
+.admin-root {
+  --admin-bg: #f7f6f3;
+  --admin-bg-card: #ffffff;
+  --admin-border: #e5e3de;
+  --admin-border-strong: #d6d3cc;
+  --admin-text: #1a1a1a;
+  --admin-text-muted: #6b6b6b;
+  --admin-text-subtle: #9a9a9a;
+  --admin-sidebar: #0f0f0f;
+  --admin-sidebar-text: #f0f0f0;
+  --admin-sidebar-muted: #8a8a8a;
+  --admin-gold: #c9a96e;
+  --admin-gold-tint: rgba(201, 169, 110, 0.08);
+  --admin-red: #c43030;
+  --admin-green: #2f8a4e;
+  --admin-blue: #2c6cb0;
+  --admin-amber: #c79320;
+
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--admin-text);
+  background: var(--admin-bg);
+  min-height: 100vh;
+}
+
+.admin-root *,
+.admin-root *::before,
+.admin-root *::after {
+  box-sizing: border-box;
+}
+
+.admin-root h1,
+.admin-root h2,
+.admin-root h3 {
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
+
+/* Focus rings — only shadow allowed by spec */
+.admin-root :focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--admin-gold);
+}
+
+/* Skeleton shimmer for table loading state */
+@keyframes admin-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.admin-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--admin-border) 0%,
+    #f0eeea 50%,
+    var(--admin-border) 100%
+  );
+  background-size: 200% 100%;
+  animation: admin-shimmer 1.4s linear infinite;
+  border-radius: 4px;
+  display: inline-block;
+  height: 0.9rem;
+  width: 100%;
+}
+
+/* Toast slide-in */
+@keyframes admin-toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
