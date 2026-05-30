@@ -29,13 +29,15 @@ export default function AdminRoute({ children, redirectTo = "/account" }) {
     }
     (async () => {
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", user.id)
           .maybeSingle();
+        if (error) console.error("[AdminRoute] profiles lookup failed:", error);
         if (!cancelled) setProfileAdmin(!!data?.is_admin);
-      } catch {
+      } catch (err) {
+        console.error("[AdminRoute] profiles lookup exception:", err);
         if (!cancelled) setProfileAdmin(false);
       }
     })();
@@ -50,7 +52,7 @@ export default function AdminRoute({ children, redirectTo = "/account" }) {
   // Still resolving profile lookup — show nothing rather than flicker a redirect.
   if (!allowlisted && profileAdmin === null) return null;
 
-  if (!allowlisted && !profileAdmin) return <Navigate to="/" replace />;
+  if (!allowlisted && !profileAdmin) return <Navigate to={redirectTo} replace />;
 
   return children;
 }
