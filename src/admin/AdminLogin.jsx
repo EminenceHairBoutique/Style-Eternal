@@ -13,18 +13,42 @@ export default function AdminLogin() {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!supabase) {
-      setError("Supabase is not configured.");
+      setError("Supabase is not configured — VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is missing.");
       return;
     }
     setError("");
     setSubmitting(true);
+
     try {
-      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+      // signInWithPassword resolves with the session in its result — no need to
+      // poll getSession() afterwards (that risks supabase-js auth-lock contention).
+      // Race against a 15s timeout so a paused/unreachable project fails visibly
+      // instead of leaving the button stuck on "Signing in…".
+      const { data, error: signInErr } = await Promise.race([
+        supabase.auth.signInWithPassword({ email, password }),
+        new Promise((_, reject) =>
+          setTimeout(
+            () =>
+              reject(
+                new Error(
+                  "Sign-in timed out. The Supabase project may be paused — open the Supabase dashboard to resume it, then try again."
+                )
+              ),
+            15_000
+          )
+        ),
+      ]);
+
       if (signInErr) throw signInErr;
-      // Always navigate to /admin explicitly on success — do not rely on
-      // location.state which may be stale or missing.
+      if (!data?.session) {
+        throw new Error("Signed in but no session was returned. Please try again.");
+      }
+
+      // Session is confirmed present. AdminRoute will independently pick it up
+      // via onAuthStateChange, so a plain navigate is safe and race-free.
       navigate("/admin", { replace: true });
     } catch (err) {
+      console.error("[AdminLogin] sign-in failed:", err);
       setError(err.message || "Sign-in failed. Check your credentials.");
     } finally {
       setSubmitting(false);
