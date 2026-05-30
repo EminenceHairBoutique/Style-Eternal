@@ -99,16 +99,19 @@ export const UserProvider = ({ children }) => {
         .maybeSingle();
 
       if (error) {
+        console.error("[UserContext] profiles fetch failed:", error.message, error.code, error);
         return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
       }
 
+      console.log("[UserContext] profile row:", JSON.stringify({ is_admin: data?.is_admin, account_tier: data?.account_tier }));
       return {
         accountTier: data?.account_tier || "customer",
         partnerStatus: data?.partner_status || "none",
         partnerTier: data?.partner_tier ?? null,
         isAdmin: data?.is_admin === true,
       };
-    } catch (_e) {
+    } catch (e) {
+      console.error("[UserContext] profiles fetch exception:", e?.message, e);
       return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
     }
   };
