@@ -6,7 +6,19 @@
       "Read(//c/Users/chinx/OneDrive/Documents/Style Eternal Website/src/pages/**)",
       "Bash(done)",
       "Bash(npx vite:*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "PowerShell(gh pr list --head fix/brand-cleanup-and-critical-bugs --json url,number,state)",
+      "Bash(git push *)",
+      "Bash(mkdir -p /tmp/se-auth-fix)",
+      "Bash(git show *)",
+      "Read(//tmp/**)",
+      "Bash(git reset *)",
+      "Bash(cp /tmp/se-auth-fix/supabaseServer.js lib/supabaseServer.js)",
+      "Bash(cp /tmp/se-auth-fix/UserContext.jsx src/context/UserContext.jsx)",
+      "Bash(cp /tmp/se-auth-fix/Account.jsx src/pages/Account.jsx)",
+      "Bash(git restore *)"
     ]
   }
 }
