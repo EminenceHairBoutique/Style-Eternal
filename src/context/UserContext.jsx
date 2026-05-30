@@ -204,6 +204,15 @@ export const UserProvider = ({ children }) => {
     if (error) throw error;
   };
 
+  const loginWithApple = async () => {
+    if (!supabase) throw new Error("Auth not configured");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: { redirectTo: window.location.origin + "/account" },
+    });
+    if (error) throw error;
+  };
+
   const logout = async () => {
     if (supabase) await supabase.auth.signOut();
     setUser(null);
@@ -282,6 +291,7 @@ export const UserProvider = ({ children }) => {
         register,
         login,
         loginWithGoogle,
+        loginWithApple,
         logout,
         addOrder,
         addLoyaltyPoints,
