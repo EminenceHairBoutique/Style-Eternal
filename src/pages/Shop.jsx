@@ -101,7 +101,7 @@ export default function Shop() {
     <>
       <SEO
         title={`${pageTitle} — Style Eternal`}
-        description="Shop premium streetwear from Style Eternal. Tees, hoodies, outerwear, and accessories rooted in Newark."
+        description="Shop premium streetwear from Style Eternal. Tees, hoodies, outerwear, and accessories built to last."
       />
 
       <div className="bg-se-black text-se-bone min-h-screen">

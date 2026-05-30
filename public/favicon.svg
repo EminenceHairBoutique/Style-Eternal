@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Style Eternal favicon — SE monogram on dark background -->
+  <rect width="32" height="32" rx="4" fill="#0A0A0A"/>
+  <rect x="2" y="2" width="28" height="28" rx="2" stroke="#E8E4DE" stroke-width="0.75" fill="none"/>
+  <text
+    x="16" y="22.5"
+    font-family="'Arial Narrow', 'Helvetica Neue', sans-serif"
+    font-weight="700"
+    font-size="17"
+    letter-spacing="0.02em"
+    text-anchor="middle"
+    fill="#E8E4DE"
+  >SE</text>
+</svg>

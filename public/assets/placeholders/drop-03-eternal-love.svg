@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" fill="none">
+  <title>Eternal Love — Collection Placeholder</title>
+  <defs>
+    <linearGradient id="love-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="50%" stop-color="#1A1210"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with warm dark tint -->
+  <rect width="800" height="1000" fill="url(#love-bg)"/>
+  <!-- Subtle red atmospheric glow -->
+  <ellipse cx="400" cy="500" rx="250" ry="200" fill="#8B2020" opacity="0.06"/>
+  <!-- Flame accent shapes -->
+  <path d="M400 600 C380 550, 360 500, 370 460 C380 420, 400 400, 400 380 C400 400, 420 420, 430 460 C440 500, 420 550, 400 600Z" fill="#C43030" opacity="0.12"/>
+  <path d="M400 580 C388 545, 376 510, 382 480 C388 450, 400 435, 400 420 C400 435, 412 450, 418 480 C424 510, 412 545, 400 580Z" fill="#C43030" opacity="0.08"/>
+  <!-- Gold accent line -->
+  <line x1="300" y1="420" x2="500" y2="420" stroke="#C4A35A" stroke-width="0.75" opacity="0.35"/>
+  <!-- Title -->
+  <text x="400" y="480" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="64" letter-spacing="0.08em" fill="#E8E4DE" opacity="0.95">ETERNAL</text>
+  <text x="400" y="540" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="64" letter-spacing="0.08em" fill="#E8E4DE" opacity="0.95">LOVE</text>
+  <!-- Subtitle -->
+  <text x="400" y="590" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="13" letter-spacing="0.35em" fill="#E8E4DE" opacity="0.35">DROP 03 — LOVE NEVER DIES</text>
+  <!-- Gold accent -->
+  <line x1="300" y1="610" x2="500" y2="610" stroke="#C4A35A" stroke-width="0.75" opacity="0.35"/>
+  <!-- Brand footer -->
+  <text x="400" y="940" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="10" letter-spacing="0.3em" fill="#E8E4DE" opacity="0.2">STYLE ETERNAL — SS26</text>
+</svg>

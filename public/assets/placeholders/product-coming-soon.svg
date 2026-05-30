@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" fill="none">
+  <title>Product Coming Soon — Generic Placeholder</title>
+  <defs>
+    <linearGradient id="prod-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="100%" stop-color="#141414"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="1000" fill="url(#prod-bg)"/>
+  <!-- Subtle border -->
+  <rect x="20" y="20" width="760" height="960" rx="2" stroke="#E8E4DE" stroke-width="0.5" fill="none" opacity="0.05"/>
+  <!-- SE monogram watermark -->
+  <text x="400" y="480" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="120" fill="#E8E4DE" opacity="0.04" letter-spacing="0.1em">SE</text>
+  <!-- Coming soon text -->
+  <text x="400" y="530" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="500" font-size="14" letter-spacing="0.35em" fill="#E8E4DE" opacity="0.3">COMING SOON</text>
+  <!-- Gold accent -->
+  <line x1="350" y1="545" x2="450" y2="545" stroke="#C4A35A" stroke-width="0.75" opacity="0.3"/>
+  <!-- Brand -->
+  <text x="400" y="940" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="9" letter-spacing="0.3em" fill="#E8E4DE" opacity="0.15">STYLE ETERNAL</text>
+</svg>

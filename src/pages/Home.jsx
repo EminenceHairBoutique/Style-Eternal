@@ -8,6 +8,8 @@ import { collections, getNewArrivals, getLimitedProducts } from "../data/product
 import ProductCard from "../components/ProductCard";
 import BrandPromise from "../components/BrandPromise";
 import SEO from "../components/SEO";
+import HeroVideo from "../components/HeroVideo";
+import NotifyMeForm from "../components/NotifyMeForm";
 import { subscribeEmail } from "../utils/subscribe";
 
 const fadeUp = {
@@ -47,8 +49,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Style Eternal — Born in Newark"
-        description="Premium streetwear rooted in Newark's North Ward. Pieces with weight. Style that outlives trends."
+        title="Style Eternal — Premium Streetwear"
+        description="Premium streetwear built on permanence, emotion, and legacy. Pieces with weight. Style that outlives trends."
       />
 
       <div className="bg-se-black text-se-bone">
@@ -86,13 +88,13 @@ export default function Home() {
                 </h1>
 
                 <p className="font-accent text-[9px] tracking-[0.28em] uppercase text-se-bone/50 mb-2">
-                  NEWARK, NEW JERSEY — NORTH WARD
+                  EST. 2021 — PREMIUM STREETWEAR
                 </p>
 
                 <div className="divider-gold w-12 mb-5" />
 
                 <p className="font-accent text-[10px] tracking-[0.18em] uppercase text-se-bone/60 leading-[1.8] mb-8">
-                  STYLE IS MEMORY.<br />LEGACY IS FOREVER.
+                  LOVE IS ETERNAL.<br />STYLE IS ETERNAL.
                 </p>
 
                 <Link
@@ -166,13 +168,13 @@ export default function Home() {
                   </h1>
 
                   <p className="font-accent text-[9px] md:text-[10px] tracking-[0.28em] uppercase text-se-bone/50 mb-2 leading-relaxed">
-                    NEWARK, NEW JERSEY<br className="md:hidden" /> <span className="hidden md:inline">— </span>NORTH WARD
+                    EST. 2021<br className="md:hidden" /> <span className="hidden md:inline">— </span>PREMIUM STREETWEAR
                   </p>
 
                   <div className="divider-gold w-12 mb-5" />
 
                   <p className="font-accent text-[10px] md:text-[11px] tracking-[0.18em] uppercase text-se-bone/60 leading-[1.8] mb-8">
-                    STYLE IS MEMORY.<br />LEGACY IS FOREVER.
+                    LOVE IS ETERNAL.<br />STYLE IS ETERNAL.
                   </p>
 
                   <Link
@@ -212,12 +214,12 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* ── PANEL 3: Top-right — North Ward editorial ── */}
+            {/* ── PANEL 3: Top-right — Editorial / Brand ── */}
             <div className="relative overflow-hidden bg-[#110A04] group">
               {/* Editorial photo slot */}
               <img
                 src="/assets/editorial/north-ward-street.jpg"
-                alt="North Ward, Newark"
+                alt="Style Eternal Editorial"
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-70 transition-transform duration-700 group-hover:scale-[1.03]"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -232,10 +234,10 @@ export default function Home() {
                   className="font-display text-se-bone/70 leading-[0.9] tracking-[0.08em]"
                   style={{ fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)" }}
                 >
-                  NORTH<br />WARD
+                  THE<br />FLAME
                 </p>
                 <p className="font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/60 mt-2">
-                  Newark, NJ
+                  Never Dies
                 </p>
               </div>
             </div>
@@ -256,7 +258,7 @@ export default function Home() {
                 className="absolute bottom-0 left-0 right-0 p-4 md:p-5 flex items-end justify-between"
               >
                 <div>
-                  <span className="block font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/70">Drop 03</span>
+                  <span className="block font-accent text-[8px] tracking-[0.2em] uppercase text-se-gold/70">Drop 01</span>
                   <span className="block font-accent text-[9px] tracking-[0.15em] uppercase text-se-bone/50 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Love Never Dies Tee</span>
                 </div>
                 <ChevronRight size={12} className="text-se-bone/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -287,12 +289,12 @@ export default function Home() {
                   className="font-display text-se-bone/80 leading-[1.25] tracking-[0.08em]"
                   style={{ fontSize: "clamp(0.85rem, 2vw, 1.35rem)" }}
                 >
-                  THE CITY<br />MAKES YOU.<br />
-                  THE STRUGGLE<br />SHAPES YOU.<br />
-                  THE STYLE<br />REMAINS.
+                  LOVE IS<br />ETERNAL.<br />
+                  STYLE IS<br />ETERNAL.<br />
+                  THE FLAME<br />NEVER DIES.
                 </p>
                 <p
-                  className="font-signature text-se-gold/70 mt-5"
+                  className="font-accent italic text-se-gold/70 mt-5"
                   style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)" }}
                 >
                   Style Eternal
@@ -306,7 +308,7 @@ export default function Home() {
           <div className="hidden md:grid h-[52px] border-t border-white/8 grid-cols-3 divide-x divide-white/8 bg-se-black">
             {[
               { label: "New Arrivals", to: "/shop?filter=new" },
-              { label: "Drop 03",      to: "/collections/love-never-dies" },
+              { label: "Drop 01",      to: "/collections/love-never-dies" },
               { label: "Editorial",    to: "/editorial" },
             ].map(({ label, to }) => (
               <Link
@@ -321,6 +323,22 @@ export default function Home() {
 
         </section>
 
+        {/* ── TRUST STRIP ── */}
+        <div className="border-y border-white/5 bg-se-black">
+          <div className="content-wide py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
+            {[
+              { text: "Free Shipping $150+" },
+              { text: "Heavyweight Premium" },
+              { text: "30-Day Returns" },
+              { text: "EST. 2021" },
+            ].map(({ text }) => (
+              <span key={text} className="text-[9px] font-accent tracking-[0.25em] uppercase text-se-steel/70">
+                ✦ {text}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 1.5: EDITORIAL MARQUEE
         ═══════════════════════════════════════════════════════════════ */}
@@ -331,19 +349,19 @@ export default function Home() {
                 {[
                   "HEAVYWEIGHT COTTON",
                   "◆",
-                  "BORN IN NEWARK",
+                  "PREMIUM STREETWEAR",
                   "◆",
                   "SCREEN-PRINTED GRAPHICS",
                   "◆",
                   "GARMENT-WASHED",
                   "◆",
-                  "PREMIUM STREETWEAR",
-                  "◆",
-                  "NORTH WARD",
+                  "STYLE IS ETERNAL",
                   "◆",
                   "STYLE IS MEMORY",
                   "◆",
                   "LIMITED RELEASES",
+                  "◆",
+                  "BUILT TO LAST",
                   "◆",
                 ].map((text, i) => (
                   <span
@@ -359,6 +377,11 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 1.6: BRAND VIDEO
+        ═══════════════════════════════════════════════════════════════ */}
+        <HeroVideo />
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 2: NEW ARRIVALS
@@ -410,7 +433,7 @@ export default function Home() {
               <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt overflow-hidden mb-8 md:mb-0">
                 <img
                   src="/assets/products/love-never-dies-tee/01.jpg"
-                  alt="Drop 03: Love Never Dies"
+                  alt="Drop 01: Love Never Dies"
                   className="h-full w-full object-cover"
                   onError={(e) => {
                     e.target.style.display = "none";
@@ -422,7 +445,7 @@ export default function Home() {
 
               {/* Copy */}
               <Motion.div {...fadeUp} className="md:pl-4">
-                <p className="text-overline mb-4">Drop 03 — SS26</p>
+                <p className="text-overline mb-4">Drop 01 — SS26</p>
                 <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-[0.04em] mb-6">
                   LOVE<br />NEVER<br />DIES
                 </h2>
@@ -435,7 +458,7 @@ export default function Home() {
                   Once it's gone, it's gone.
                 </p>
                 <Link to="/collections/love-never-dies" className="btn-primary">
-                  Explore Drop 03
+                  Explore Drop 01
                 </Link>
               </Motion.div>
             </div>
@@ -456,10 +479,10 @@ export default function Home() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "Tees", href: "/shop/tees", desc: "Heavyweight. Oversized." },
-                { label: "Hoodies", href: "/shop/hoodies", desc: "French terry. Year-round." },
-                { label: "Outerwear", href: "/shop/outerwear", desc: "Statement pieces." },
-                { label: "Bottoms", href: "/shop/bottoms", desc: "Sweats. Cargos." },
+                { label: "Tees", href: "/shop/tees", desc: "Heavyweight 300gsm. Oversized cut." },
+                { label: "Hoodies", href: "/shop/hoodies", desc: "French terry. Heavy. Year-round." },
+                { label: "Outerwear", href: "/shop/outerwear", desc: "Coats. Bombers. Statements." },
+                { label: "Bottoms", href: "/shop/bottoms", desc: "Sweats. Cargos. Tailored." },
               ].map((cat, i) => (
                 <Motion.div
                   key={cat.label}
@@ -493,22 +516,29 @@ export default function Home() {
         <section className="section-pad border-t border-white/5">
           <div className="content-wide">
             <Motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+              <p className="section-eyebrow mb-6">The Philosophy</p>
               <div className="divider-gold mb-10 mx-auto w-24" />
-              <h2 className="font-display text-[clamp(1.8rem,5vw,3rem)] leading-[1.05] tracking-[0.04em] mb-8">
-                STYLE IS NOT WHAT YOU WEAR.
+              <h2 className="font-display text-[clamp(2rem,6vw,4rem)] leading-[1] tracking-[0.02em] mb-10">
+                LOVE IS<br />ETERNAL.
                 <br />
-                IT'S WHAT YOU SURVIVE IN.
+                <span className="text-se-gold/80">STYLE IS<br />ETERNAL.</span>
               </h2>
               <p className="text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed mb-4 max-w-xl mx-auto">
-                Born in Newark's North Ward, Style Eternal is a record of where we come from. Every stitch holds a story.
-                Every piece is made to endure — like the people who wear them.
+                Every piece is a statement of permanence. Crafted with heavyweight fabrics, 
+                garment-washed for character, screen-printed for legacy. Built to outlast 
+                every season and every trend.
               </p>
-              <p className="text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed mb-10 max-w-xl mx-auto">
-                We don't chase trends. We outlast them.
+              <p className="text-[16px] md:text-[18px] text-se-bone/60 leading-relaxed mb-10 max-w-xl mx-auto font-accent tracking-wide">
+                The flame never dies.
               </p>
-              <Link to="/about" className="btn-outline">
-                Read Our Story
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <Link to="/about" className="btn-primary">
+                  Read Our Story
+                </Link>
+                <Link to="/community" className="btn-outline">
+                  Join the Community
+                </Link>
+              </div>
             </Motion.div>
           </div>
         </section>
@@ -590,35 +620,75 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            SECTION 8: NEWARK / NORTH WARD STORY
+            SECTION 8: DROP 02 TEASER — ETERNAL STRUGGLE
         ═══════════════════════════════════════════════════════════════ */}
         <section className="section-pad border-t border-white/5">
           <div className="content-wide">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <Motion.div {...fadeUp}>
-                <p className="text-overline mb-4">Newark, NJ — North Ward</p>
+                <p className="text-overline mb-4">Coming Soon</p>
                 <h2 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] tracking-[0.04em] mb-6">
-                  WHERE THE<br />CONCRETE<br />SPEAKS
+                  DROP 02<br />ETERNAL<br />FLAME
                 </h2>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-4 max-w-md">
-                  The North Ward is brick and iron. Corner stores with steel gates.
-                  Wet pavement under sodium lights. Basements where the music started.
-                  Stoops where the conversations never ended.
+                  Burn eternal. Anime-inspired halos, distressed medallions, and
+                  split-panel angel graphics. 400gsm heavyweight hoodies.
+                  Limited to 100 units per style.
                 </p>
                 <p className="text-[15px] text-se-bone/50 leading-relaxed mb-8 max-w-md">
-                  Style Eternal is a product of that texture. We build clothes the way
-                  the neighborhood builds character — heavy, deliberate, and built to
-                  endure whatever comes next.
+                  FW26. Sign up to be the first to know.
                 </p>
-                <Link to="/community" className="btn-outline">
-                  Explore Community
-                </Link>
+                <NotifyMeForm
+                  source="drop_02_teaser"
+                  dropId="drop-02"
+                  ctaText="Get Notified"
+                  className="max-w-sm"
+                />
+                <div className="mt-6">
+                  <Link to="/drops" className="btn-outline">
+                    View All Drops
+                  </Link>
+                </div>
               </Motion.div>
 
-              <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt">
-                <div className="h-full w-full bg-gradient-to-t from-se-charcoal to-se-asphalt flex items-center justify-center">
-                  <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/20">NORTH WARD</span>
+              <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt overflow-hidden">
+                <div className="h-full w-full bg-gradient-to-br from-se-charcoal via-se-asphalt to-se-black flex items-center justify-center">
+                  <div className="text-center">
+                    <span className="font-display text-[32px] tracking-[0.2em] text-se-steel/20 block">DROP 02</span>
+                    <span className="font-accent text-[10px] tracking-[0.25em] uppercase text-se-gold/30 mt-3 block">Coming Soon</span>
+                  </div>
                 </div>
+              </Motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION 8B: SOCIAL PROOF / BRAND STATS
+        ═══════════════════════════════════════════════════════════════ */}
+        <section className="relative overflow-hidden border-t border-white/5">
+          <div className="relative bg-gradient-to-b from-se-charcoal/50 to-se-black py-20 md:py-28">
+            <div className="content-wide">
+              <Motion.div {...fadeUp} className="max-w-4xl mx-auto text-center">
+                <p className="section-eyebrow mb-6">The Brand</p>
+                <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-[0.04em] mb-8">
+                  BUILT DIFFERENT.<br />WORN FOREVER.
+                </h2>
+                <div className="grid grid-cols-3 gap-6 md:gap-12 mb-12 max-w-lg mx-auto">
+                  {[
+                    { stat: "300gsm+", label: "Fabric Weight" },
+                    { stat: "NJ", label: "Designed In" },
+                    { stat: "Limited", label: "Every Drop" },
+                  ].map(({ stat, label }) => (
+                    <div key={label}>
+                      <p className="font-display text-[20px] md:text-[28px] tracking-[0.04em] text-se-bone">{stat}</p>
+                      <p className="text-[9px] font-accent tracking-[0.2em] uppercase text-se-steel mt-1">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link to="/about" className="btn-outline">
+                  Our Process
+                </Link>
               </Motion.div>
             </div>
           </div>

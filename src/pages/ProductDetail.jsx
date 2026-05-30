@@ -16,6 +16,7 @@ import { products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
+import NotifyMeForm from "../components/NotifyMeForm";
 import { resolveProductImages } from "../utils/productMedia";
 
 /* ------------------------------------------------------------------ */
@@ -29,6 +30,7 @@ function Accordion({ title, children, defaultOpen = false }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
         className="flex w-full items-center justify-between py-5 text-left"
       >
         <span className="text-[13px] font-accent font-medium tracking-[0.08em] uppercase text-se-bone">
@@ -231,6 +233,43 @@ export default function ProductDetail() {
   /* ================================================================ */
   /*  RENDER                                                           */
   /* ================================================================ */
+  const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.shopstyleeternal.com";
+  const productUrl = `${siteUrl}/products/${product.slug}`;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "@id": `${productUrl}#product`,
+        name: product.displayName || product.name,
+        description: product.description,
+        url: productUrl,
+        image: images.map((img) =>
+          String(img).startsWith("http") ? img : `${siteUrl}${img}`
+        ),
+        brand: { "@type": "Brand", name: "Style Eternal" },
+        ...(product.price
+          ? {
+              offers: {
+                "@type": "Offer",
+                price: product.price,
+                priceCurrency: "USD",
+                url: productUrl,
+              },
+            }
+          : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+          { "@type": "ListItem", position: 2, name: "Shop", item: `${siteUrl}/shop` },
+          { "@type": "ListItem", position: 3, name: product.displayName || product.name },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
       <SEO
@@ -238,6 +277,7 @@ export default function ProductDetail() {
         description={product.description}
         image={images[0]}
         type="product"
+        jsonLd={productJsonLd}
       />
 
       <main className="min-h-screen bg-se-black">
@@ -400,11 +440,11 @@ export default function ProductDetail() {
                           setSelectedSize(size);
                           setSizeError(false);
                         }}
-                        disabled={isSoldOut}
+                        disabled={isSoldOut || isComingSoon}
                         className={`py-2.5 text-[12px] font-accent font-medium tracking-[0.1em] uppercase rounded-sm border transition-all duration-200 ${
                           selectedSize === size
                             ? "bg-se-bone text-se-black border-se-bone"
-                            : isSoldOut
+                            : isSoldOut || isComingSoon
                             ? "border-white/[0.06] text-se-steel/40 cursor-not-allowed"
                             : "border-white/[0.1] text-se-bone/70 hover:border-se-bone/40 hover:text-se-bone"
                         }`}
@@ -468,13 +508,18 @@ export default function ProductDetail() {
                     Sold Out
                   </button>
                 ) : isComingSoon ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full py-4 bg-se-asphalt text-se-steel text-[12px] font-accent font-semibold tracking-[0.2em] uppercase rounded-sm cursor-not-allowed"
-                  >
-                    Coming Soon
-                  </button>
+                  <div>
+                    <p className="text-[11px] font-accent text-se-steel tracking-[0.1em] uppercase mb-3">
+                      Drop notifier — be first in line
+                    </p>
+                    <NotifyMeForm
+                      source="coming_soon_notify"
+                      productId={product.id}
+                      dropId={product.drop || ""}
+                      ctaText="Notify Me"
+                      className="w-full"
+                    />
+                  </div>
                 ) : (
                   <button
                     type="button"

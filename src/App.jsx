@@ -2,9 +2,12 @@ import React, { Suspense, lazy } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { useCart } from "./context/CartContext";
+import { useUser } from "./context/UserContext";
 import CookieBanner from "./components/legal/CookieBanner";
 import TrackingScripts from "./components/TrackingScripts";
 const CartDrawer = lazy(() => import("./components/CartDrawer"));
+const DiscountModal = lazy(() => import("./components/DiscountModal"));
+const EmailPopup = lazy(() => import("./components/EmailPopup"));
 import useRouteAnalytics from "./hooks/useRouteAnalytics";
 
 // Layout
@@ -32,7 +35,7 @@ const Cart = lazy(() => import("./pages/Cart"));
 const Success = lazy(() => import("./pages/Success"));
 const Cancel = lazy(() => import("./pages/Cancel"));
 const Account = lazy(() => import("./pages/Account"));
-const Contact = lazy(() => import("./pages/Contact"));
+const ClientServices = lazy(() => import("./pages/ClientServices"));
 const Faqs = lazy(() => import("./pages/Faqs"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const PrivacyChoices = lazy(() => import("./pages/PrivacyChoices"));
@@ -41,6 +44,7 @@ const Returns = lazy(() => import("./pages/Returns"));
 const Rewards = lazy(() => import("./pages/Rewards"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 const SizeGuide = lazy(() => import("./pages/SizeGuide"));
+const Lookbook = lazy(() => import("./pages/Lookbook"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin panel (lazy — never loaded for storefront visitors)
@@ -60,12 +64,19 @@ export default function App() {
   const location = useLocation();
   const { isOpen: isCartOpen } = useCart();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const { user } = useUser();
 
   return (
     <>
       <TrackingScripts />
       <Suspense fallback={null}>
         <CartDrawer />
+      </Suspense>
+      <Suspense fallback={null}>
+        <DiscountModal user={user} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <EmailPopup user={user} />
       </Suspense>
 
       <div
@@ -77,7 +88,8 @@ export default function App() {
         <ScrollToTop />
 
         <ErrorBoundary>
-          <AnimatePresence mode="wait">
+          <div id="main-content" tabIndex={-1} role="main">
+            <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               {[
                 ["/", <Home />],
@@ -96,7 +108,7 @@ export default function App() {
                 ["/success", <Success />],
                 ["/cancel", <Cancel />],
                 ["/account", <Account />],
-                ["/contact", <Contact />],
+                ["/client-services", <ClientServices />],
                 ["/faqs", <Faqs />],
                 ["/privacy", <Privacy />],
                 ["/terms", <Terms />],
@@ -105,6 +117,7 @@ export default function App() {
                 ["/rewards", <Rewards />],
                 ["/shipping", <Shipping />],
                 ["/size-guide", <SizeGuide />],
+                ["/lookbook", <Lookbook />],
                 ["*", <NotFound />],
               ].map(([path, element]) => (
                 <Route
@@ -112,10 +125,10 @@ export default function App() {
                   path={path}
                   element={
                     <Motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.35, ease: [0.2, 0, 0, 1] }}
                     >
                       <Suspense fallback={<RouteSkeleton />}>
                         {element}
@@ -125,6 +138,7 @@ export default function App() {
                 />
               ))}
               <Route path="/new-arrivals" element={<Navigate to="/shop?filter=new" replace />} />
+              <Route path="/contact" element={<Navigate to="/client-services" replace />} />
               <Route path="/help" element={<Navigate to="/faqs" replace />} />
               <Route path="/shipping-returns" element={<Navigate to="/returns" replace />} />
 
@@ -161,6 +175,7 @@ export default function App() {
               </Route>
             </Routes>
           </AnimatePresence>
+          </div>
         </ErrorBoundary>
 
         {!isAdminRoute && <CookieBanner />}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" fill="none">
+  <title>Eternal Love — Drop Teaser (Square)</title>
+  <defs>
+    <linearGradient id="love-teaser-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="50%" stop-color="#120E0E"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#love-teaser-bg)"/>
+  <!-- Subtle red atmosphere -->
+  <ellipse cx="540" cy="540" rx="300" ry="250" fill="#8B2020" opacity="0.04"/>
+  <!-- Abstract flame / heart shape -->
+  <path d="M540 650 C520 600, 500 550, 510 510 C520 470, 540 450, 540 430 C540 450, 560 470, 570 510 C580 550, 560 600, 540 650Z" fill="#C43030" opacity="0.1"/>
+  <!-- Small stars -->
+  <circle cx="460" cy="420" r="1.5" fill="#C4A35A" opacity="0.3"/>
+  <circle cx="620" cy="440" r="1" fill="#C4A35A" opacity="0.25"/>
+  <circle cx="500" cy="380" r="1.2" fill="#C4A35A" opacity="0.2"/>
+  <circle cx="580" cy="400" r="0.8" fill="#C4A35A" opacity="0.2"/>
+  <!-- Gold line -->
+  <line x1="420" y1="470" x2="660" y2="470" stroke="#C4A35A" stroke-width="0.75" opacity="0.35"/>
+  <!-- Title -->
+  <text x="540" y="530" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="56" letter-spacing="0.1em" fill="#E8E4DE">ETERNAL</text>
+  <text x="540" y="590" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="56" letter-spacing="0.1em" fill="#E8E4DE">LOVE</text>
+  <!-- Subtitle -->
+  <text x="540" y="640" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="13" letter-spacing="0.4em" fill="#E8E4DE" opacity="0.3">SS26 — DROP 03</text>
+  <!-- Bottom accent -->
+  <line x1="420" y1="660" x2="660" y2="660" stroke="#C4A35A" stroke-width="0.75" opacity="0.35"/>
+  <!-- Brand -->
+  <text x="540" y="1020" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="10" letter-spacing="0.3em" fill="#E8E4DE" opacity="0.2">STYLE ETERNAL</text>
+</svg>

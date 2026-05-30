@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Style Eternal — Utility Mark -->
+  <g stroke="#F0EDE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Outer hexagonal frame -->
+    <polygon points="50,8 88,28 88,72 50,92 12,72 12,28" fill="none" stroke-width="1.5"/>
+    <!-- Inner structure lines — technical/architectural -->
+    <line x1="50" y1="28" x2="50" y2="72"/>
+    <line x1="30" y1="50" x2="70" y2="50"/>
+    <!-- Corner notch details -->
+    <line x1="30" y1="28" x2="30" y2="36"/>
+    <line x1="70" y1="28" x2="70" y2="36"/>
+    <line x1="30" y1="72" x2="30" y2="64"/>
+    <line x1="70" y1="72" x2="70" y2="64"/>
+  </g>
+  <!-- SE text -->
+  <text x="50" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="14" fill="#F0EDE5" letter-spacing="2">SE</text>
+</svg>

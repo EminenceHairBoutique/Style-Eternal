@@ -42,6 +42,9 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ['@mediapipe/tasks-vision']
+  },
   server: {
     port: 5173,
     strictPort: false, // fall back to next port if 5173 is taken

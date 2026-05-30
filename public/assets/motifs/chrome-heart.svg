@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Style Eternal — Chrome Heart Motif -->
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E0E0E0"/>
+      <stop offset="35%" stop-color="#C0C0C0"/>
+      <stop offset="65%" stop-color="#A0A0A0"/>
+      <stop offset="100%" stop-color="#D0D0D0"/>
+    </linearGradient>
+  </defs>
+  <!-- Heart shape -->
+  <path d="M50 85 L15 50 C5 35 10 15 30 15 C40 15 48 22 50 30 C52 22 60 15 70 15 C90 15 95 35 85 50 Z"
+        fill="url(#chrome)" stroke="#808080" stroke-width="1.5"/>
+  <!-- Highlight reflection -->
+  <path d="M35 28 C38 22 44 20 48 24" stroke="#F0F0F0" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+</svg>

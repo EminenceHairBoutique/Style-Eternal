@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 600" fill="none">
+  <rect width="1440" height="600" fill="#0A0A0A"/>
+  <defs>
+    <linearGradient id="haze" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#1A1A1A" stop-opacity="0.8"/>
+      <stop offset="0.4" stop-color="#0A0A0A" stop-opacity="0"/>
+      <stop offset="0.7" stop-color="#1A1A1A" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#0A0A0A" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0" stop-color="#0A0A0A" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0A0A0A" stop-opacity="0.4"/>
+    </radialGradient>
+  </defs>
+  <rect width="1440" height="600" fill="url(#haze)"/>
+  <rect width="1440" height="600" fill="url(#vignette)"/>
+  <!-- Thin border frame -->
+  <rect x="57.6" y="36.0" width="1324.8" height="528.0" stroke="#E8E4DE" stroke-width="0.5" fill="none" opacity="0.08"/>
+  <!-- Title -->
+  <text x="720.0" y="292.0" font-family="Arial Narrow, Helvetica Neue, sans-serif" font-weight="700" font-size="42" letter-spacing="0.18em" text-anchor="middle" fill="#E8E4DE">ESSENTIALS</text>
+  
+  <text x="720.0" y="316.0" font-family="Helvetica Neue, Arial, sans-serif" font-weight="300" font-size="14" letter-spacing="0.35em" text-anchor="middle" fill="#6B6B6B">CORE COLLECTION</text>
+
+  
+</svg>

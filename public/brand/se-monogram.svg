@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <title>SE — Compact Monogram</title>
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="56" stroke="#E8E4DE" stroke-width="1.5" fill="none" opacity="0.15"/>
+  <!-- Inner circle -->
+  <circle cx="60" cy="60" r="48" stroke="#C4A35A" stroke-width="0.75" fill="none" opacity="0.3"/>
+  <!-- S letter -->
+  <text x="42" y="76" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="56" fill="#E8E4DE" letter-spacing="-0.02em">S</text>
+  <!-- E letter, slightly overlapping -->
+  <text x="68" y="76" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="700" font-size="56" fill="#E8E4DE" opacity="0.85" letter-spacing="-0.02em">E</text>
+</svg>

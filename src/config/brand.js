@@ -4,18 +4,18 @@
 export const BRAND = {
   name: "Style Eternal",
   fullName: "Style Eternal",
-  tagline: "Born in Newark",
+  tagline: "Love is Eternal. Style is Eternal.",
   supportEmail: "info@styleeternal.com",
-  origin: "Newark, NJ — North Ward",
-  motto: "Style that outlives trends.",
-  founded: "2024",
+  origin: "New Jersey — EST. 2021",
+  motto: "The Flame Never Dies.",
+  founded: "2021",
 };
 
 export const SOCIAL = {
-  instagram: "",
-  tiktok: "",
-  youtube: "",
-  twitter: "",
+  instagram: "https://instagram.com/styleeternal",
+  tiktok: "https://tiktok.com/@styleeternal",
+  youtube: "https://youtube.com/@styleeternal",
+  twitter: "https://x.com/styleeternal",
 };
 
 export const MICROCOPY = {

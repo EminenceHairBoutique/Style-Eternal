@@ -1,5 +1,6 @@
 /* eslint-env node */
 import Stripe from "stripe";
+import { checkRateLimit } from "./_utils/rateLimit.js";
 import { products } from "../src/data/products.js";
 import { applyCustomPricing } from "../src/utils/pricing.js";
 
@@ -19,6 +20,14 @@ export async function createHandler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+
+  // Rate limit: 5 checkout session creations per IP per minute
+  const allowed = await checkRateLimit(req, res, {
+    endpoint: "checkout",
+    max: 5,
+    windowMs: 60_000,
+  });
+  if (!allowed) return;
 
   const stripe = getStripe();
   if (!stripe) {
@@ -58,39 +67,20 @@ export async function createHandler(req, res) {
         throw new Error(`Unknown product: ${item.id || item.slug}`);
       }
 
-      // Variant selections (null => server applies safe defaults)
-      const length = Number(item.length ?? Math.min(...(product.lengths || [0])));
-      const density = Number(item.density ?? Math.min(...(product.densities || [0])));
-      const lace = item.lace ?? "Transparent Lace";
+      // Variant selections — apparel uses size only (no length/density/lace)
+      const size = item.size ?? null;
 
-      // Compute base price on the server.
-      // - Wigs: priced by (length, density, lace)
-      // - Bundles: priced by (length)
-      let basePrice = 0;
-      if (typeof product.price === "function") {
-        if (product.type === "bundle") {
-          basePrice = Number(product.price(length) || 0);
-        } else {
-          basePrice = Number(product.price(length, density, lace) || 0);
-        }
-      } else {
-        basePrice = Number(product.basePrice ?? product.fromPrice ?? product.price ?? 0);
-      }
+      // Compute base price on the server (flat pricing for apparel).
+      let basePrice = Number(product.price ?? 0);
 
-      // Custom pricing only applies to wigs.
-      const finalPrice =
-        product.type === "wig"
-          ? Number(
-              applyCustomPricing({
-                basePrice,
-                density,
-                isCustom: Boolean(item.isCustom),
-                customNotes: String(item.customNotes ?? ""),
-                baseColor: String(product.color ?? ""),
-                customColorTier: item.customColorTier ?? null,
-              }).price || basePrice
-            )
-          : basePrice;
+      // Apply custom pricing adjustments if any.
+      const finalPrice = Number(
+        applyCustomPricing({
+          basePrice,
+          isCustom: Boolean(item.isCustom),
+          customNotes: String(item.customNotes ?? ""),
+        }).price || basePrice
+      );
 
       const unitAmount = Math.round(Number(finalPrice) * 100);
       if (!Number.isFinite(unitAmount) || unitAmount <= 0) {
@@ -109,6 +99,7 @@ export async function createHandler(req, res) {
           currency: "usd",
           product_data: {
             name: item.name || product.displayName || product.name,
+            ...(size ? { description: `Size: ${size}` } : {}),
             images: image ? [image] : [],
           },
           unit_amount: unitAmount,

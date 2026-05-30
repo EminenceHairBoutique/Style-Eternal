@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 28" fill="none">
+  <title>Style Eternal — Footer / Browser Lightweight Mark</title>
+  <!-- Lightweight wordmark for footer and small spaces -->
+  <text x="100" y="18" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="500" font-size="12" letter-spacing="0.3em" fill="#E8E4DE" opacity="0.5">STYLE ETERNAL</text>
+  <!-- Thin gold accent -->
+  <line x1="30" y1="24" x2="170" y2="24" stroke="#C4A35A" stroke-width="0.5" opacity="0.25"/>
+</svg>

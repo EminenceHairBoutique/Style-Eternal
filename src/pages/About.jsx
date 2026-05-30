@@ -16,7 +16,7 @@ export default function About() {
     <>
       <SEO
         title="About — Style Eternal"
-        description="Born in Newark's North Ward. Style Eternal builds premium streetwear rooted in place, memory, and permanence."
+        description="Style Eternal builds premium heavyweight streetwear rooted in permanence, emotional design, and quality construction."
       />
 
       <div className="bg-se-black text-se-bone">
@@ -26,13 +26,12 @@ export default function About() {
             <Motion.div {...fadeUp} className="max-w-3xl">
               <p className="text-overline mb-4">Our Story</p>
               <h1 className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-[0.9] tracking-[0.04em] mb-8">
-                BORN IN<br />NEWARK
+                THE STORY
               </h1>
               <p className="text-[17px] md:text-[19px] text-se-bone/60 leading-relaxed max-w-xl">
-                Style Eternal didn't start in a studio or a boardroom.
-                It started on the streets of Newark's North Ward —
-                where style was survival, and what you wore said everything
-                words couldn't.
+                Style Eternal didn&apos;t start with a business plan. It started with
+                a feeling — that what you wear carries weight, and the right piece
+                can make you feel permanent in a world that forgets fast.
               </p>
             </Motion.div>
           </div>
@@ -44,27 +43,17 @@ export default function About() {
             <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
               <Motion.div {...fadeUp}>
                 <p className="text-[9px] tracking-[0.25em] uppercase text-se-gold font-accent mb-6">
-                  The Beginning
+                  New Jersey
                 </p>
                 <h2 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] tracking-[0.04em] mb-8">
-                  THE WARD<br />RAISED US
+                  WHERE WE<br />STARTED
                 </h2>
                 <div className="space-y-4 text-[15px] text-se-bone/50 leading-relaxed">
                   <p>
-                    The North Ward is brick rowhouses and steel gates. It's corner stores
-                    with bulletproof glass and stoops where the realest conversations happen.
-                    It's cold mornings that teach you to layer right. It's sodium lights
-                    casting orange on wet pavement.
-                  </p>
-                  <p>
-                    In the North Ward, style was never just aesthetics. It was armor.
-                    It was a signal. It told the world you hadn't been broken by the
-                    circumstances — that you still took yourself seriously, even when
-                    no one else did.
-                  </p>
-                  <p>
-                    Style Eternal was built to honor that. Every piece carries the weight
-                    of the streets that made us. Not as nostalgia — as foundation.
+                    We came up in New Jersey — concrete, cold mornings, corner-store
+                    runs. Style wasn&apos;t optional where we&apos;re from. It was how you
+                    told the world you still gave a damn. That energy is the
+                    foundation of everything we build.
                   </p>
                 </div>
               </Motion.div>
@@ -72,7 +61,7 @@ export default function About() {
               <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt">
                 <div className="h-full w-full bg-gradient-to-t from-se-charcoal to-se-asphalt flex items-center justify-center">
                   <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/15">
-                    NORTH WARD
+                    ORIGINS
                   </span>
                 </div>
               </Motion.div>
@@ -80,26 +69,28 @@ export default function About() {
           </div>
         </section>
 
-        {/* Manifesto */}
+        {/* The Craft */}
         <section className="section-pad border-b border-white/5">
           <div className="content-wide">
             <Motion.div {...fadeUp} className="max-w-3xl mx-auto text-center">
+              <p className="text-[9px] tracking-[0.25em] uppercase text-se-gold font-accent mb-6">
+                What We Make
+              </p>
               <div className="divider-gold mb-10 mx-auto w-24" />
               <h2 className="font-display text-[clamp(1.8rem,5vw,3rem)] leading-[1.1] tracking-[0.04em] mb-8">
-                WE DON&apos;T CHASE TRENDS.<br />
-                WE OUTLAST THEM.
+                THE CRAFT
               </h2>
-              <div className="space-y-4 text-[15px] md:text-[17px] text-se-bone/40 leading-relaxed max-w-xl mx-auto">
+              <div className="space-y-4 text-[15px] md:text-[17px] text-se-bone/50 leading-relaxed max-w-xl mx-auto">
                 <p>
-                  Style Eternal is built on permanence. Every garment is designed
-                  to be worn fifty times, not five. Every graphic tells a story
-                  that matters beyond the season.
+                  280gsm tees. 400gsm hoodies. Every piece starts with fabric
+                  that has real weight — because cheap material falls apart and
+                  we don&apos;t make disposable clothing.
                 </p>
                 <p>
-                  We use heavyweight fabrics because they last. We garment-wash
-                  because we want the pieces to feel lived-in from day one.
-                  We screen-print because it holds. We don&apos;t cut corners on
-                  materials because the streets taught us that cheap falls apart.
+                  We garment-wash for character, screen-print for durability,
+                  and cut oversized because that&apos;s how streetwear actually
+                  lives on a body. No shortcuts on construction. No compromises
+                  on feel.
                 </p>
               </div>
             </Motion.div>
@@ -120,7 +111,7 @@ export default function About() {
               </blockquote>
               <div className="divider-gold w-12 mx-auto mb-4" />
               <p className="text-[11px] font-accent tracking-[0.2em] uppercase text-se-steel">
-                — Style Eternal
+                — Chino, Founder
               </p>
             </Motion.div>
           </div>
@@ -175,40 +166,38 @@ export default function About() {
           </div>
         </section>
 
-        {/* Newark Section */}
+        {/* The Vision */}
         <section className="section-pad border-b border-white/5">
           <div className="content-wide">
             <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
               <Motion.div {...fadeUp} className="order-2 md:order-1 aspect-[4/5] bg-se-asphalt">
                 <div className="h-full w-full bg-gradient-to-br from-se-charcoal to-se-asphalt flex items-center justify-center">
                   <span className="font-display text-[28px] tracking-[0.15em] text-se-steel/15">
-                    NEWARK
+                    ETERNAL
                   </span>
                 </div>
               </Motion.div>
 
               <Motion.div {...fadeUp} className="order-1 md:order-2">
                 <p className="text-[9px] tracking-[0.25em] uppercase text-se-gold font-accent mb-6">
-                  Newark, NJ
+                  Beyond Geography
                 </p>
                 <h2 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] leading-[1] tracking-[0.04em] mb-8">
-                  ROOTED IN<br />REAL PLACE
+                  THE VISION
                 </h2>
                 <div className="space-y-4 text-[15px] text-se-bone/50 leading-relaxed">
                   <p>
-                    Every collection draws from Newark — its architecture, its grit,
-                    its people, its memory. The North Ward. The Ironbound. The brick,
-                    the concrete, the iron.
+                    Style Eternal is built on permanence over trend. We design
+                    pieces that carry emotional weight — graphics rooted in love,
+                    death, and rebirth. The symbols mean something. The work
+                    outlasts the season.
                   </p>
                   <p>
-                    This isn't decoration. The city is in the DNA of everything we make.
-                    When you wear Style Eternal, you carry a piece of that story.
+                    This isn&apos;t fast fashion with a streetwear skin. Every
+                    collection is a statement about what deserves to endure. We
+                    make clothes for people who feel something when they get
+                    dressed.
                   </p>
-                </div>
-                <div className="mt-8">
-                  <Link to="/community" className="btn-outline">
-                    Explore Community
-                  </Link>
                 </div>
               </Motion.div>
             </div>

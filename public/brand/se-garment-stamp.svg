@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <title>SE — Garment Chest Stamp</title>
+  <!-- Minimal garment stamp mark for left-chest placement -->
+  <!-- Outer frame -->
+  <rect x="8" y="8" width="64" height="64" rx="2" stroke="#E8E4DE" stroke-width="1" fill="none" opacity="0.2"/>
+  <!-- SE monogram -->
+  <text x="40" y="52" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="600" font-size="32" fill="#E8E4DE" letter-spacing="0.08em">SE</text>
+  <!-- Thin divider -->
+  <line x1="22" y1="58" x2="58" y2="58" stroke="#C4A35A" stroke-width="0.5" opacity="0.4"/>
+  <!-- Small brand text -->
+  <text x="40" y="68" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="400" font-size="5.5" letter-spacing="0.2em" fill="#E8E4DE" opacity="0.5">STYLE ETERNAL</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Style Eternal — Broken Halo Motif -->
+  <!-- Main halo ring with a gap at top-right -->
+  <path d="M50 12 A38 38 0 1 1 82 30" stroke="#D4AF37" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M88 38 A38 38 0 0 1 62 14" stroke="#D4AF37" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Inner subtle ring, also broken -->
+  <path d="M50 16 A34 34 0 1 1 78 33" stroke="#D4AF37" stroke-width="1" fill="none" opacity="0.3" stroke-linecap="round"/>
+  <!-- Small glow dot at break point -->
+  <circle cx="85" cy="34" r="2" fill="#D4AF37" opacity="0.5"/>
+</svg>

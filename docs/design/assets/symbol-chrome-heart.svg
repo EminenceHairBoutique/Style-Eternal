@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <title>Style Eternal — Chrome Heart Emblem</title>
+  <!-- Outer heart shape -->
+  <path d="M100 170 C60 140, 20 110, 20 75 C20 45, 45 30, 70 30 C85 30, 95 40, 100 50 C105 40, 115 30, 130 30 C155 30, 180 45, 180 75 C180 110, 140 140, 100 170Z" stroke="#E8E4DE" stroke-width="2" fill="none"/>
+  <!-- Inner heart shine -->
+  <path d="M100 155 C68 130, 35 105, 35 78 C35 55, 52 42, 70 42 C82 42, 92 50, 100 60 C108 50, 118 42, 130 42 C148 42, 165 55, 165 78 C165 105, 132 130, 100 155Z" stroke="#C0C0C0" stroke-width="1" fill="none" opacity="0.3"/>
+  <!-- Chrome shine accent -->
+  <path d="M65 55 C58 65, 48 75, 48 78" stroke="#E8E4DE" stroke-width="1.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <!-- SE mark inside -->
+  <text x="100" y="108" text-anchor="middle" font-family="'Oswald', 'Arial Narrow', sans-serif" font-weight="600" font-size="20" fill="#E8E4DE" opacity="0.6" letter-spacing="0.05em">SE</text>
+  <!-- Gold accent dot -->
+  <circle cx="100" cy="125" r="2" fill="#C4A35A" opacity="0.5"/>
+</svg>
