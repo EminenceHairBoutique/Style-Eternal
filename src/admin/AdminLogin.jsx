@@ -1,19 +1,71 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+/**
+ * AdminLogin — standalone login page for /admin/login
+ *
+ * Flow (race-free, no auth-lock contention):
+ * 1. signInWithPassword stores the session.
+ * 2. supabase-js fires onAuthStateChange (SIGNED_IN) — handled by UserContext,
+ *    which owns the single auth subscription. UserContext fetches the profile
+ *    (including is_admin) and updates `user`.
+ * 3. The effect below reacts to `user`:
+ *      - user.isAdmin === true  → navigate to /admin
+ *      - logged in but not admin → show an inline error
+ *
+ * We deliberately do NOT call supabase.auth.getSession() in a polling loop after
+ * sign-in. Repeated getSession() calls compete for the auth token Web Lock and
+ * produced "Lock was not released within 5000ms" failures. Reacting to
+ * UserContext (one subscription) is both simpler and lock-safe.
+ */
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import { useUser } from "../context/UserContext";
 import "./admin.css";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, loading } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // True only between a successful sign-in and UserContext confirming the
+  // profile. Lets us tell "non-admin who just logged in" apart from
+  // "non-admin merely viewing the login page".
+  const awaitingAuth = useRef(false);
+  const safetyTimer = useRef(null);
+
+  const from = location.state?.from || "/admin";
+
+  // React to UserContext resolving the signed-in user. Covers both a fresh
+  // login and an existing admin session on page refresh.
+  useEffect(() => {
+    if (loading) return;
+
+    if (user?.isAdmin) {
+      clearTimeout(safetyTimer.current);
+      awaitingAuth.current = false;
+      navigate(from, { replace: true });
+      return;
+    }
+
+    // Signed in but not an admin — only surface this if a login was just made.
+    if (user && !user.isAdmin && awaitingAuth.current) {
+      clearTimeout(safetyTimer.current);
+      awaitingAuth.current = false;
+      setError("This account doesn't have admin access.");
+      setSubmitting(false);
+    }
+  }, [loading, user, from, navigate]);
+
+  // Clean up the safety timer on unmount.
+  useEffect(() => () => clearTimeout(safetyTimer.current), []);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!supabase) {
-      setError("Supabase is not configured — VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is missing.");
+      setError("Supabase is not configured. Check environment variables.");
       return;
     }
     setError("");
@@ -21,21 +73,35 @@ export default function AdminLogin() {
 
     try {
       const { error: signInErr } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       });
       if (signInErr) throw signInErr;
-      // Session is now stored by supabase-js. UserContext will pick it up via
-      // its own onAuthStateChange subscription. AdminRoute's grace period covers
-      // the brief window while UserContext's async fetchAccountAccess runs.
-      navigate("/admin", { replace: true });
+
+      // Success. Do NOT navigate here and do NOT poll getSession(). UserContext's
+      // onAuthStateChange will fetch the profile and update `user`; the effect
+      // above then navigates (admin) or shows an error (non-admin).
+      awaitingAuth.current = true;
+
+      // Safety net: if the profile never resolves, re-enable the form so the
+      // button doesn't sit on "Signing in…" forever. Single timer, no polling.
+      clearTimeout(safetyTimer.current);
+      safetyTimer.current = setTimeout(() => {
+        if (awaitingAuth.current) {
+          awaitingAuth.current = false;
+          setSubmitting(false);
+          setError("Sign-in is taking longer than expected. Please try again.");
+        }
+      }, 8000);
     } catch (err) {
-      console.error("[AdminLogin] sign-in failed:", err);
       setError(err.message || "Sign-in failed. Check your credentials.");
-    } finally {
       setSubmitting(false);
     }
   };
+
+  // Avoid flashing the form while UserContext is still resolving an existing
+  // session (the effect above will redirect an already-signed-in admin).
+  if (loading) return null;
 
   return (
     <div
@@ -85,9 +151,7 @@ export default function AdminLogin() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "8px" }}>
-          <label htmlFor="admin-email" style={labelStyle}>
-            Email
-          </label>
+          <label htmlFor="admin-email" style={labelStyle}>Email</label>
           <input
             id="admin-email"
             type="email"
@@ -100,9 +164,7 @@ export default function AdminLogin() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "1.5rem" }}>
-          <label htmlFor="admin-password" style={labelStyle}>
-            Password
-          </label>
+          <label htmlFor="admin-password" style={labelStyle}>Password</label>
           <input
             id="admin-password"
             type="password"
@@ -135,7 +197,7 @@ export default function AdminLogin() {
           disabled={submitting}
           style={{
             width: "100%",
-            background: "#c9a96e",
+            background: submitting ? "#a08050" : "#c9a96e",
             color: "#0f0f0f",
             border: "none",
             padding: "0.75rem 1rem",
@@ -144,6 +206,7 @@ export default function AdminLogin() {
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             cursor: submitting ? "wait" : "pointer",
+            transition: "background 0.2s",
           }}
         >
           {submitting ? "Signing in…" : "Sign in"}

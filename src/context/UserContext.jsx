@@ -20,6 +20,7 @@ const EMPTY_USER = {
   accountTier: "customer",
   partnerStatus: "none",
   partnerTier: null,
+  isAdmin: false,
   loyaltyPoints: 0,
   orders: [],
   wishlist: [],
@@ -88,26 +89,27 @@ export const UserProvider = ({ children }) => {
   // If the partner columns aren't installed yet, we fall back safely.
   const fetchAccountAccess = async (userId) => {
     if (!userId || !supabase) {
-      return { accountTier: "customer", partnerStatus: "none", partnerTier: null };
+      return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
     }
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("account_tier, partner_status, partner_tier")
+        .select("account_tier, partner_status, partner_tier, is_admin")
         .eq("id", userId)
         .maybeSingle();
 
       if (error) {
-        return { accountTier: "customer", partnerStatus: "none", partnerTier: null };
+        return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
       }
 
       return {
         accountTier: data?.account_tier || "customer",
         partnerStatus: data?.partner_status || "none",
         partnerTier: data?.partner_tier ?? null,
+        isAdmin: data?.is_admin === true,
       };
     } catch (_e) {
-      return { accountTier: "customer", partnerStatus: "none", partnerTier: null };
+      return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
     }
   };
 

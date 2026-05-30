@@ -156,7 +156,7 @@ export default function App() {
               <Route
                 path="/admin"
                 element={
-                  <AdminRoute redirectTo="/admin/login">
+                  <AdminRoute>
                     <Suspense fallback={<RouteSkeleton />}>
                       <AdminLayout />
                     </Suspense>
