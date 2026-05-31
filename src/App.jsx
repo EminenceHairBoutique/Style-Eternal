@@ -59,6 +59,7 @@ const AdminPages = lazy(() => import("./admin/AdminPages"));
 const AdminPageEditor = lazy(() => import("./admin/AdminPageEditor"));
 const AdminMedia = lazy(() => import("./admin/AdminMedia"));
 const AdminHomepage = lazy(() => import("./admin/AdminHomepage"));
+const AdminBroadcasts = lazy(() => import("./admin/AdminBroadcasts"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders"));
 const AdminOrderDetail = lazy(() => import("./admin/AdminOrderDetail"));
 const AdminCustomers = lazy(() => import("./admin/AdminCustomers"));
@@ -185,6 +186,7 @@ export default function App() {
                 <Route path="pages/:key" element={<Suspense fallback={null}><AdminPageEditor /></Suspense>} />
                 <Route path="homepage" element={<Suspense fallback={null}><AdminHomepage /></Suspense>} />
                 <Route path="media" element={<Suspense fallback={null}><AdminMedia /></Suspense>} />
+                <Route path="broadcasts" element={<Suspense fallback={null}><AdminBroadcasts /></Suspense>} />
               </Route>
             </Routes>
           </AnimatePresence>
