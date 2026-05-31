@@ -3,10 +3,22 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { resolveProductImages } from "../utils/productMedia";
+import { useProductPrice } from "../hooks/useProductOverlay";
 import ComingSoonOverlay from "./ComingSoonOverlay";
 
-const ProductCard = ({ product, featured = false }) => {
+const ProductCard = ({ product: rawProduct, featured = false }) => {
   const { addToCart, openCart } = useCart();
+  // Overlay live price/compare-at from Supabase (admin-editable) onto the
+  // hardcoded product. Falls back to the hardcoded values when no DB row.
+  const overlay = useProductPrice(rawProduct?.slug);
+  const product = overlay
+    ? {
+        ...rawProduct,
+        price: overlay.price != null ? overlay.price : rawProduct.price,
+        comparePrice: overlay.comparePrice != null ? overlay.comparePrice : rawProduct.comparePrice,
+      }
+    : rawProduct;
+
   const images = resolveProductImages(product);
   const img = product.image || images?.[0] || product.images?.[0] || null;
   const imgSecondary = images?.[1] || product.images?.[1] || null;

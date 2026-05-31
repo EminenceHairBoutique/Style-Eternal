@@ -14,6 +14,7 @@ import { motion as Motion } from "framer-motion";
 
 import { products } from "../data/products";
 import { useCart } from "../context/CartContext";
+import { useProductPrice } from "../hooks/useProductOverlay";
 import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
 import NotifyMeForm from "../components/NotifyMeForm";
@@ -140,9 +141,25 @@ export default function ProductDetail() {
   const { addToCart, openCart } = useCart();
 
   /* ---------- find product ---------- */
-  const product = useMemo(
+  const rawProduct = useMemo(
     () => products.find((p) => p.slug === slug || p.id === slug),
     [slug]
+  );
+
+  // Overlay live price/compare-at from Supabase (admin-editable) onto the
+  // hardcoded product so admin price edits show on the live product page.
+  const overlay = useProductPrice(rawProduct?.slug);
+  const product = useMemo(
+    () =>
+      rawProduct && overlay
+        ? {
+            ...rawProduct,
+            price: overlay.price != null ? overlay.price : rawProduct.price,
+            comparePrice:
+              overlay.comparePrice != null ? overlay.comparePrice : rawProduct.comparePrice,
+          }
+        : rawProduct,
+    [rawProduct, overlay]
   );
 
   /* ---------- images ---------- */
