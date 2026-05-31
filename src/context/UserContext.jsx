@@ -87,30 +87,54 @@ export const UserProvider = ({ children }) => {
 
   // Load partner/account tier from public.profiles (RLS should allow select own row).
   // If the partner columns aren't installed yet, we fall back safely.
+  //
+  // Resilience: right after sign-in, supabase-js's auth token Web Lock can be
+  // "stolen" by a concurrent background refresh, causing this query to fail
+  // transiently. A single failure used to default the user to non-admin and
+  // lock real admins out. We now retry a couple of times with a short backoff
+  // before giving up, so a transient lock-steal self-heals.
   const fetchAccountAccess = async (userId) => {
-    if (!userId || !supabase) {
-      return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
-    }
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("account_tier, partner_status, partner_tier, is_admin")
-        .eq("id", userId)
-        .maybeSingle();
+    const FALLBACK = { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
+    if (!userId || !supabase) return FALLBACK;
 
-      if (error) {
-        return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
+    const MAX_ATTEMPTS = 3;
+    const RETRY_DELAY_MS = 400;
+
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("account_tier, partner_status, partner_tier, is_admin")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (!error) {
+          return {
+            accountTier: data?.account_tier || "customer",
+            partnerStatus: data?.partner_status || "none",
+            partnerTier: data?.partner_tier ?? null,
+            isAdmin: data?.is_admin === true,
+          };
+        }
+        // Query returned an error — log and retry (unless this was the last try).
+        if (attempt < MAX_ATTEMPTS) {
+          console.warn(`[UserContext] profiles fetch error (attempt ${attempt}/${MAX_ATTEMPTS}), retrying:`, error.message);
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        } else {
+          console.error("[UserContext] profiles fetch failed after retries:", error.message, error.code);
+        }
+      } catch (e) {
+        // Thrown error (e.g. lock stolen mid-flight) — retry as above.
+        if (attempt < MAX_ATTEMPTS) {
+          console.warn(`[UserContext] profiles fetch threw (attempt ${attempt}/${MAX_ATTEMPTS}), retrying:`, e?.message);
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        } else {
+          console.error("[UserContext] profiles fetch threw after retries:", e?.message);
+        }
       }
-
-      return {
-        accountTier: data?.account_tier || "customer",
-        partnerStatus: data?.partner_status || "none",
-        partnerTier: data?.partner_tier ?? null,
-        isAdmin: data?.is_admin === true,
-      };
-    } catch (_e) {
-      return { accountTier: "customer", partnerStatus: "none", partnerTier: null, isAdmin: false };
     }
+
+    return FALLBACK;
   };
 
   /* ---------- SESSION HYDRATION ---------- */
