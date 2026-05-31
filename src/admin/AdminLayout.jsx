@@ -11,7 +11,10 @@ const NAV = [
   },
   {
     section: "Catalog",
-    items: [{ label: "Products", to: "/admin/products" }],
+    items: [
+      { label: "Products", to: "/admin/products" },
+      { label: "Drops", to: "/admin/drops" },
+    ],
   },
   {
     section: "Commerce",
@@ -21,22 +24,42 @@ const NAV = [
       { label: "Discounts", to: "/admin/discounts" },
     ],
   },
+  {
+    section: "Content",
+    items: [
+      { label: "Homepage", to: "/admin/homepage" },
+      { label: "Pages", to: "/admin/pages" },
+      { label: "Media", to: "/admin/media" },
+    ],
+  },
+  {
+    section: "Marketing",
+    items: [{ label: "Broadcasts", to: "/admin/broadcasts" }],
+  },
 ];
 
 const TITLES = {
   "/admin": "Dashboard",
   "/admin/products": "Products",
   "/admin/products/new": "New product",
+  "/admin/drops": "Drops",
+  "/admin/drops/new": "New drop",
   "/admin/orders": "Orders",
   "/admin/customers": "Customers",
   "/admin/discounts": "Discount codes",
+  "/admin/homepage": "Homepage",
+  "/admin/pages": "Pages",
+  "/admin/media": "Media library",
+  "/admin/broadcasts": "Broadcasts",
 };
 
 function pageTitle(pathname) {
   if (TITLES[pathname]) return TITLES[pathname];
   if (pathname.startsWith("/admin/products/")) return "Edit product";
+  if (pathname.startsWith("/admin/drops/")) return "Edit drop";
   if (pathname.startsWith("/admin/orders/")) return "Order detail";
   if (pathname.startsWith("/admin/customers/")) return "Customer detail";
+  if (pathname.startsWith("/admin/pages/")) return "Edit page";
   return "Admin";
 }
 

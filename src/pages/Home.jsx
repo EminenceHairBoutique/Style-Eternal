@@ -10,7 +10,9 @@ import BrandPromise from "../components/BrandPromise";
 import SEO from "../components/SEO";
 import HeroVideo from "../components/HeroVideo";
 import NotifyMeForm from "../components/NotifyMeForm";
+import CmsHero from "../components/CmsHero";
 import { subscribeEmail } from "../utils/subscribe";
+import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -29,6 +31,11 @@ export default function Home() {
   const newArrivals = getNewArrivals().slice(0, 8);
   const limitedPieces = getLimitedProducts().slice(0, 4);
   const featuredCollections = collections.filter(c => c.slug !== "archive").slice(0, 4);
+
+  // CMS-managed homepage hero slides. When present, they replace the hardcoded
+  // mosaic hero below; otherwise the original hero renders unchanged.
+  const { content: homeContent } = usePageContent("homepage");
+  const heroSlides = (homeContent?.blocks || []).filter((b) => b.type === "hero");
 
   const [email, setEmail] = useState("");
   const [subStatus, setSubStatus] = useState("idle");
@@ -57,7 +64,10 @@ export default function Home() {
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 1: MOSAIC HERO
+            (replaced by CmsHero when homepage hero slides are configured)
         ═══════════════════════════════════════════════════════════════ */}
+        {heroSlides.length > 0 && <CmsHero slides={heroSlides} />}
+        {heroSlides.length === 0 && (
         <section className="relative overflow-hidden" style={{ minHeight: 680 }}>
 
           {/* ── MOBILE HERO (hidden on md+) ── */}
@@ -322,6 +332,7 @@ export default function Home() {
           </div>
 
         </section>
+        )}
 
         {/* ── TRUST STRIP ── */}
         <div className="border-y border-white/5 bg-se-black">

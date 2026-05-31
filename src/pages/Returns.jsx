@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { RotateCcw, Shield, Clock, AlertCircle, Mail, Tag, PackageCheck, Camera } from "lucide-react";
 import SEO from "../components/SEO";
+import CmsPageShell from "../components/CmsPageShell";
+import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -13,6 +15,18 @@ const fadeUp = {
 };
 
 export default function Returns() {
+  const { content } = usePageContent("returns");
+  if (content?.blocks?.length > 0) {
+    return (
+      <CmsPageShell
+        seoTitle="Returns & Exchanges — Style Eternal"
+        seoDescription="Style Eternal returns and exchanges policy."
+        overline="Support"
+        title={content.title || "RETURNS & EXCHANGES"}
+        blocks={content.blocks}
+      />
+    );
+  }
   return (
     <>
       <SEO

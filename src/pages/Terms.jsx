@@ -3,6 +3,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import SEO from "../components/SEO";
+import CmsPageShell from "../components/CmsPageShell";
+import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -12,6 +14,18 @@ const fadeUp = {
 };
 
 export default function Terms() {
+  const { content } = usePageContent("tos");
+  if (content?.blocks?.length > 0) {
+    return (
+      <CmsPageShell
+        seoTitle="Terms & Conditions — Style Eternal"
+        seoDescription="Terms and conditions governing your use of shopstyleeternal.com and all purchases from Style Eternal."
+        overline="Legal"
+        title={content.title || "TERMS & CONDITIONS"}
+        blocks={content.blocks}
+      />
+    );
+  }
   return (
     <>
       <SEO title="Terms & Conditions — Style Eternal" description="Terms and conditions governing your use of shopstyleeternal.com and all purchases from Style Eternal." />

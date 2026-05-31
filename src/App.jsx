@@ -53,6 +53,13 @@ const AdminLogin = lazy(() => import("./admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./admin/AdminDashboard"));
 const AdminProducts = lazy(() => import("./admin/AdminProducts"));
 const AdminProductForm = lazy(() => import("./admin/AdminProductForm"));
+const AdminDrops = lazy(() => import("./admin/AdminDrops"));
+const AdminDropForm = lazy(() => import("./admin/AdminDropForm"));
+const AdminPages = lazy(() => import("./admin/AdminPages"));
+const AdminPageEditor = lazy(() => import("./admin/AdminPageEditor"));
+const AdminMedia = lazy(() => import("./admin/AdminMedia"));
+const AdminHomepage = lazy(() => import("./admin/AdminHomepage"));
+const AdminBroadcasts = lazy(() => import("./admin/AdminBroadcasts"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders"));
 const AdminOrderDetail = lazy(() => import("./admin/AdminOrderDetail"));
 const AdminCustomers = lazy(() => import("./admin/AdminCustomers"));
@@ -167,11 +174,19 @@ export default function App() {
                 <Route path="products" element={<Suspense fallback={null}><AdminProducts /></Suspense>} />
                 <Route path="products/new" element={<Suspense fallback={null}><AdminProductForm /></Suspense>} />
                 <Route path="products/:id" element={<Suspense fallback={null}><AdminProductForm /></Suspense>} />
+                <Route path="drops" element={<Suspense fallback={null}><AdminDrops /></Suspense>} />
+                <Route path="drops/new" element={<Suspense fallback={null}><AdminDropForm /></Suspense>} />
+                <Route path="drops/:id" element={<Suspense fallback={null}><AdminDropForm /></Suspense>} />
                 <Route path="orders" element={<Suspense fallback={null}><AdminOrders /></Suspense>} />
                 <Route path="orders/:id" element={<Suspense fallback={null}><AdminOrderDetail /></Suspense>} />
                 <Route path="customers" element={<Suspense fallback={null}><AdminCustomers /></Suspense>} />
                 <Route path="customers/:id" element={<Suspense fallback={null}><AdminCustomerDetail /></Suspense>} />
                 <Route path="discounts" element={<Suspense fallback={null}><AdminDiscounts /></Suspense>} />
+                <Route path="pages" element={<Suspense fallback={null}><AdminPages /></Suspense>} />
+                <Route path="pages/:key" element={<Suspense fallback={null}><AdminPageEditor /></Suspense>} />
+                <Route path="homepage" element={<Suspense fallback={null}><AdminHomepage /></Suspense>} />
+                <Route path="media" element={<Suspense fallback={null}><AdminMedia /></Suspense>} />
+                <Route path="broadcasts" element={<Suspense fallback={null}><AdminBroadcasts /></Suspense>} />
               </Route>
             </Routes>
           </AnimatePresence>
