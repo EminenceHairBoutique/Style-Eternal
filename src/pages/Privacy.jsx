@@ -3,6 +3,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import SEO from "../components/SEO";
+import CmsPageShell from "../components/CmsPageShell";
+import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -12,6 +14,18 @@ const fadeUp = {
 };
 
 export default function Privacy() {
+  const { content } = usePageContent("privacy");
+  if (content?.blocks?.length > 0) {
+    return (
+      <CmsPageShell
+        seoTitle="Privacy Policy — Style Eternal"
+        seoDescription="How Style Eternal collects, uses, and protects your personal information."
+        overline="Legal"
+        title={content.title || "PRIVACY POLICY"}
+        blocks={content.blocks}
+      />
+    );
+  }
   return (
     <>
       <SEO title="Privacy Policy — Style Eternal" description="How Style Eternal collects, uses, and protects your personal information when you visit shopstyleeternal.com." />

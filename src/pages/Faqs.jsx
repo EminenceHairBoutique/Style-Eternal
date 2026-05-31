@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ChevronDown, Search, MessageCircle, Mail, HelpCircle } from "lucide-react";
 import SEO from "../components/SEO";
+import CmsPageShell from "../components/CmsPageShell";
+import { usePageContent } from "../hooks/usePageContent";
 
 const CATEGORY_ICONS = {
   "Orders & Shipping": "📦",
@@ -113,8 +115,21 @@ function FaqItem({ q, a, isOpen, onToggle, index }) {
 }
 
 export default function Faqs() {
+  const { content } = usePageContent("faq");
   const [openId, setOpenId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  if (content?.blocks?.length > 0) {
+    return (
+      <CmsPageShell
+        seoTitle="FAQs — Style Eternal"
+        seoDescription="Frequently asked questions about Style Eternal orders, products, returns, and more."
+        overline="Support"
+        title={content.title || "FREQUENTLY ASKED QUESTIONS"}
+        blocks={content.blocks}
+      />
+    );
+  }
 
   const filteredFaqs = FAQS.map((section) => ({
     ...section,

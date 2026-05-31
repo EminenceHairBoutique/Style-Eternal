@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { Truck, Clock, Globe, ShieldCheck, Package, MapPin, AlertTriangle } from "lucide-react";
 import SEO from "../components/SEO";
+import CmsPageShell from "../components/CmsPageShell";
+import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -13,6 +15,18 @@ const fadeUp = {
 };
 
 export default function Shipping() {
+  const { content } = usePageContent("shipping");
+  if (content?.blocks?.length > 0) {
+    return (
+      <CmsPageShell
+        seoTitle="Shipping — Style Eternal"
+        seoDescription="Style Eternal shipping information, timelines, and rates."
+        overline="Support"
+        title={content.title || "SHIPPING"}
+        blocks={content.blocks}
+      />
+    );
+  }
   return (
     <>
       <SEO

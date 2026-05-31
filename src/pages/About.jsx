@@ -3,6 +3,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import SEO from "../components/SEO";
+import CmsPageShell from "../components/CmsPageShell";
+import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -12,6 +14,18 @@ const fadeUp = {
 };
 
 export default function About() {
+  const { content } = usePageContent("about");
+  if (content?.blocks?.length > 0) {
+    return (
+      <CmsPageShell
+        seoTitle="About — Style Eternal"
+        seoDescription="The story behind Style Eternal — born in Newark, built to last."
+        overline="Our Story"
+        title={content.title || "ABOUT"}
+        blocks={content.blocks}
+      />
+    );
+  }
   return (
     <>
       <SEO

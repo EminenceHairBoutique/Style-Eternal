@@ -24,6 +24,10 @@ const NAV = [
       { label: "Discounts", to: "/admin/discounts" },
     ],
   },
+  {
+    section: "Content",
+    items: [{ label: "Pages", to: "/admin/pages" }],
+  },
 ];
 
 const TITLES = {
@@ -35,6 +39,7 @@ const TITLES = {
   "/admin/orders": "Orders",
   "/admin/customers": "Customers",
   "/admin/discounts": "Discount codes",
+  "/admin/pages": "Pages",
 };
 
 function pageTitle(pathname) {
@@ -43,6 +48,7 @@ function pageTitle(pathname) {
   if (pathname.startsWith("/admin/drops/")) return "Edit drop";
   if (pathname.startsWith("/admin/orders/")) return "Order detail";
   if (pathname.startsWith("/admin/customers/")) return "Customer detail";
+  if (pathname.startsWith("/admin/pages/")) return "Edit page";
   return "Admin";
 }
 
