@@ -53,6 +53,8 @@ const AdminLogin = lazy(() => import("./admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./admin/AdminDashboard"));
 const AdminProducts = lazy(() => import("./admin/AdminProducts"));
 const AdminProductForm = lazy(() => import("./admin/AdminProductForm"));
+const AdminDrops = lazy(() => import("./admin/AdminDrops"));
+const AdminDropForm = lazy(() => import("./admin/AdminDropForm"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders"));
 const AdminOrderDetail = lazy(() => import("./admin/AdminOrderDetail"));
 const AdminCustomers = lazy(() => import("./admin/AdminCustomers"));
@@ -167,6 +169,9 @@ export default function App() {
                 <Route path="products" element={<Suspense fallback={null}><AdminProducts /></Suspense>} />
                 <Route path="products/new" element={<Suspense fallback={null}><AdminProductForm /></Suspense>} />
                 <Route path="products/:id" element={<Suspense fallback={null}><AdminProductForm /></Suspense>} />
+                <Route path="drops" element={<Suspense fallback={null}><AdminDrops /></Suspense>} />
+                <Route path="drops/new" element={<Suspense fallback={null}><AdminDropForm /></Suspense>} />
+                <Route path="drops/:id" element={<Suspense fallback={null}><AdminDropForm /></Suspense>} />
                 <Route path="orders" element={<Suspense fallback={null}><AdminOrders /></Suspense>} />
                 <Route path="orders/:id" element={<Suspense fallback={null}><AdminOrderDetail /></Suspense>} />
                 <Route path="customers" element={<Suspense fallback={null}><AdminCustomers /></Suspense>} />

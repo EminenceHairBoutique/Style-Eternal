@@ -11,7 +11,10 @@ const NAV = [
   },
   {
     section: "Catalog",
-    items: [{ label: "Products", to: "/admin/products" }],
+    items: [
+      { label: "Products", to: "/admin/products" },
+      { label: "Drops", to: "/admin/drops" },
+    ],
   },
   {
     section: "Commerce",
@@ -27,6 +30,8 @@ const TITLES = {
   "/admin": "Dashboard",
   "/admin/products": "Products",
   "/admin/products/new": "New product",
+  "/admin/drops": "Drops",
+  "/admin/drops/new": "New drop",
   "/admin/orders": "Orders",
   "/admin/customers": "Customers",
   "/admin/discounts": "Discount codes",
@@ -35,6 +40,7 @@ const TITLES = {
 function pageTitle(pathname) {
   if (TITLES[pathname]) return TITLES[pathname];
   if (pathname.startsWith("/admin/products/")) return "Edit product";
+  if (pathname.startsWith("/admin/drops/")) return "Edit drop";
   if (pathname.startsWith("/admin/orders/")) return "Order detail";
   if (pathname.startsWith("/admin/customers/")) return "Customer detail";
   return "Admin";

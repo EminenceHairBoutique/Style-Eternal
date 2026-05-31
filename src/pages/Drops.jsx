@@ -1,11 +1,12 @@
 // src/pages/Drops.jsx — Style Eternal
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { DROPS_ROADMAP } from "../data/products";
 import SEO from "../components/SEO";
 import { subscribeEmail } from "../utils/subscribe";
+import { useDrops } from "../hooks/useDrops";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -44,6 +45,26 @@ const drops = [
 export default function Drops() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
+
+  // Live drops from the CMS. When present, they take over the drop list;
+  // otherwise we fall back to the original hardcoded showcase below.
+  const { drops: liveDrops } = useDrops();
+  const dropList = useMemo(() => {
+    if (liveDrops && liveDrops.length > 0) {
+      return liveDrops.map((d) => ({
+        id: d.id,
+        name: d.name,
+        slug: d.slug,
+        tagline: "",
+        season: d.release_at ? new Date(d.release_at).getFullYear().toString() : "",
+        pieces: d.products?.length || 0,
+        description: d.description || "",
+        status: "available",
+        image: d.hero_image || (d.products?.[0]?.images?.[0] ?? null),
+      }));
+    }
+    return drops;
+  }, [liveDrops]);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -84,7 +105,7 @@ export default function Drops() {
         {/* Drop List */}
         <section className="section-pad">
           <div className="content-wide space-y-0">
-            {drops.map((drop, i) => {
+            {dropList.map((drop, i) => {
               const isComingSoon = drop.status === "coming-soon";
               return (
                 <Motion.article
