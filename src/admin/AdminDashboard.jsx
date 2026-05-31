@@ -42,6 +42,7 @@ function MetricCard({ label, value, hint }) {
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [recentOrders, setRecentOrders] = useState([]);
+  const [lowStock, setLowStock] = useState([]);
   const [stats, setStats] = useState({ revenue: 0, orderCount: 0, customerCount: 0, aov: 0 });
   const [error, setError] = useState("");
 
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
       try {
         const since = thirtyDaysAgoISO();
 
-        const [recentRes, statRes] = await Promise.all([
+        const [recentRes, statRes, productRes] = await Promise.all([
           supabase
             .from("orders")
             .select("id, customer_name, customer_email, total, status, created_at, order_items(product_name)")
@@ -65,12 +66,24 @@ export default function AdminDashboard() {
             .from("orders")
             .select("user_id, total, status, created_at")
             .gte("created_at", since),
+          supabase
+            .from("products")
+            .select("id, name, stock, low_stock_threshold")
+            .order("stock", { ascending: true })
+            .limit(100),
         ]);
 
         if (cancelled) return;
 
         if (recentRes.error) throw recentRes.error;
         if (statRes.error) throw statRes.error;
+        // Low-stock is non-critical — don't fail the whole dashboard if it errors.
+        if (!productRes.error) {
+          const low = (productRes.data || []).filter(
+            (p) => Number(p.stock ?? 0) <= Number(p.low_stock_threshold ?? 5)
+          );
+          setLowStock(low);
+        }
 
         setRecentOrders(recentRes.data || []);
 
@@ -109,6 +122,76 @@ export default function AdminDashboard() {
           <MetricCard key={m.label} {...m} />
         ))}
       </div>
+
+      {!loading && lowStock.length > 0 && (
+        <div
+          style={{
+            background: "#fff",
+            border: "0.5px solid #ecdca0",
+            borderLeft: "2px solid #c79320",
+            padding: "1rem 1.25rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              fontSize: "0.7rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "#8a6310",
+              fontWeight: 600,
+              marginBottom: "0.75rem",
+            }}
+          >
+            Low stock alerts
+            <span
+              style={{
+                fontSize: "0.62rem",
+                background: "#fbf1d9",
+                border: "0.5px solid #ecdca0",
+                borderRadius: 999,
+                padding: "1px 7px",
+              }}
+            >
+              {lowStock.length}
+            </span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+            {lowStock.slice(0, 8).map((p) => (
+              <Link
+                key={p.id}
+                to={`/admin/products/${p.id}`}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  fontSize: "0.85rem",
+                  color: "#1a1a1a",
+                  textDecoration: "none",
+                  padding: "0.3rem 0",
+                  borderBottom: "0.5px solid #f0eeea",
+                }}
+              >
+                <span style={{ borderBottom: "0.5px solid #c9a96e" }}>{p.name}</span>
+                <span style={{ color: "#8a6310", fontWeight: 600 }}>
+                  {p.stock ?? 0} left
+                </span>
+              </Link>
+            ))}
+            {lowStock.length > 8 && (
+              <Link
+                to="/admin/products"
+                style={{ fontSize: "0.78rem", color: "#6b6b6b", marginTop: "0.4rem", textDecoration: "underline" }}
+              >
+                + {lowStock.length - 8} more — view all products
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       <h2 style={{ fontSize: "0.95rem", margin: "0 0 1rem", color: "#1a1a1a", letterSpacing: "0.05em", textTransform: "uppercase" }}>
         Recent orders
