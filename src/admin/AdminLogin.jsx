@@ -99,9 +99,12 @@ export default function AdminLogin() {
     }
   };
 
-  // Avoid flashing the form while UserContext is still resolving an existing
-  // session (the effect above will redirect an already-signed-in admin).
-  if (loading) return null;
+  // NOTE: we deliberately do NOT return null while loading.
+  // Hiding the form caused a blank page when supabase-js's getSession()
+  // hung waiting for the auth lock (orphaned from previous sessions).
+  // The redirect effect above handles the already-logged-in-admin case
+  // once loading resolves — the form is visible immediately and replaced
+  // by the redirect if/when it fires.
 
   return (
     <div
