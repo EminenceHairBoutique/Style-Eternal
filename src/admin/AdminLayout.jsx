@@ -26,7 +26,11 @@ const NAV = [
   },
   {
     section: "Content",
-    items: [{ label: "Pages", to: "/admin/pages" }],
+    items: [
+      { label: "Homepage", to: "/admin/homepage" },
+      { label: "Pages", to: "/admin/pages" },
+      { label: "Media", to: "/admin/media" },
+    ],
   },
 ];
 
@@ -39,7 +43,9 @@ const TITLES = {
   "/admin/orders": "Orders",
   "/admin/customers": "Customers",
   "/admin/discounts": "Discount codes",
+  "/admin/homepage": "Homepage",
   "/admin/pages": "Pages",
+  "/admin/media": "Media library",
 };
 
 function pageTitle(pathname) {
