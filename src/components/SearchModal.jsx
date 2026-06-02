@@ -1,13 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion as Motion, AnimatePresence } from "framer-motion";
-import { Search, X } from "lucide-react";
+import { Search, X, Sparkles } from "lucide-react";
 import { products } from "../data/products";
 import { resolveProductImages } from "../utils/productMedia";
 import { norm } from "../utils/strings";
+import { buildAiCatalog } from "../utils/aiCatalog";
 
 export default function SearchModal({ open, onClose }) {
   const [q, setQ] = useState("");
+  const [aiResults, setAiResults] = useState(null); // null | product[]
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -23,7 +27,32 @@ export default function SearchModal({ open, onClose }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  useEffect(() => { if (!open) setQ(""); }, [open]);
+  useEffect(() => { if (!open) { setQ(""); setAiResults(null); setAiError(""); } }, [open]);
+  // Reset AI results when the query changes.
+  useEffect(() => { setAiResults(null); setAiError(""); }, [q]);
+
+  const runAiSearch = async () => {
+    const query = q.trim();
+    if (!query || aiLoading) return;
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "search", query, products: buildAiCatalog() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "AI search failed");
+      const bySlug = new Map(products.map((p) => [p.slug, p]));
+      setAiResults((data.slugs || []).map((s) => bySlug.get(s)).filter(Boolean));
+    } catch (e) {
+      setAiError(e.message || "AI search unavailable");
+      setAiResults([]);
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const results = useMemo(() => {
     const needle = norm(q);
@@ -71,9 +100,22 @@ export default function SearchModal({ open, onClose }) {
                 ref={inputRef}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Search tees, hoodies, drops, collections..."
+                onKeyDown={(e) => { if (e.key === "Enter") runAiSearch(); }}
+                placeholder="Search, or describe what you want…"
                 className="flex-1 bg-transparent outline-none text-sm text-se-bone placeholder:text-se-steel font-body"
               />
+              {q.trim() && (
+                <button
+                  type="button"
+                  onClick={runAiSearch}
+                  disabled={aiLoading}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-accent tracking-[0.12em] uppercase border border-se-gold/50 text-se-gold hover:border-se-gold transition disabled:opacity-50"
+                  aria-label="AI search"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {aiLoading ? "Thinking…" : "AI Search"}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={onClose}
@@ -85,6 +127,38 @@ export default function SearchModal({ open, onClose }) {
             </div>
 
             <div className="px-6 py-5">
+              {/* AI semantic results */}
+              {aiResults !== null && (
+                <div className="mb-6">
+                  <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-se-gold font-accent mb-3">
+                    <Sparkles className="w-3 h-3" /> AI Picks
+                  </p>
+                  {aiError ? (
+                    <p className="text-[12px] text-red-400">{aiError}</p>
+                  ) : aiResults.length === 0 ? (
+                    <p className="text-[12px] text-se-steel">No AI matches — try the keyword results below.</p>
+                  ) : (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {aiResults.map((p) => (
+                        <Link key={`ai-${p.id}`} to={`/products/${p.slug}`} onClick={onClose} className="group border border-se-gold/20 bg-se-asphalt hover:bg-se-concrete transition overflow-hidden">
+                          <div className="aspect-[4/3] overflow-hidden bg-se-asphalt">
+                            {resolveProductImages(p)?.[0] ? (
+                              <img src={resolveProductImages(p)[0]} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center"><span className="font-display text-[14px] tracking-[0.2em] text-se-steel">SE</span></div>
+                            )}
+                          </div>
+                          <div className="p-4">
+                            <p className="text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">{p.category}{p.colorway ? ` · ${p.colorway}` : ""}</p>
+                            <p className="mt-1 text-[13px] text-se-bone font-accent">{p.name}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {!q ? (
                 <div className="grid md:grid-cols-3 gap-4">
                   <QuickLink title="Tees" href="/shop/tees" subtitle="Heavyweight cuts" onClick={onClose} />

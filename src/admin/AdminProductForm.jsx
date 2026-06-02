@@ -35,6 +35,31 @@ export default function AdminProductForm() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [generating, setGenerating] = useState(false);
+
+  // AI: draft on-brand copy from name + category (+ existing description as notes).
+  const generateDescription = async () => {
+    if (!form.name.trim()) return showToast("Add a product name first", "error");
+    setGenerating(true);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess?.session?.access_token;
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ action: "describe", name: form.name, category: form.category, notes: form.description }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Generation failed");
+      const merged = [data.description, data.materials && `\n\n${data.materials}`].filter(Boolean).join("");
+      setForm((f) => ({ ...f, description: merged }));
+      showToast("Draft generated — review before saving");
+    } catch (e) {
+      showToast(e.message || "Generation failed", "error");
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   useEffect(() => {
     if (isNew || !supabase) return;
@@ -129,6 +154,25 @@ export default function AdminProductForm() {
           />
         </Field>
         <Field label="Description">
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.4rem" }}>
+            <button
+              type="button"
+              onClick={generateDescription}
+              disabled={generating}
+              style={{
+                background: "transparent",
+                border: "0.5px solid #c9a96e",
+                color: "#8a6310",
+                padding: "0.3rem 0.7rem",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                letterSpacing: "0.03em",
+                cursor: generating ? "wait" : "pointer",
+              }}
+            >
+              {generating ? "Generating…" : "✨ Generate description"}
+            </button>
+          </div>
           <textarea
             style={{ ...inputStyle, minHeight: "120px", resize: "vertical", fontFamily: "inherit" }}
             value={form.description}

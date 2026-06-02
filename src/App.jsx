@@ -10,6 +10,7 @@ import TrackingScripts from "./components/TrackingScripts";
 const CartDrawer = lazy(() => import("./components/CartDrawer"));
 const DiscountModal = lazy(() => import("./components/DiscountModal"));
 const EmailPopup = lazy(() => import("./components/EmailPopup"));
+const StylistChat = lazy(() => import("./components/StylistChat"));
 import useRouteAnalytics from "./hooks/useRouteAnalytics";
 
 // Layout
@@ -200,6 +201,11 @@ export default function App() {
         {!isAdminRoute && <CookieBanner />}
         {!isAdminRoute && <Footer />}
       </div>
+      {!isAdminRoute && (
+        <Suspense fallback={null}>
+          <StylistChat />
+        </Suspense>
+      )}
       </ProductsProvider>
     </RecentlyViewedProvider>
   );
