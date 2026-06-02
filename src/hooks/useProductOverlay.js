@@ -21,7 +21,7 @@ function notify() {
   subscribers.forEach((cb) => cb());
 }
 
-async function loadOverlay() {
+export async function loadOverlay() {
   if (cache) return cache;
   if (inflight) return inflight;
   if (!supabase) {
