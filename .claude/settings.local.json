@@ -16,7 +16,8 @@
       "Skill(claude-api)",
       "Skill(claude-api:*)",
       "Bash(npm install *)",
-      "Bash(git commit -m 'feat\\(ai\\): stylist chat, fit finder, AI copy, semantic search *)"
+      "Bash(git commit -m 'feat\\(ai\\): stylist chat, fit finder, AI copy, semantic search *)",
+      "Bash(git commit -m 'feat\\(account\\): tier visualizer, points history, orders, for-you *)"
     ]
   }
 }
