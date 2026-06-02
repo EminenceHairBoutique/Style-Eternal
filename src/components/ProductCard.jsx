@@ -1,13 +1,16 @@
 // src/components/ProductCard.jsx — Style Eternal
 import React from "react";
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useUser } from "../context/UserContext";
 import { resolveProductImages } from "../utils/productMedia";
 import { useProductPrice } from "../hooks/useProductOverlay";
 import ComingSoonOverlay from "./ComingSoonOverlay";
 
 const ProductCard = ({ product: rawProduct, featured = false }) => {
   const { addToCart, openCart } = useCart();
+  const { user, toggleWishlistItem } = useUser();
   // Overlay live price/compare-at from Supabase (admin-editable) onto the
   // hardcoded product. Falls back to the hardcoded values when no DB row.
   const overlay = useProductPrice(rawProduct?.slug);
@@ -43,6 +46,19 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
   const isSoldOut = product.releaseStatus === "sold-out";
   const isPreorder = product.releaseStatus === "preorder";
   const isComingSoon = product.releaseStatus === "coming-soon";
+
+  const isWishlisted = !!user?.wishlist?.some((w) => w.id === product.id);
+  const handleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlistItem?.({
+      id: product.id,
+      slug: product.slug,
+      name: product.displayName || product.name,
+      price: Number(product.price ?? 0),
+      image: img,
+    });
+  };
 
   return (
     <Link
@@ -112,6 +128,22 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
             {product.badge}
           </div>
         )}
+
+        {/* Wishlist heart */}
+        <button
+          type="button"
+          onClick={handleWishlist}
+          aria-pressed={isWishlisted}
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-se-black/40 backdrop-blur-sm border border-white/10 transition-colors hover:bg-se-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-se-gold"
+        >
+          <Heart
+            size={15}
+            className={isWishlisted ? "text-se-gold" : "text-se-bone/70"}
+            fill={isWishlisted ? "#c9a96e" : "none"}
+          />
+        </button>
 
         {/* Quick Add (desktop hover) — only for available/preorder */}
         {!isSoldOut && !isComingSoon && (

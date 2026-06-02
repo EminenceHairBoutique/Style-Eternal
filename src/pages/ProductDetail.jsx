@@ -19,6 +19,7 @@ import { useRecentlyViewed } from "../context/RecentlyViewedContext";
 import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
 import NotifyMeForm from "../components/NotifyMeForm";
+import FitFinder from "../components/FitFinder";
 import { resolveProductImages } from "../utils/productMedia";
 
 /* ------------------------------------------------------------------ */
@@ -355,6 +356,9 @@ export default function ProductDetail() {
   const addBtnRef = useRef(null);
   const [showSticky, setShowSticky] = useState(false);
 
+  /* ---------- AI fit finder ---------- */
+  const [fitOpen, setFitOpen] = useState(false);
+
   /* reset state when product changes */
   useEffect(() => {
     setSelectedSize(null);
@@ -627,9 +631,13 @@ export default function ProductDetail() {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-label text-se-bone/80">Size</span>
-                    {product.fit && (
-                      <span className="text-[11px] font-accent text-se-steel">{product.fit} fit</span>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setFitOpen(true)}
+                      className="text-[11px] font-accent text-se-gold hover:text-se-gold/80 underline underline-offset-2 transition-colors"
+                    >
+                      Find my size
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-5 gap-2">
@@ -853,6 +861,14 @@ export default function ProductDetail() {
           <ProductRow title="RECENTLY VIEWED" items={recentlyViewed} />
         )}
       </main>
+
+      {/* ---- AI Fit Finder ---- */}
+      <FitFinder
+        open={fitOpen}
+        onClose={() => setFitOpen(false)}
+        product={product}
+        onPick={(size) => { setSelectedSize(size); setSizeError(false); }}
+      />
 
       {/* ---- Sticky mobile add-to-cart bar ---- */}
       {canAddToCart && (

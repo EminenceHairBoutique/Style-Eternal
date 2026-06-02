@@ -6,7 +6,18 @@
       "Read(//c/Users/chinx/OneDrive/Documents/Style Eternal Website/src/pages/**)",
       "Bash(done)",
       "Bash(npx vite:*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'feat\\(pdp\\): gallery, breadcrumbs, complete-the-look, sticky cart, stock urgency, recently viewed *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'feat\\(ux\\): shop performance, functional filters, card hover *)",
+      "Bash(git commit -m 'feat\\(drops\\): countdown, waitlist, live state, drop detail *)",
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(npm install *)",
+      "Bash(git commit -m 'feat\\(ai\\): stylist chat, fit finder, AI copy, semantic search *)",
+      "Bash(git commit -m 'feat\\(account\\): tier visualizer, points history, orders, for-you *)"
     ]
   }
 }

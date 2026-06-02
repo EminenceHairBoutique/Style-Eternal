@@ -4,11 +4,13 @@ import { AnimatePresence, motion as Motion } from "framer-motion";
 import { useCart } from "./context/CartContext";
 import { useUser } from "./context/UserContext";
 import { RecentlyViewedProvider } from "./context/RecentlyViewedContext";
+import { ProductsProvider } from "./context/ProductsContext";
 import CookieBanner from "./components/legal/CookieBanner";
 import TrackingScripts from "./components/TrackingScripts";
 const CartDrawer = lazy(() => import("./components/CartDrawer"));
 const DiscountModal = lazy(() => import("./components/DiscountModal"));
 const EmailPopup = lazy(() => import("./components/EmailPopup"));
+const StylistChat = lazy(() => import("./components/StylistChat"));
 import useRouteAnalytics from "./hooks/useRouteAnalytics";
 
 // Layout
@@ -28,6 +30,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Collections = lazy(() => import("./pages/Collections"));
 const CollectionDetail = lazy(() => import("./pages/CollectionDetail"));
 const Drops = lazy(() => import("./pages/Drops"));
+const DropDetail = lazy(() => import("./pages/DropDetail"));
 const Editorial = lazy(() => import("./pages/Editorial"));
 const Community = lazy(() => import("./pages/Community"));
 const About = lazy(() => import("./pages/About"));
@@ -76,6 +79,7 @@ export default function App() {
 
   return (
     <RecentlyViewedProvider>
+      <ProductsProvider>
       <TrackingScripts />
       <Suspense fallback={null}>
         <CartDrawer />
@@ -107,7 +111,7 @@ export default function App() {
                 ["/collections", <Collections />],
                 ["/collections/:slug", <CollectionDetail />],
                 ["/drops", <Drops />],
-                ["/drops/:slug", <CollectionDetail />],
+                ["/drops/:slug", <DropDetail />],
                 ["/editorial", <Editorial />],
                 ["/community", <Community />],
                 ["/about", <About />],
@@ -197,6 +201,12 @@ export default function App() {
         {!isAdminRoute && <CookieBanner />}
         {!isAdminRoute && <Footer />}
       </div>
+      {!isAdminRoute && (
+        <Suspense fallback={null}>
+          <StylistChat />
+        </Suspense>
+      )}
+      </ProductsProvider>
     </RecentlyViewedProvider>
   );
 }

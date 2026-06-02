@@ -4,11 +4,8 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
 import { motion as Motion } from "framer-motion";
 
-import {
-  products,
-  categories,
-  collections,
-} from "../data/products";
+import { categories, collections } from "../data/products";
+import { useProducts } from "../context/ProductsContext";
 import ProductCard from "../components/ProductCard";
 import SEO from "../components/SEO";
 
@@ -26,18 +23,23 @@ export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  // Shared catalog (instant hardcoded data + live price overlay) — no flash.
+  const { products: allProducts } = useProducts();
+
   // Read params
   const filterParam = searchParams.get("filter") || "";
   const collectionParam = searchParams.get("collection") || "";
   const sortParam = searchParams.get("sort") || "featured";
   const sizeParam = searchParams.get("size") || "";
+  const priceMin = searchParams.get("min") || "";
+  const priceMax = searchParams.get("max") || "";
 
   // Category from route
   const activeCategory = categories.find((c) => c.slug === categorySlug) || null;
 
   // Filter + Sort
   const filtered = useMemo(() => {
-    let result = [...products];
+    let result = [...allProducts];
 
     // Special filters
     if (filterParam === "new") result = result.filter((p) => p.isNew);
@@ -49,8 +51,14 @@ export default function Shop() {
     // Collection filter
     if (collectionParam) result = result.filter((p) => p.collectionSlug === collectionParam);
 
-    // Size filter
+    // Size availability filter
     if (sizeParam) result = result.filter((p) => p.sizes?.includes(sizeParam));
+
+    // Price range filter
+    const minN = priceMin !== "" ? Number(priceMin) : null;
+    const maxN = priceMax !== "" ? Number(priceMax) : null;
+    if (minN != null && !Number.isNaN(minN)) result = result.filter((p) => Number(p.price ?? 0) >= minN);
+    if (maxN != null && !Number.isNaN(maxN)) result = result.filter((p) => Number(p.price ?? 0) <= maxN);
 
     // Sort
     switch (sortParam) {
@@ -73,7 +81,7 @@ export default function Shop() {
     }
 
     return result;
-  }, [filterParam, activeCategory, collectionParam, sortParam, sizeParam]);
+  }, [allProducts, filterParam, activeCategory, collectionParam, sortParam, sizeParam, priceMin, priceMax]);
 
   const updateParam = (key, value) => {
     const p = new URLSearchParams(searchParams);
@@ -86,7 +94,34 @@ export default function Shop() {
     setSearchParams({}, { replace: true });
   };
 
-  const hasActiveFilters = filterParam || collectionParam || sizeParam;
+  // Active filter chips — each individually removable.
+  const activeChips = [];
+  if (filterParam) {
+    activeChips.push({ key: "filter", label: filterParam === "new" ? "New Arrivals" : "Limited" });
+  }
+  if (collectionParam) {
+    const col = collections.find((c) => c.slug === collectionParam);
+    activeChips.push({ key: "collection", label: col?.name || collectionParam });
+  }
+  if (sizeParam) activeChips.push({ key: "size", label: `Size ${sizeParam}` });
+  if (priceMin || priceMax) {
+    const label =
+      priceMin && priceMax ? `$${priceMin}–$${priceMax}` : priceMin ? `$${priceMin}+` : `Under $${priceMax}`;
+    activeChips.push({ key: "price", label });
+  }
+
+  const removeChip = (key) => {
+    const p = new URLSearchParams(searchParams);
+    if (key === "price") {
+      p.delete("min");
+      p.delete("max");
+    } else {
+      p.delete(key);
+    }
+    setSearchParams(p, { replace: true });
+  };
+
+  const hasActiveFilters = activeChips.length > 0;
 
   // Page title
   const pageTitle = activeCategory
@@ -237,6 +272,44 @@ export default function Shop() {
                   </div>
                 </div>
 
+                {/* Price range */}
+                <div>
+                  <p className="text-[10px] font-accent uppercase tracking-[0.2em] text-se-steel mb-3">Price</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: "Under $75", min: "", max: "75" },
+                      { label: "$75–$150", min: "75", max: "150" },
+                      { label: "$150+", min: "150", max: "" },
+                    ].map((range) => {
+                      const isActive = priceMin === range.min && priceMax === range.max;
+                      return (
+                        <button
+                          key={range.label}
+                          type="button"
+                          onClick={() => {
+                            const p = new URLSearchParams(searchParams);
+                            if (isActive) {
+                              p.delete("min");
+                              p.delete("max");
+                            } else {
+                              range.min ? p.set("min", range.min) : p.delete("min");
+                              range.max ? p.set("max", range.max) : p.delete("max");
+                            }
+                            setSearchParams(p, { replace: true });
+                          }}
+                          className={`text-[10px] font-accent uppercase tracking-[0.15em] px-3 py-1.5 border transition ${
+                            isActive
+                              ? "border-se-bone text-se-bone"
+                              : "border-white/10 text-se-steel hover:text-se-bone hover:border-white/20"
+                          }`}
+                        >
+                          {range.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Quick filters */}
                 <div>
                   <p className="text-[10px] font-accent uppercase tracking-[0.2em] text-se-steel mb-3">Quick Filter</p>
@@ -261,6 +334,26 @@ export default function Shop() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Active filter chips */}
+        {hasActiveFilters && (
+          <div className="border-b border-white/5">
+            <div className="content-wide py-3 flex flex-wrap items-center gap-2">
+              {activeChips.map((chip) => (
+                <button
+                  key={chip.key}
+                  type="button"
+                  onClick={() => removeChip(chip.key)}
+                  className="inline-flex items-center gap-1.5 text-[10px] font-accent uppercase tracking-[0.12em] px-3 py-1.5 border border-se-gold/40 text-se-bone hover:border-se-gold transition group"
+                  aria-label={`Remove filter ${chip.label}`}
+                >
+                  {chip.label}
+                  <X size={12} className="text-se-gold group-hover:scale-110 transition-transform" />
+                </button>
+              ))}
             </div>
           </div>
         )}

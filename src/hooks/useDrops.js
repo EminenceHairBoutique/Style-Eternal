@@ -65,7 +65,7 @@ export function useDrop(slug) {
         .from("drops")
         .select(SELECT)
         .eq("slug", slug)
-        .eq("status", "live")
+        .neq("status", "draft")
         .maybeSingle();
       if (!active) return;
       if (err) setError(err.message);
@@ -76,4 +76,36 @@ export function useDrop(slug) {
   }, [slug]);
 
   return { drop, loading, error };
+}
+
+/**
+ * useAllDrops — every non-draft drop (scheduled / live / archived) for the
+ * public drop calendar, ordered by release date (soonest first).
+ */
+export function useAllDrops() {
+  const [drops, setDrops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+    (async () => {
+      const { data, error: err } = await supabase
+        .from("drops")
+        .select(SELECT)
+        .neq("status", "draft")
+        .order("release_at", { ascending: true, nullsFirst: false });
+      if (!active) return;
+      if (err) setError(err.message);
+      else setDrops((data || []).map(normalize));
+      setLoading(false);
+    })();
+    return () => { active = false; };
+  }, []);
+
+  return { drops, loading, error };
 }
