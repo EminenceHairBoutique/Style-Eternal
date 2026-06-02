@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { useCart } from "./context/CartContext";
 import { useUser } from "./context/UserContext";
+import { RecentlyViewedProvider } from "./context/RecentlyViewedContext";
 import CookieBanner from "./components/legal/CookieBanner";
 import TrackingScripts from "./components/TrackingScripts";
 const CartDrawer = lazy(() => import("./components/CartDrawer"));
@@ -74,7 +75,7 @@ export default function App() {
   const { user } = useUser();
 
   return (
-    <>
+    <RecentlyViewedProvider>
       <TrackingScripts />
       <Suspense fallback={null}>
         <CartDrawer />
@@ -196,6 +197,6 @@ export default function App() {
         {!isAdminRoute && <CookieBanner />}
         {!isAdminRoute && <Footer />}
       </div>
-    </>
+    </RecentlyViewedProvider>
   );
 }

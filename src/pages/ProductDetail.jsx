@@ -1,5 +1,5 @@
 // src/pages/ProductDetail.jsx — Style Eternal (Streetwear PDP)
-import React, { useMemo, useState, useEffect, useCallback } from "react";
+import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -15,6 +15,7 @@ import { motion as Motion } from "framer-motion";
 import { products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useProductPrice } from "../hooks/useProductOverlay";
+import { useRecentlyViewed } from "../context/RecentlyViewedContext";
 import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
 import NotifyMeForm from "../components/NotifyMeForm";
@@ -48,10 +49,7 @@ function Accordion({ title, children, defaultOpen = false }) {
 
       <Motion.div
         initial={false}
-        animate={{
-          height: open ? "auto" : 0,
-          opacity: open ? 1 : 0,
-        }}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="overflow-hidden"
       >
@@ -122,6 +120,189 @@ function SizeGuideTable({ measurements, sizes }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Image Gallery — desktop zoom + thumbnails, mobile swipe carousel   */
+/* ------------------------------------------------------------------ */
+function ProductBadge({ badge }) {
+  if (!badge) return null;
+  return (
+    <div
+      className={`absolute top-4 left-4 badge ${
+        badge === "Sold Out"
+          ? "badge-sold-out"
+          : badge === "Limited"
+          ? "badge-limited"
+          : "badge-new"
+      }`}
+    >
+      {badge}
+    </div>
+  );
+}
+
+function ImageGallery({ images, alt, badge }) {
+  const [active, setActive] = useState(0);
+  const [zoom, setZoom] = useState({ on: false, x: 50, y: 50 });
+  const scrollRef = useRef(null);
+
+  // Reset to first image whenever the image set changes (product switch).
+  useEffect(() => {
+    setActive(0);
+    if (scrollRef.current) scrollRef.current.scrollLeft = 0;
+  }, [images]);
+
+  const hasMultiple = images.length > 1;
+
+  const onMove = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    setZoom({ on: true, x, y });
+  };
+  const onLeave = () => setZoom((z) => ({ ...z, on: false }));
+
+  // Mobile: derive active dot from scroll position.
+  const onScroll = (e) => {
+    const el = e.currentTarget;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    if (idx !== active) setActive(idx);
+  };
+
+  if (images.length === 0) {
+    return (
+      <div className="relative aspect-[3/4] bg-se-charcoal overflow-hidden rounded-sm flex items-center justify-center">
+        <span className="font-display text-2xl tracking-[0.3em] text-se-steel/40">SE</span>
+        <ProductBadge badge={badge} />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* ── Desktop: vertical thumbnails + zoomable main ── */}
+      <div className="hidden lg:flex lg:gap-4">
+        {hasMultiple && (
+          <div className="flex flex-col gap-3">
+            {images.map((src, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-label={`View image ${i + 1} of ${images.length}`}
+                aria-current={active === i}
+                className="w-[72px] h-[72px] overflow-hidden transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-se-gold"
+                style={{
+                  borderRadius: "2px",
+                  border: `0.5px solid ${active === i ? "#c9a96e" : "#2a2a2a"}`,
+                  opacity: active === i ? 1 : 0.65,
+                }}
+              >
+                <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div
+          className="relative flex-1 aspect-[3/4] bg-se-charcoal overflow-hidden rounded-sm cursor-zoom-in"
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+        >
+          {images.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt={`${alt} — view ${i + 1}`}
+              aria-hidden={i !== active}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                opacity: i === active ? 1 : 0,
+                transform: zoom.on && i === active ? "scale(1.35)" : "scale(1)",
+                transformOrigin: `${zoom.x}% ${zoom.y}%`,
+                transition: "opacity 180ms ease, transform 120ms ease-out",
+              }}
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+          ))}
+          <ProductBadge badge={badge} />
+        </div>
+      </div>
+
+      {/* ── Mobile: swipeable scroll-snap carousel + dots ── */}
+      <div className="lg:hidden">
+        <div
+          ref={scrollRef}
+          onScroll={onScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory rounded-sm [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {images.map((src, i) => (
+            <div key={i} className="snap-center shrink-0 w-full">
+              <div className="relative aspect-[3/4] bg-se-charcoal overflow-hidden">
+                <img
+                  src={src}
+                  alt={`${alt} — view ${i + 1}`}
+                  className="w-full h-full object-cover"
+                  loading={i === 0 ? "eager" : "lazy"}
+                />
+                {i === 0 && <ProductBadge badge={badge} />}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {hasMultiple && (
+          <div className="flex justify-center gap-2 mt-3" role="tablist" aria-label="Image position">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to image ${i + 1}`}
+                aria-selected={active === i}
+                onClick={() => {
+                  setActive(i);
+                  if (scrollRef.current) {
+                    scrollRef.current.scrollTo({ left: i * scrollRef.current.clientWidth, behavior: "smooth" });
+                  }
+                }}
+                className="h-1.5 rounded-full transition-all duration-200"
+                style={{
+                  width: active === i ? 20 : 6,
+                  background: active === i ? "#c9a96e" : "rgba(232,228,222,0.35)",
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Compact product row (Complete the Look / Recently Viewed)          */
+/* ------------------------------------------------------------------ */
+function ProductRow({ title, items }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <section className="section-pad border-t border-white/[0.06]">
+      <div className="content-wide">
+        <h2 className="font-display text-xl tracking-[0.2em] text-se-bone mb-8">{title}</h2>
+        <div
+          className="flex gap-5 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {items.map((p) => (
+            <div key={p.id} className="shrink-0 w-[200px]">
+              <ProductCard product={p} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Fade-in wrapper                                                     */
 /* ------------------------------------------------------------------ */
 const fadeUp = {
@@ -139,6 +320,7 @@ const fadeUp = {
 export default function ProductDetail() {
   const { slug } = useParams();
   const { addToCart, openCart } = useCart();
+  const { recentSlugs, addSlug } = useRecentlyViewed();
 
   /* ---------- find product ---------- */
   const rawProduct = useMemo(
@@ -146,8 +328,7 @@ export default function ProductDetail() {
     [slug]
   );
 
-  // Overlay live price/compare-at from Supabase (admin-editable) onto the
-  // hardcoded product so admin price edits show on the live product page.
+  // Overlay live price/compare-at/stock from Supabase (admin-editable).
   const overlay = useProductPrice(rawProduct?.slug);
   const product = useMemo(
     () =>
@@ -164,21 +345,28 @@ export default function ProductDetail() {
 
   /* ---------- images ---------- */
   const images = useMemo(() => resolveProductImages(product), [product]);
-  const [activeImg, setActiveImg] = useState(0);
 
   /* ---------- selections ---------- */
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [sizeError, setSizeError] = useState(false);
 
+  /* ---------- sticky add-to-cart (mobile) ---------- */
+  const addBtnRef = useRef(null);
+  const [showSticky, setShowSticky] = useState(false);
+
   /* reset state when product changes */
   useEffect(() => {
-    setActiveImg(0);
     setSelectedSize(null);
     setQuantity(1);
     setSizeError(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [slug]);
+
+  /* record recently viewed */
+  useEffect(() => {
+    if (product?.slug) addSlug(product.slug);
+  }, [product?.slug, addSlug]);
 
   /* ---------- derived ---------- */
   const isSoldOut = product?.releaseStatus === "sold-out";
@@ -186,18 +374,53 @@ export default function ProductDetail() {
   const isComingSoon = product?.releaseStatus === "coming-soon";
   const canAddToCart = !isSoldOut && !isComingSoon;
 
-  /* ---------- related products ---------- */
-  const related = useMemo(() => {
+  // Stock urgency: prefer the live Supabase stock, fall back to limitedQty.
+  const effectiveStock =
+    overlay?.stock != null ? overlay.stock : (typeof product?.limitedQty === "number" ? product.limitedQty : null);
+  const lowThreshold = typeof product?.low_stock_threshold === "number" ? product.low_stock_threshold : 5;
+  const showOnlyXLeft = effectiveStock != null && effectiveStock > 0 && effectiveStock <= lowThreshold;
+  const soldOutSizes = Array.isArray(product?.soldOutSizes) ? product.soldOutSizes : [];
+
+  /* ---------- sticky bar observer ---------- */
+  useEffect(() => {
+    const el = addBtnRef.current;
+    if (!el || !canAddToCart) {
+      setShowSticky(false);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [canAddToCart, slug]);
+
+  /* ---------- complete the look (same category, then fill) ---------- */
+  const completeTheLook = useMemo(() => {
     if (!product) return [];
-    return products
-      .filter(
-        (p) =>
-          p.id !== product.id &&
-          p.collectionSlug === product.collectionSlug &&
-          p.releaseStatus !== "coming-soon"
-      )
-      .slice(0, 4);
+    const eligible = (p) => p.id !== product.id && p.releaseStatus !== "coming-soon";
+    const sameCat = products.filter((p) => eligible(p) && p.category === product.category);
+    let picks = sameCat.slice(0, 4);
+    if (picks.length < 4) {
+      const chosen = new Set(picks.map((p) => p.id));
+      const fill = products
+        .filter((p) => eligible(p) && !chosen.has(p.id))
+        .slice(0, 4 - picks.length);
+      picks = [...picks, ...fill];
+    }
+    return picks;
   }, [product]);
+
+  /* ---------- recently viewed (excluding current) ---------- */
+  const recentlyViewed = useMemo(
+    () =>
+      recentSlugs
+        .filter((s) => s !== product?.slug)
+        .map((s) => products.find((p) => p.slug === s))
+        .filter(Boolean),
+    [recentSlugs, product?.slug]
+  );
 
   /* ---------- add to cart ---------- */
   const handleAddToCart = useCallback(() => {
@@ -231,16 +454,11 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="min-h-screen bg-se-black flex flex-col items-center justify-center gap-6 px-6">
-        <h1 className="font-display text-3xl text-se-bone tracking-wider">
-          PRODUCT NOT FOUND
-        </h1>
+        <h1 className="font-display text-3xl text-se-bone tracking-wider">PRODUCT NOT FOUND</h1>
         <p className="text-se-steel font-body text-sm">
-          This product doesn't exist or has been removed.
+          This product doesn&apos;t exist or has been removed.
         </p>
-        <Link
-          to="/shop"
-          className="btn-primary px-8 py-3 text-[11px] tracking-[0.2em]"
-        >
+        <Link to="/shop" className="btn-primary px-8 py-3 text-[11px] tracking-[0.2em]">
           BACK TO SHOP
         </Link>
       </div>
@@ -252,18 +470,22 @@ export default function ProductDetail() {
   /* ================================================================ */
   const siteUrl = import.meta?.env?.VITE_SITE_URL || "https://www.shopstyleeternal.com";
   const productUrl = `${siteUrl}/products/${product.slug}`;
+  const categoryLabel = product.category
+    ? product.category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : null;
+  const categoryHref = product.category ? `/shop/${product.category}` : "/shop";
+  const productName = product.displayName || product.name;
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Product",
         "@id": `${productUrl}#product`,
-        name: product.displayName || product.name,
+        name: productName,
         description: product.description,
         url: productUrl,
-        image: images.map((img) =>
-          String(img).startsWith("http") ? img : `${siteUrl}${img}`
-        ),
+        image: images.map((img) => (String(img).startsWith("http") ? img : `${siteUrl}${img}`)),
         brand: { "@type": "Brand", name: "Style Eternal" },
         ...(product.price
           ? {
@@ -272,6 +494,9 @@ export default function ProductDetail() {
                 price: product.price,
                 priceCurrency: "USD",
                 url: productUrl,
+                availability: isSoldOut
+                  ? "https://schema.org/OutOfStock"
+                  : "https://schema.org/InStock",
               },
             }
           : {}),
@@ -281,7 +506,10 @@ export default function ProductDetail() {
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
           { "@type": "ListItem", position: 2, name: "Shop", item: `${siteUrl}/shop` },
-          { "@type": "ListItem", position: 3, name: product.displayName || product.name },
+          ...(categoryLabel
+            ? [{ "@type": "ListItem", position: 3, name: categoryLabel, item: `${siteUrl}${categoryHref}` }]
+            : []),
+          { "@type": "ListItem", position: categoryLabel ? 4 : 3, name: productName },
         ],
       },
     ],
@@ -290,7 +518,7 @@ export default function ProductDetail() {
   return (
     <>
       <SEO
-        title={`${product.displayName || product.name} | Style Eternal`}
+        title={`${productName} | Style Eternal`}
         description={product.description}
         image={images[0]}
         type="product"
@@ -298,16 +526,32 @@ export default function ProductDetail() {
       />
 
       <main className="min-h-screen bg-se-black">
-        {/* ---- Breadcrumb / Back ---- */}
-        <div className="content-wide pt-6 pb-4">
-          <Link
-            to="/shop"
-            className="inline-flex items-center gap-1.5 text-se-steel hover:text-se-bone text-[11px] font-accent tracking-[0.15em] uppercase transition-colors"
-          >
-            <ChevronLeft size={14} />
-            Back to Shop
-          </Link>
-        </div>
+        {/* ---- Breadcrumbs ---- */}
+        <nav aria-label="Breadcrumb" className="content-wide pt-6 pb-4">
+          <ol className="flex flex-wrap items-center gap-1.5 text-[11px] font-accent tracking-[0.08em]">
+            <li>
+              <Link to="/" className="text-se-steel hover:text-se-bone transition-colors">Home</Link>
+            </li>
+            <li className="text-se-steel/40">/</li>
+            <li>
+              <Link to="/shop" className="text-se-steel hover:text-se-bone transition-colors">Shop</Link>
+            </li>
+            {categoryLabel && (
+              <>
+                <li className="text-se-steel/40">/</li>
+                <li>
+                  <Link to={categoryHref} className="text-se-steel hover:text-se-bone transition-colors">
+                    {categoryLabel}
+                  </Link>
+                </li>
+              </>
+            )}
+            <li className="text-se-steel/40">/</li>
+            <li aria-current="page" className="text-se-gold truncate max-w-[55vw] sm:max-w-none">
+              {productName}
+            </li>
+          </ol>
+        </nav>
 
         {/* ============================================================ */}
         {/*  PRODUCT GRID — image left, info right                       */}
@@ -321,63 +565,7 @@ export default function ProductDetail() {
               variants={fadeUp}
               className="lg:sticky lg:top-24 lg:self-start"
             >
-              {/* Main image */}
-              <div className="relative aspect-[3/4] bg-se-charcoal overflow-hidden rounded-sm">
-                {images.length > 0 ? (
-                  <img
-                    key={activeImg}
-                    src={images[activeImg]}
-                    alt={`${product.displayName || product.name} — view ${activeImg + 1}`}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <span className="font-display text-2xl tracking-[0.3em] text-se-steel/40">
-                      SE
-                    </span>
-                  </div>
-                )}
-
-                {/* Badge overlay */}
-                {product.badge && (
-                  <div
-                    className={`absolute top-4 left-4 badge ${
-                      product.badge === "Sold Out"
-                        ? "badge-sold-out"
-                        : product.badge === "Limited"
-                        ? "badge-limited"
-                        : "badge-new"
-                    }`}
-                  >
-                    {product.badge}
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnails */}
-              {images.length > 1 && (
-                <div className="flex gap-3 mt-3 overflow-x-auto pb-1">
-                  {images.map((src, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setActiveImg(i)}
-                      className={`relative flex-shrink-0 w-20 h-20 rounded-sm overflow-hidden border-2 transition-all duration-200 ${
-                        activeImg === i
-                          ? "border-se-gold"
-                          : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
-                    >
-                      <img
-                        src={src}
-                        alt={`Thumbnail ${i + 1}`}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+              <ImageGallery images={images} alt={productName} badge={product.badge} />
             </Motion.div>
 
             {/* ── RIGHT: Product Info ── */}
@@ -400,7 +588,7 @@ export default function ProductDetail() {
 
               {/* Product name */}
               <h1 className="font-display text-3xl md:text-4xl text-se-bone tracking-wider leading-tight">
-                {product.displayName || product.name}
+                {productName}
               </h1>
 
               {/* Price */}
@@ -428,9 +616,7 @@ export default function ProductDetail() {
                       style={{ backgroundColor: product.colorHex }}
                     />
                   )}
-                  <span className="text-[13px] font-accent text-se-bone/70">
-                    {product.colorway}
-                  </span>
+                  <span className="text-[13px] font-accent text-se-bone/70">{product.colorway}</span>
                 </div>
               )}
 
@@ -442,39 +628,49 @@ export default function ProductDetail() {
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-label text-se-bone/80">Size</span>
                     {product.fit && (
-                      <span className="text-[11px] font-accent text-se-steel">
-                        {product.fit} fit
-                      </span>
+                      <span className="text-[11px] font-accent text-se-steel">{product.fit} fit</span>
                     )}
                   </div>
 
                   <div className="grid grid-cols-5 gap-2">
-                    {product.sizes.map((size) => (
-                      <button
-                        key={size}
-                        type="button"
-                        onClick={() => {
-                          setSelectedSize(size);
-                          setSizeError(false);
-                        }}
-                        disabled={isSoldOut || isComingSoon}
-                        className={`py-2.5 text-[12px] font-accent font-medium tracking-[0.1em] uppercase rounded-sm border transition-all duration-200 ${
-                          selectedSize === size
-                            ? "bg-se-bone text-se-black border-se-bone"
-                            : isSoldOut || isComingSoon
-                            ? "border-white/[0.06] text-se-steel/40 cursor-not-allowed"
-                            : "border-white/[0.1] text-se-bone/70 hover:border-se-bone/40 hover:text-se-bone"
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
+                    {product.sizes.map((size) => {
+                      const sizeSoldOut = soldOutSizes.includes(size);
+                      const disabled = isSoldOut || isComingSoon || sizeSoldOut;
+                      return (
+                        <button
+                          key={size}
+                          type="button"
+                          onClick={() => {
+                            if (disabled) return;
+                            setSelectedSize(size);
+                            setSizeError(false);
+                          }}
+                          disabled={disabled}
+                          aria-label={sizeSoldOut ? `Size ${size} — out of stock` : `Size ${size}`}
+                          className={`py-2.5 text-[12px] font-accent font-medium tracking-[0.1em] uppercase rounded-sm border transition-all duration-200 ${
+                            selectedSize === size
+                              ? "bg-se-bone text-se-black border-se-bone"
+                              : disabled
+                              ? "border-white/[0.06] text-se-steel/40 cursor-not-allowed line-through"
+                              : "border-white/[0.1] text-se-bone/70 hover:border-se-bone/40 hover:text-se-bone"
+                          }`}
+                          style={sizeSoldOut ? { opacity: 0.35 } : undefined}
+                        >
+                          {size}
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  {sizeError && (
-                    <p className="text-[11px] text-red-400 font-accent mt-2">
-                      Please select a size
+                  {/* Stock urgency */}
+                  {showOnlyXLeft && (
+                    <p className="text-[11px] font-accent text-se-gold tracking-[0.1em] uppercase mt-2.5">
+                      Only {effectiveStock} left
                     </p>
+                  )}
+
+                  {sizeError && (
+                    <p className="text-[11px] text-red-400 font-accent mt-2">Please select a size</p>
                   )}
                 </div>
               )}
@@ -507,15 +703,8 @@ export default function ProductDetail() {
                 </div>
               )}
 
-              {/* ---- Limited stock note ---- */}
-              {product.limited && product.limitedQty && !isSoldOut && (
-                <p className="text-[11px] font-accent text-se-gold tracking-[0.1em] uppercase mb-4">
-                  Only {product.limitedQty} remaining
-                </p>
-              )}
-
               {/* ---- Add to Cart / Status Button ---- */}
-              <div className="mt-2 mb-8">
+              <div ref={addBtnRef} className="mt-2 mb-8">
                 {isSoldOut ? (
                   <button
                     type="button"
@@ -557,15 +746,12 @@ export default function ProductDetail() {
                 ].map((item) => {
                   const SignalIcon = item.icon;
                   return (
-                  <div
-                    key={item.label}
-                    className="flex flex-col items-center gap-2 text-center"
-                  >
-                    <SignalIcon size={16} className="text-se-steel" />
-                    <span className="text-[10px] font-accent text-se-steel tracking-[0.05em] uppercase leading-tight">
-                      {item.label}
-                    </span>
-                  </div>
+                    <div key={item.label} className="flex flex-col items-center gap-2 text-center">
+                      <SignalIcon size={16} className="text-se-steel" />
+                      <span className="text-[10px] font-accent text-se-steel tracking-[0.05em] uppercase leading-tight">
+                        {item.label}
+                      </span>
+                    </div>
                   );
                 })}
               </div>
@@ -575,19 +761,14 @@ export default function ProductDetail() {
               {/* ============================================================ */}
               {/*  Accordion Sections                                           */}
               {/* ============================================================ */}
-
-              {/* Description */}
               <Accordion title="Description" defaultOpen>
-                {product.story && (
-                  <p className="mb-4 italic text-se-bone/50">{product.story}</p>
-                )}
+                {product.story && <p className="mb-4 italic text-se-bone/50">{product.story}</p>}
                 <p>{product.description}</p>
                 {product.modelInfo && (
                   <p className="mt-4 text-se-steel text-[12px]">{product.modelInfo}</p>
                 )}
               </Accordion>
 
-              {/* Materials & Care */}
               <Accordion title="Materials & Care">
                 <div className="space-y-3">
                   {product.fabric && (
@@ -605,9 +786,7 @@ export default function ProductDetail() {
                   {product.printMethod && (
                     <div>
                       <span className="text-se-bone/90 font-medium">Print: </span>
-                      <span className="capitalize">
-                        {product.printMethod.replace(/-/g, " ")}
-                      </span>
+                      <span className="capitalize">{product.printMethod.replace(/-/g, " ")}</span>
                     </div>
                   )}
                   {product.careInstructions && (
@@ -619,7 +798,6 @@ export default function ProductDetail() {
                 </div>
               </Accordion>
 
-              {/* Size Guide */}
               {product.measurements && product.sizes?.length > 0 && (
                 <Accordion title="Size Guide">
                   <div className="flex items-center gap-2 mb-4 text-se-steel">
@@ -628,26 +806,19 @@ export default function ProductDetail() {
                       Measurements in inches (flat)
                     </span>
                   </div>
-                  <SizeGuideTable
-                    measurements={product.measurements}
-                    sizes={product.sizes}
-                  />
+                  <SizeGuideTable measurements={product.measurements} sizes={product.sizes} />
                   {product.fit && (
                     <p className="mt-4 text-[12px] text-se-bone/50">
-                      This garment has a{" "}
-                      <span className="text-se-bone/80">{product.fit}</span> fit.
+                      This garment has a <span className="text-se-bone/80">{product.fit}</span> fit.
                       {product.fit === "oversized" &&
                         " We recommend your usual size for the intended silhouette, or size down for a more standard fit."}
-                      {product.fit === "relaxed" &&
-                        " True to size with a comfortable, relaxed drape."}
-                      {product.fit === "regular" &&
-                        " True to size with a classic, tailored feel."}
+                      {product.fit === "relaxed" && " True to size with a comfortable, relaxed drape."}
+                      {product.fit === "regular" && " True to size with a classic, tailored feel."}
                     </p>
                   )}
                 </Accordion>
               )}
 
-              {/* Shipping */}
               <Accordion title="Shipping & Returns">
                 <div className="space-y-3">
                   <p>
@@ -674,24 +845,39 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* ============================================================ */}
-        {/*  Related Products                                             */}
-        {/* ============================================================ */}
-        {related.length > 0 && (
-          <section className="section-pad border-t border-white/[0.06]">
-            <div className="content-wide">
-              <h2 className="font-display text-xl tracking-[0.2em] text-se-bone mb-10">
-                FROM THE SAME COLLECTION
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                {related.map((p) => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
-              </div>
-            </div>
-          </section>
+        {/* ---- Complete the Look ---- */}
+        <ProductRow title="COMPLETE THE LOOK" items={completeTheLook} />
+
+        {/* ---- Recently Viewed (≥ 2 others) ---- */}
+        {recentlyViewed.length >= 2 && (
+          <ProductRow title="RECENTLY VIEWED" items={recentlyViewed} />
         )}
       </main>
+
+      {/* ---- Sticky mobile add-to-cart bar ---- */}
+      {canAddToCart && (
+        <div
+          className="lg:hidden fixed bottom-0 left-0 right-0 z-40 transition-transform duration-200"
+          style={{ transform: showSticky ? "translateY(0)" : "translateY(110%)" }}
+        >
+          <div className="bg-se-charcoal/95 backdrop-blur border-t border-white/10 px-4 py-3 flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] text-se-bone font-accent font-medium truncate">{productName}</p>
+              <p className="text-[11px] text-se-steel font-accent">
+                {selectedSize ? `Size ${selectedSize}` : "Select size"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="shrink-0 px-5 py-3 rounded-sm text-[12px] font-accent font-semibold tracking-[0.15em] uppercase"
+              style={{ background: "#c9a96e", color: "#0A0A0A" }}
+            >
+              Add — ${product.price * quantity}
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
