@@ -29,6 +29,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Collections = lazy(() => import("./pages/Collections"));
 const CollectionDetail = lazy(() => import("./pages/CollectionDetail"));
 const Drops = lazy(() => import("./pages/Drops"));
+const DropDetail = lazy(() => import("./pages/DropDetail"));
 const Editorial = lazy(() => import("./pages/Editorial"));
 const Community = lazy(() => import("./pages/Community"));
 const About = lazy(() => import("./pages/About"));
@@ -109,7 +110,7 @@ export default function App() {
                 ["/collections", <Collections />],
                 ["/collections/:slug", <CollectionDetail />],
                 ["/drops", <Drops />],
-                ["/drops/:slug", <CollectionDetail />],
+                ["/drops/:slug", <DropDetail />],
                 ["/editorial", <Editorial />],
                 ["/community", <Community />],
                 ["/about", <About />],
