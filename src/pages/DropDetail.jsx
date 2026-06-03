@@ -101,15 +101,14 @@ export default function DropDetail() {
 
       <div className="bg-se-black text-se-bone min-h-screen">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="content-wide pt-6 pb-2">
-          <ol className="flex items-center gap-1.5 text-[11px] font-accent tracking-[0.08em]">
-            <li><Link to="/" className="text-se-steel hover:text-se-bone transition-colors">Home</Link></li>
-            <li className="text-se-steel/40">/</li>
-            <li><Link to="/drops" className="text-se-steel hover:text-se-bone transition-colors">Drops</Link></li>
-            <li className="text-se-steel/40">/</li>
-            <li aria-current="page" className="text-se-gold truncate max-w-[55vw] sm:max-w-none">{drop.name}</li>
-          </ol>
-        </nav>
+        <Breadcrumbs
+          className="content-wide pt-6 pb-2"
+          items={[
+            { label: "Home", to: "/" },
+            { label: "Drops", to: "/drops" },
+            { label: drop.name },
+          ]}
+        />
 
         {/* Hero */}
         <section className="content-wide pt-4 pb-12">

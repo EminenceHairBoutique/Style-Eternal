@@ -8,6 +8,7 @@ import { categories, collections } from "../data/products";
 import { useProducts } from "../context/ProductsContext";
 import ProductCard from "../components/ProductCard";
 import SEO from "../components/SEO";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const SORT_OPTIONS = [
   { key: "featured", label: "Featured" },
@@ -143,6 +144,14 @@ export default function Shop() {
         {/* Header */}
         <section className="pt-28 pb-8 md:pt-36 md:pb-12 border-b border-white/5">
           <div className="content-wide">
+            <Breadcrumbs
+              className="pb-4"
+              items={[
+                { label: "Home", to: "/" },
+                { label: "Shop", to: "/shop" },
+                ...(activeCategory ? [{ label: activeCategory.label }] : []),
+              ]}
+            />
             <p className="text-overline mb-2">Style Eternal</p>
             <h1 className="font-display text-[clamp(2rem,6vw,4rem)] leading-[0.9] tracking-[0.04em]">
               {pageTitle.toUpperCase()}

@@ -96,6 +96,11 @@ export default function App() {
           isCartOpen ? "blur-sm pointer-events-none select-none" : ""
         }`}
       >
+        {!isAdminRoute && (
+          <a href="#main-content" className="skip-to-content">
+            Skip to content
+          </a>
+        )}
         {!isAdminRoute && <Navbar />}
         <ScrollToTop />
 
