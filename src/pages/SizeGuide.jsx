@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
 import { Ruler } from "lucide-react";
 import SEO from "../components/SEO";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -85,6 +86,10 @@ export default function SizeGuide() {
         {/* Hero */}
         <section className="pt-32 pb-16 md:pt-40 md:pb-24 border-b border-white/5">
           <div className="content-wide">
+            <Breadcrumbs
+              className="pb-4"
+              items={[{ label: "Home", to: "/" }, { label: "Size Guide" }]}
+            />
             <Motion.div {...fadeUp}>
               <p className="text-overline mb-4">Fit & Sizing</p>
               <h1 className="font-display text-[clamp(2rem,6vw,4rem)] tracking-[0.04em] mb-4">

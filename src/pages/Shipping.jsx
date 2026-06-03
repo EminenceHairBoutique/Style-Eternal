@@ -5,6 +5,7 @@ import { motion as Motion } from "framer-motion";
 import { Truck, Clock, Globe, ShieldCheck, Package, MapPin, AlertTriangle } from "lucide-react";
 import SEO from "../components/SEO";
 import CmsPageShell from "../components/CmsPageShell";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { usePageContent } from "../hooks/usePageContent";
 
 const fadeUp = {
@@ -38,6 +39,10 @@ export default function Shipping() {
         {/* Hero */}
         <section className="pt-32 pb-16 md:pt-40 md:pb-24 border-b border-white/5">
           <div className="content-wide">
+            <Breadcrumbs
+              className="pb-4"
+              items={[{ label: "Home", to: "/" }, { label: "Shipping" }]}
+            />
             <Motion.div {...fadeUp}>
               <p className="text-overline mb-4">Policy</p>
               <h1 className="font-display text-[clamp(2rem,6vw,4rem)] tracking-[0.04em] mb-4">

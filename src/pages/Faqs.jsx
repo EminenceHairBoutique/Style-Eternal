@@ -5,6 +5,7 @@ import { motion as Motion } from "framer-motion";
 import { ChevronDown, Search, MessageCircle, Mail, HelpCircle } from "lucide-react";
 import SEO from "../components/SEO";
 import CmsPageShell from "../components/CmsPageShell";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { usePageContent } from "../hooks/usePageContent";
 
 const CATEGORY_ICONS = {
@@ -151,6 +152,10 @@ export default function Faqs() {
         {/* Hero */}
         <section className="pt-32 pb-12 md:pt-40 md:pb-20 border-b border-white/5">
           <div className="content-wide">
+            <Breadcrumbs
+              className="pb-4"
+              items={[{ label: "Home", to: "/" }, { label: "FAQs" }]}
+            />
             <Motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
