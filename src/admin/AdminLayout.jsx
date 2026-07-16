@@ -20,6 +20,7 @@ const NAV = [
     section: "Commerce",
     items: [
       { label: "Orders", to: "/admin/orders" },
+      { label: "Returns", to: "/admin/returns" },
       { label: "Customers", to: "/admin/customers" },
       { label: "Discounts", to: "/admin/discounts" },
       { label: "Reviews", to: "/admin/reviews" },
@@ -46,6 +47,7 @@ const TITLES = {
   "/admin/drops": "Drops",
   "/admin/drops/new": "New drop",
   "/admin/orders": "Orders",
+  "/admin/returns": "Returns",
   "/admin/customers": "Customers",
   "/admin/discounts": "Discount codes",
   "/admin/reviews": "Reviews",

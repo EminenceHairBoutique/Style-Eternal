@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import {
   Crown, Receipt, Sparkles, Gift, LogOut, ChevronRight, Star, Zap,
-  Heart, ShoppingBag, RotateCcw, Lock, Clock, Check,
+  Heart, ShoppingBag, RotateCcw, Lock, Clock, Check, Truck, X,
 } from "lucide-react";
 
 import { supabase } from "../../lib/supabaseClient";
@@ -58,6 +58,8 @@ export default function AccountDashboard() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const [tab, setTab] = useState("overview");
+  const [returns, setReturns] = useState([]);
+  const [returnOrder, setReturnOrder] = useState(null); // order being returned
 
   // For You (AI) state.
   const [forYou, setForYou] = useState(null); // null | product[]
@@ -95,7 +97,8 @@ export default function AccountDashboard() {
         }
 
         const ordersSelect =
-          "order_number, created_at, amount_total, currency, status, " +
+          "id, order_number, created_at, amount_total, currency, status, " +
+          "tracking_number, tracking_carrier, tracking_url, shipped_at, " +
           "order_items(product_name, variant, quantity, unit_price, product_id)";
 
         let { data: ord, error: ordErr } = await supabase
@@ -116,11 +119,22 @@ export default function AccountDashboard() {
           ordErr = fallback.error || null;
         }
 
+        // Existing return requests (table may not exist pre-RUNBOOK — ignore errors).
+        let rets = [];
+        try {
+          const { data: retData } = await supabase
+            .from("returns")
+            .select("id, order_id, status, created_at")
+            .eq("user_id", user.id);
+          rets = retData || [];
+        } catch { /* graceful */ }
+
         if (!cancelled) {
           if (profErr) setError(profErr.message || "Failed to load profile.");
           if (ordErr) setError((prev) => prev || ordErr.message || "Failed to load orders.");
           setProfile(prof || null);
           setOrders(ord || []);
+          setReturns(rets);
         }
       } catch (e) {
         if (!cancelled) setError(e?.message || "Something went wrong.");
@@ -366,6 +380,8 @@ export default function AccountDashboard() {
             )}
             {tab === "orders" && (
               <OrdersTab
+                returnsByOrder={new Map(returns.map((r) => [r.order_id, r]))}
+                onRequestReturn={setReturnOrder}
                 loading={loading}
                 orders={orders}
                 matchItem={matchItem}
@@ -383,6 +399,150 @@ export default function AccountDashboard() {
           </Motion.div>
         </AnimatePresence>
       </div>
+
+      {returnOrder && (
+        <ReturnRequestModal
+          order={returnOrder}
+          user={user}
+          onClose={() => setReturnOrder(null)}
+          onSubmitted={(newReturn) => {
+            setReturns((prev) => [...prev, newReturn]);
+            setReturnOrder(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Return request modal ---------------- */
+function ReturnRequestModal({ order, user, onClose, onSubmitted }) {
+  const items = order.order_items || [];
+  const [selected, setSelected] = useState(() => new Set(items.map((_, i) => i)));
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const toggle = (i) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!selected.size) return setError("Select at least one item.");
+    if (!reason.trim()) return setError("Tell us briefly why you're returning it.");
+    setSaving(true);
+    try {
+      const returnItems = items
+        .filter((_, i) => selected.has(i))
+        .map((it) => ({
+          product_name: it.product_name,
+          variant: it.variant,
+          quantity: it.quantity,
+        }));
+
+      const { data, error: insErr } = await supabase
+        .from("returns")
+        .insert({
+          order_id: order.id,
+          user_id: user.id,
+          email: user.email || null,
+          items: returnItems,
+          reason: reason.trim().slice(0, 1000),
+        })
+        .select("id, order_id, status, created_at")
+        .single();
+      if (insErr) throw insErr;
+      onSubmitted(data);
+    } catch (err) {
+      setSaving(false);
+      setError(err?.message || "Could not submit the return. Please try again.");
+    }
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Request a return"
+      className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <form
+        onSubmit={submit}
+        className="bg-se-charcoal border border-white/10 max-w-md w-full p-7 space-y-5 max-h-[85vh] overflow-y-auto"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[10px] tracking-[0.25em] uppercase text-se-gold font-accent mb-1">
+              Return request
+            </p>
+            <h2 className="font-display text-[17px] tracking-[0.08em]">
+              ORDER {order.order_number || ""}
+            </h2>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close" className="text-se-steel hover:text-se-bone transition">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          <span className="block text-[11px] font-accent tracking-[0.15em] uppercase text-se-bone/60">
+            Items to return
+          </span>
+          {items.map((it, i) => (
+            <label key={i} className="flex items-center gap-3 border border-white/5 bg-se-black/40 px-3 py-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selected.has(i)}
+                onChange={() => toggle(i)}
+                className="accent-[#C4A35A]"
+              />
+              <span className="text-[13px] font-accent text-se-bone flex-1 truncate">
+                {it.product_name}
+                {it.variant ? ` · ${it.variant}` : ""} · ×{it.quantity}
+              </span>
+            </label>
+          ))}
+        </div>
+
+        <label className="block">
+          <span className="text-[11px] font-accent tracking-[0.15em] uppercase text-se-bone/60">
+            Reason
+          </span>
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            rows={3}
+            maxLength={1000}
+            required
+            placeholder="Fit, quality, changed your mind…"
+            className="mt-2 w-full bg-se-black border border-white/10 px-4 py-3 text-[14px] text-se-bone focus:outline-none focus:border-se-gold/60 resize-y"
+          />
+        </label>
+
+        <p className="text-[11px] text-se-steel font-accent leading-relaxed">
+          Unworn items with tags qualify within 30 days. We'll review within
+          1–2 business days and email next steps.
+        </p>
+
+        {error && (
+          <p className="text-[12px] text-se-red-bright font-accent" role="alert">{error}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={saving}
+          className={`btn-primary w-full ${saving ? "opacity-70 cursor-wait" : ""}`}
+        >
+          {saving ? "Submitting…" : "Submit Return Request"}
+        </button>
+      </form>
     </div>
   );
 }
@@ -616,7 +776,17 @@ function OverviewTab({ tier, points, pointsHistory, forYou, forYouLoading, upcom
 }
 
 /* ---------------- Orders tab ---------------- */
-function OrdersTab({ loading, orders, matchItem, reorder }) {
+// Returns are accepted on paid/processing/shipped/fulfilled orders within 30 days.
+const RETURN_WINDOW_DAYS = 30;
+function returnEligible(order) {
+  const status = String(order.status || "").toLowerCase();
+  if (!["paid", "processing", "shipped", "fulfilled"].includes(status)) return false;
+  if (!order.created_at || !order.id) return false;
+  const ageDays = (Date.now() - new Date(order.created_at).getTime()) / 86_400_000;
+  return ageDays <= RETURN_WINDOW_DAYS;
+}
+
+function OrdersTab({ loading, orders, matchItem, reorder, returnsByOrder, onRequestReturn }) {
   if (loading) {
     return (
       <div className="space-y-3">
@@ -664,6 +834,41 @@ function OrdersTab({ loading, orders, matchItem, reorder }) {
                 </button>
               </div>
             </div>
+
+            {(o.tracking_url || o.tracking_number || returnsByOrder?.get(o.id) || returnEligible(o)) && (
+              <div className="mt-3 flex items-center gap-4 flex-wrap text-[11px] font-accent">
+                {o.tracking_url ? (
+                  <a
+                    href={o.tracking_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-se-gold hover:text-se-bone transition underline underline-offset-2"
+                  >
+                    <Truck className="w-3.5 h-3.5" aria-hidden="true" />
+                    Track shipment{o.tracking_carrier ? ` (${o.tracking_carrier.toUpperCase()})` : ""}
+                  </a>
+                ) : o.tracking_number ? (
+                  <span className="inline-flex items-center gap-1.5 text-se-bone/60">
+                    <Truck className="w-3.5 h-3.5" aria-hidden="true" />
+                    Tracking {o.tracking_number}
+                  </span>
+                ) : null}
+
+                {returnsByOrder?.get(o.id) ? (
+                  <span className="text-se-steel">
+                    Return {returnsByOrder.get(o.id).status}
+                  </span>
+                ) : returnEligible(o) ? (
+                  <button
+                    type="button"
+                    onClick={() => onRequestReturn(o)}
+                    className="text-se-steel hover:text-se-bone transition underline underline-offset-2"
+                  >
+                    Request return
+                  </button>
+                ) : null}
+              </div>
+            )}
 
             {items.length > 0 && (
               <div className="mt-4 flex items-center gap-3 flex-wrap">

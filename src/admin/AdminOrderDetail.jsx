@@ -4,6 +4,20 @@ import { supabase } from "../lib/supabaseClient";
 import StatusBadge from "./components/StatusBadge";
 import { useAdminToast } from "./components/Toast";
 
+async function fulfillmentPost(payload) {
+  const { data } = await supabase.auth.getSession();
+  const token = data?.session?.access_token;
+  if (!token) throw new Error("Not authenticated");
+  const res = await fetch("/api/admin/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Request failed");
+  return json;
+}
+
 const USD = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 const STATUSES = ["pending", "paid", "processing", "shipped", "fulfilled", "cancelled", "refunded"];
 
@@ -156,6 +170,8 @@ export default function AdminOrderDetail() {
           )}
         </Card>
 
+        <FulfillmentCard order={order} onShipped={(patch) => setOrder({ ...order, ...patch })} />
+
         <Card>
           <Label>Status</Label>
           <select
@@ -182,6 +198,110 @@ export default function AdminOrderDetail() {
         </Card>
       </div>
     </div>
+  );
+}
+
+const CARRIERS = ["usps", "ups", "fedex", "dhl", "other"];
+
+function FulfillmentCard({ order, onShipped }) {
+  const { showToast } = useAdminToast();
+  const [trackingNumber, setTrackingNumber] = useState(order.tracking_number || "");
+  const [carrier, setCarrier] = useState(order.tracking_carrier || "usps");
+  const [busy, setBusy] = useState(false);
+
+  const ship = async () => {
+    if (!trackingNumber.trim()) return showToast("Enter a tracking number", "error");
+    setBusy(true);
+    try {
+      const result = await fulfillmentPost({
+        action: "ship",
+        id: order.id,
+        trackingNumber: trackingNumber.trim(),
+        trackingCarrier: carrier === "other" ? "" : carrier,
+      });
+      onShipped({
+        status: "shipped",
+        tracking_number: trackingNumber.trim(),
+        tracking_carrier: carrier === "other" ? null : carrier,
+        tracking_url: result.trackingUrl || null,
+        shipped_at: new Date().toISOString(),
+      });
+      showToast(result.emailed ? "Marked shipped — customer notified" : "Marked shipped (email not sent)");
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (order.tracking_number) {
+    return (
+      <Card>
+        <Label>Fulfillment</Label>
+        <div style={{ marginTop: "0.5rem", fontSize: "0.85rem" }}>
+          <div style={{ fontFamily: "monospace" }}>{order.tracking_number}</div>
+          <div style={{ color: "#6b6b6b", marginTop: "0.2rem" }}>
+            {(order.tracking_carrier || "carrier").toUpperCase()}
+            {order.shipped_at ? ` · shipped ${new Date(order.shipped_at).toLocaleDateString()}` : ""}
+          </div>
+          {order.tracking_url && (
+            <a
+              href={order.tracking_url}
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: "0.8rem", color: "#1a1a1a", borderBottom: "0.5px solid #c9a96e", textDecoration: "none", marginTop: "0.5rem", display: "inline-block" }}
+            >
+              Track shipment →
+            </a>
+          )}
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <Label>Fulfillment</Label>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginTop: "0.6rem" }}>
+        <input
+          type="text"
+          value={trackingNumber}
+          onChange={(e) => setTrackingNumber(e.target.value)}
+          placeholder="Tracking number"
+          style={{ padding: "0.55rem 0.7rem", border: "0.5px solid #d6d3cc", fontSize: "0.85rem", width: "100%" }}
+        />
+        <select
+          value={carrier}
+          onChange={(e) => setCarrier(e.target.value)}
+          style={{ padding: "0.55rem 0.7rem", border: "0.5px solid #d6d3cc", background: "#fff", fontSize: "0.85rem", width: "100%", color: "#1a1a1a" }}
+        >
+          {CARRIERS.map((c) => (
+            <option key={c} value={c}>{c.toUpperCase()}</option>
+          ))}
+        </select>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={ship}
+          style={{
+            padding: "0.6rem 0.9rem",
+            background: "#1a1a1a",
+            color: "#f5f2ec",
+            border: "none",
+            fontSize: "0.78rem",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            cursor: busy ? "wait" : "pointer",
+            opacity: busy ? 0.7 : 1,
+          }}
+        >
+          {busy ? "Shipping…" : "Mark shipped & notify"}
+        </button>
+        <p style={{ fontSize: "0.72rem", color: "#9a9a9a", margin: 0 }}>
+          Sets status to Shipped and emails the customer their tracking link.
+        </p>
+      </div>
+    </Card>
   );
 }
 

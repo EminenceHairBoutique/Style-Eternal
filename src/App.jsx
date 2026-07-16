@@ -72,6 +72,7 @@ const AdminCustomers = lazy(() => import("./admin/AdminCustomers"));
 const AdminCustomerDetail = lazy(() => import("./admin/AdminCustomerDetail"));
 const AdminDiscounts = lazy(() => import("./admin/AdminDiscounts"));
 const AdminReviews = lazy(() => import("./admin/AdminReviews"));
+const AdminReturns = lazy(() => import("./admin/AdminReturns"));
 
 const STOREFRONT_ROUTES = [
   ["/", Home],
@@ -175,6 +176,7 @@ function AdminRoutes() {
         <Route path="drops/:id" element={<Suspense fallback={null}><AdminDropForm /></Suspense>} />
         <Route path="orders" element={<Suspense fallback={null}><AdminOrders /></Suspense>} />
         <Route path="orders/:id" element={<Suspense fallback={null}><AdminOrderDetail /></Suspense>} />
+        <Route path="returns" element={<Suspense fallback={null}><AdminReturns /></Suspense>} />
         <Route path="customers" element={<Suspense fallback={null}><AdminCustomers /></Suspense>} />
         <Route path="customers/:id" element={<Suspense fallback={null}><AdminCustomerDetail /></Suspense>} />
         <Route path="discounts" element={<Suspense fallback={null}><AdminDiscounts /></Suspense>} />
