@@ -1,11 +1,13 @@
 import Stripe from "stripe";
 import { checkRateLimit } from "./_utils/rateLimit.js";
+import { getUserFromReq } from "./_utils/auth.js";
 import { supabaseServer } from "../lib/supabaseServer.js";
 import { products } from "../src/data/products.js";
 import {
   buildLineItems,
   buildShippingOptions,
   allowedShippingCountries,
+  isDigitalOnly,
   CheckoutError,
 } from "../lib/checkout.js";
 
@@ -84,7 +86,7 @@ export async function createHandler(req, res) {
   }
 
   try {
-    const { items, userId, customerEmail, referralCode } = req.body || {};
+    const { items, userId, customerEmail, referralCode, useStoreCredit } = req.body || {};
 
     if (!items || !Array.isArray(items)) {
       return res.status(400).json({ error: "Invalid cart items" });
@@ -124,6 +126,40 @@ export async function createHandler(req, res) {
       ? Math.max(...items.map((i) => Number(i.leadTimeDays || 0)))
       : 0;
 
+    // Digital gift-card-only orders: nothing ships, nothing to charge for.
+    const digitalOnly = isDigitalOnly(items, products);
+
+    // Store credit: only for a BEARER-VERIFIED user (the body's userId is
+    // client-supplied and must never unlock someone else's balance). Applied
+    // as a one-off coupon; Stripe disallows combining explicit discounts
+    // with allow_promotion_codes, so promo entry is off for these sessions.
+    let storeCredit = null; // { userId, cents, couponId }
+    if (useStoreCredit) {
+      const authedUser = await getUserFromReq(req);
+      if (authedUser) {
+        try {
+          const { data: prof } = await supabaseServer
+            .from("profiles")
+            .select("store_credit_cents")
+            .eq("id", authedUser.id)
+            .maybeSingle();
+          const balance = Number(prof?.store_credit_cents || 0);
+          const cents = Math.min(balance, subtotalCents);
+          if (cents > 0) {
+            const coupon = await stripe.coupons.create({
+              amount_off: cents,
+              currency: "usd",
+              duration: "once",
+              name: "Store credit",
+            });
+            storeCredit = { userId: authedUser.id, cents, couponId: coupon.id };
+          }
+        } catch (err) {
+          console.warn("Store credit skipped:", err?.message || err);
+        }
+      }
+    }
+
     const session = await stripe.checkout.sessions.create({
       // No payment_method_types: automatic payment methods let Stripe show
       // Apple Pay / Google Pay / Link when enabled in the dashboard.
@@ -132,14 +168,21 @@ export async function createHandler(req, res) {
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancel`,
 
-      allow_promotion_codes: true,
+      ...(storeCredit
+        ? { discounts: [{ coupon: storeCredit.couponId }] }
+        : { allow_promotion_codes: true }),
 
       // Physical goods: collect where to ship and charge the promised rates
-      // (free at/above the threshold, flat standard below).
-      shipping_address_collection: {
-        allowed_countries: allowedShippingCountries(process.env),
-      },
-      shipping_options: buildShippingOptions({ subtotalCents, env: process.env }),
+      // (free at/above the threshold, flat standard below). Digital gift
+      // cards skip shipping entirely.
+      ...(digitalOnly
+        ? {}
+        : {
+            shipping_address_collection: {
+              allowed_countries: allowedShippingCountries(process.env),
+            },
+            shipping_options: buildShippingOptions({ subtotalCents, env: process.env }),
+          }),
 
       // Supabase user mapping for loyalty + order history.
       client_reference_id: userId ? String(userId) : undefined,
@@ -152,6 +195,8 @@ export async function createHandler(req, res) {
         referral_code: referralCode ? String(referralCode).slice(0, 40) : "",
         preorder: isPreorderSession ? "true" : "false",
         lead_time_days: isPreorderSession ? String(preorderLeadDays) : "0",
+        store_credit_cents: storeCredit ? String(storeCredit.cents) : "0",
+        store_credit_user: storeCredit ? storeCredit.userId : "",
       },
     });
 

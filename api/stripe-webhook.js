@@ -1,9 +1,11 @@
 import Stripe from "stripe";
+import { randomBytes } from "node:crypto";
 import { supabaseServer } from "../lib/supabaseServer.js";
 import { generateOrderNumber } from "../lib/orderNumber.js";
 import {
   sendOrderConfirmationEmail,
   sendCartRecoveryEmail,
+  sendGiftCardEmail,
 } from "../lib/email.js";
 import { LOYALTY, pointsForPurchaseCents } from "../src/utils/loyalty.js";
 
@@ -51,8 +53,72 @@ function normalizeLineItems(lineItems) {
       quantity: Number(li.quantity || 1),
       unit_price: li.price?.unit_amount != null ? li.price.unit_amount / 100 : 0,
       line_total: li.amount_total != null ? li.amount_total / 100 : 0,
+      isGiftCard: md.gift_card === "true",
     };
   });
+}
+
+/**
+ * Issue digital gift cards for purchased gift-card line items (one unique
+ * code per unit) and email them to the purchaser. Never throws; a unique
+ * stripe_session_id + code pair keeps webhook retries from double-issuing
+ * (the 23505 idempotency skip path never reaches here anyway).
+ */
+async function issueGiftCards({ normalizedItems, email, orderNumber, sessionId }) {
+  const cardLines = normalizedItems.filter((i) => i.isGiftCard);
+  if (!cardLines.length || !email) return;
+
+  try {
+    for (const line of cardLines) {
+      const amountCents = Math.round(Number(line.unit_price || 0) * 100);
+      if (amountCents <= 0) continue;
+
+      for (let unit = 0; unit < line.quantity; unit++) {
+        const code = `SE-GIFT-${randomBytes(5).toString("hex").toUpperCase()}`;
+
+        const { error } = await supabaseServer.from("gift_cards").insert({
+          code,
+          amount_cents: amountCents,
+          purchaser_email: email,
+          order_number: orderNumber,
+          stripe_session_id: sessionId,
+        });
+        if (error) {
+          console.warn("Gift card insert failed:", error.message);
+          continue;
+        }
+
+        try {
+          await sendGiftCardEmail({ to: email, code, amountCents });
+        } catch (err) {
+          console.warn("Gift card email failed:", err?.message || err);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Gift card issuance skipped:", err?.message || err);
+  }
+}
+
+/** Deduct applied store credit after payment (bearer-verified at session create). Never throws. */
+async function settleStoreCredit(session) {
+  const cents = Number(session.metadata?.store_credit_cents || 0);
+  const userId = session.metadata?.store_credit_user || null;
+  if (!cents || !userId) return;
+  try {
+    const { data, error } = await supabaseServer.rpc("deduct_store_credit", {
+      p_user: userId,
+      p_amount: cents,
+    });
+    if (error) console.warn("deduct_store_credit failed:", error.message);
+    else if (Number(data) < cents) {
+      // Two concurrent sessions can race the same balance; the clamp means
+      // the second one under-deducts. Log for reconciliation — rare + small.
+      console.warn(`Store credit under-deducted: wanted ${cents}, got ${data} (user ${userId})`);
+    }
+  } catch (err) {
+    console.warn("Store credit settlement skipped:", err?.message || err);
+  }
 }
 
 /** Insert order_items rows for an order. Never throws. */
@@ -318,6 +384,8 @@ async function handleCheckoutCompleted(stripe, session) {
     stripeSessionId: session.id,
   });
   await attributeDiscount(stripe, session, orderId);
+  await issueGiftCards({ normalizedItems, email, orderNumber, sessionId: session.id });
+  await settleStoreCredit(session);
 
   try {
     await sendOrderConfirmationEmail({

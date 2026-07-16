@@ -3,6 +3,7 @@ import {
   buildLineItems,
   buildShippingOptions,
   allowedShippingCountries,
+  isDigitalOnly,
   CheckoutError,
 } from "../../lib/checkout.js";
 
@@ -84,7 +85,29 @@ describe("buildLineItems", () => {
       slug: "test-tee",
       size: "M",
       product_id: "se-test-tee",
+      gift_card: "",
     });
+  });
+
+  it("flags gift-card lines for webhook issuance and detects digital-only carts", () => {
+    const giftCatalog = [
+      ...CATALOG,
+      { id: "se-gift-50", slug: "gift-card-50", name: "Gift Card", price: 50, sizes: [], releaseStatus: "available", giftCard: true },
+    ];
+    const { lineItems } = buildLineItems({
+      items: [{ slug: "gift-card-50", quantity: 2 }],
+      catalog: giftCatalog,
+    });
+    expect(lineItems[0].price_data.product_data.metadata.gift_card).toBe("true");
+
+    expect(isDigitalOnly([{ slug: "gift-card-50", quantity: 1 }], giftCatalog)).toBe(true);
+    expect(
+      isDigitalOnly(
+        [{ slug: "gift-card-50", quantity: 1 }, { slug: "test-tee", quantity: 1 }],
+        giftCatalog
+      )
+    ).toBe(false);
+    expect(isDigitalOnly([], giftCatalog)).toBe(false);
   });
 
   it("resolves products by id as well as slug", () => {

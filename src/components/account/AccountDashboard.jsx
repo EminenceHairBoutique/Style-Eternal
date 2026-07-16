@@ -76,7 +76,7 @@ export default function AccountDashboard() {
       try {
         let { data: prof, error: profErr } = await supabase
           .from("profiles")
-          .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded")
+          .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -90,7 +90,7 @@ export default function AccountDashboard() {
               lifetime_spend_cents: 0,
               first_purchase_bonus_awarded: false,
             })
-            .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded")
+            .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents")
             .maybeSingle();
           prof = inserted || null;
           profErr = insErr || null;
@@ -328,6 +328,16 @@ export default function AccountDashboard() {
           <StatCard icon={ShoppingBag} label="Orders" value={loading ? "—" : orders.length} sub="All-time" />
         </div>
 
+        <StoreCreditPanel
+          balanceCents={Number(profile?.store_credit_cents || 0)}
+          onRedeemed={(amountCents) =>
+            setProfile((p) => ({
+              ...p,
+              store_credit_cents: Number(p?.store_credit_cents || 0) + amountCents,
+            }))
+          }
+        />
+
         {/* Tier Visualizer */}
         <TierTrack tier={tier} tierIndex={tierIndex} nextTier={nextTier} />
 
@@ -410,6 +420,76 @@ export default function AccountDashboard() {
             setReturnOrder(null);
           }}
         />
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Store credit + gift card redemption ---------------- */
+function StoreCreditPanel({ balanceCents, onRedeemed }) {
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState(null); // { ok, text }
+
+  const redeem = async (e) => {
+    e.preventDefault();
+    if (!code.trim() || busy || !supabase) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      const { data, error } = await supabase.rpc("redeem_gift_card", {
+        p_code: code.trim(),
+      });
+      if (error) throw error;
+      if (data?.ok) {
+        onRedeemed(Number(data.amount_cents || 0));
+        setMessage({ ok: true, text: `${money(data.amount_cents)} added to your store credit.` });
+        setCode("");
+      } else {
+        setMessage({ ok: false, text: data?.error || "That code was not recognized." });
+      }
+    } catch (err) {
+      setMessage({ ok: false, text: err?.message || "Redemption failed. Try again." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mb-8 border border-white/5 bg-se-charcoal p-5 flex flex-col md:flex-row md:items-center gap-4">
+      <div className="flex items-center gap-3 md:min-w-[220px]">
+        <Gift className="w-5 h-5 text-se-gold" aria-hidden="true" />
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">Store credit</p>
+          <p className="text-[18px] font-display tracking-[0.04em]">{money(balanceCents)}</p>
+        </div>
+      </div>
+
+      <form onSubmit={redeem} className="flex-1 flex flex-col sm:flex-row gap-2">
+        <input
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Gift card code (SE-GIFT-…)"
+          aria-label="Gift card code"
+          className="flex-1 bg-se-black border border-white/10 px-4 py-2.5 text-[13px] font-accent text-se-bone focus:outline-none focus:border-se-gold/60 uppercase"
+        />
+        <button
+          type="submit"
+          disabled={busy || !code.trim()}
+          className={`btn-outline text-[10px] whitespace-nowrap ${busy ? "opacity-70 cursor-wait" : ""}`}
+        >
+          {busy ? "Redeeming…" : "Redeem Gift Card"}
+        </button>
+      </form>
+
+      {message && (
+        <p
+          role="status"
+          className={`text-[12px] font-accent ${message.ok ? "text-se-gold" : "text-se-red-bright"}`}
+        >
+          {message.text}
+        </p>
       )}
     </div>
   );

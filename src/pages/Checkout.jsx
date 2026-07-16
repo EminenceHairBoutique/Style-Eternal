@@ -1,12 +1,13 @@
 // src/pages/Checkout.jsx — Style Eternal
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Lock, AlertTriangle, Truck, Loader2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
+import { supabase } from "../lib/supabaseClient";
 import SEO from "../components/SEO";
 import { trackBeginCheckout } from "../utils/track";
-import { formatMoney as money } from "../utils/format";
+import { formatMoney as money, formatMoneyCents } from "../utils/format";
 
 const CONSENT_VERSION = "v1.0";
 const REFERRAL_KEY = "se_referral";
@@ -54,7 +55,7 @@ function MixedCartModal({ onCheckoutDomestic, onCheckoutPreorder, onClose }) {
   );
 }
 
-async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
+async function buildAndRedirectCheckout({ items, user, filterFn, onError, useStoreCredit }) {
   try {
     const filteredItems = filterFn ? items.filter(filterFn) : items;
     const filteredTotal = filteredItems.reduce(
@@ -69,9 +70,19 @@ async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
 
     trackBeginCheckout({ items: filteredItems, value: filteredTotal });
 
+    // Store credit requires a verified identity server-side.
+    const headers = { "Content-Type": "application/json" };
+    if (useStoreCredit && supabase) {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const token = data?.session?.access_token;
+        if (token) headers.Authorization = `Bearer ${token}`;
+      } catch { /* proceed without credit */ }
+    }
+
     const res = await fetch("/api/create-checkout-session", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         items: filteredItems.map((i) => ({
           id: i.id,
@@ -89,6 +100,7 @@ async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
         customerEmail: user?.email || null,
         referralCode: readReferralCode() || undefined,
         consentVersion: CONSENT_VERSION,
+        useStoreCredit: Boolean(useStoreCredit),
       }),
     });
 
@@ -117,7 +129,34 @@ export default function Checkout() {
   const [showMixedModal, setShowMixedModal] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
   const [redirecting, setRedirecting] = useState(false);
+  const [storeCreditCents, setStoreCreditCents] = useState(0);
+  const [useStoreCredit, setUseStoreCredit] = useState(false);
   const rootRef = useRef(null);
+
+  // Available store credit for signed-in customers (gift cards redeem here).
+  useEffect(() => {
+    if (!user?.id || !supabase) {
+      setStoreCreditCents(0);
+      setUseStoreCredit(false);
+      return;
+    }
+    let active = true;
+    supabase
+      .from("profiles")
+      .select("store_credit_cents")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!active) return;
+        const cents = Number(data?.store_credit_cents || 0);
+        setStoreCreditCents(cents);
+        if (cents > 0) setUseStoreCredit(true);
+      })
+      .catch(() => { /* column may not exist pre-RUNBOOK */ });
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
 
   const hasPreorder = items.some((i) => i.isPreorder);
   const hasDomestic = items.some((i) => !i.isPreorder);
@@ -128,12 +167,14 @@ export default function Checkout() {
     setCheckoutError(err?.message || "Payment system temporarily unavailable. Please refresh and try again.");
   };
 
+  const applyCredit = useStoreCredit && storeCreditCents > 0;
+
   async function handleCheckout() {
     if (redirecting) return;
     setCheckoutError(null);
     if (isMixed) { setShowMixedModal(true); return; }
     setRedirecting(true);
-    await buildAndRedirectCheckout({ items, user, onError });
+    await buildAndRedirectCheckout({ items, user, onError, useStoreCredit: applyCredit });
   }
 
   async function handleCheckoutDomestic() {
@@ -141,7 +182,7 @@ export default function Checkout() {
     setShowMixedModal(false);
     setCheckoutError(null);
     setRedirecting(true);
-    await buildAndRedirectCheckout({ items, user, filterFn: (i) => !i.isPreorder, onError });
+    await buildAndRedirectCheckout({ items, user, filterFn: (i) => !i.isPreorder, onError, useStoreCredit: applyCredit });
   }
 
   async function handleCheckoutPreorder() {
@@ -149,7 +190,7 @@ export default function Checkout() {
     setShowMixedModal(false);
     setCheckoutError(null);
     setRedirecting(true);
-    await buildAndRedirectCheckout({ items, user, filterFn: (i) => i.isPreorder, onError });
+    await buildAndRedirectCheckout({ items, user, filterFn: (i) => i.isPreorder, onError, useStoreCredit: applyCredit });
   }
 
   return (
@@ -253,6 +294,31 @@ export default function Checkout() {
                   <span className="text-se-bone/60">Subtotal</span>
                   <span>{money(total)}</span>
                 </div>
+
+                {storeCreditCents > 0 && (
+                  <div className="flex items-center justify-between gap-3 text-[13px] font-accent">
+                    <label className="flex items-center gap-2 cursor-pointer text-se-bone/60">
+                      <input
+                        type="checkbox"
+                        checked={useStoreCredit}
+                        onChange={(e) => setUseStoreCredit(e.target.checked)}
+                        className="accent-[#C4A35A]"
+                      />
+                      Store credit ({formatMoneyCents(storeCreditCents)})
+                    </label>
+                    {applyCredit && (
+                      <span className="text-se-gold">
+                        −{formatMoneyCents(Math.min(storeCreditCents, Math.round(total * 100)))}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {applyCredit && (
+                  <p className="text-[10px] text-se-steel font-accent">
+                    Promo codes can't be combined with store credit.
+                  </p>
+                )}
+
                 <div className="flex justify-between text-[13px] font-accent">
                   <span className="text-se-bone/60">Shipping</span>
                   <span className="text-se-steel">At checkout</span>
@@ -260,7 +326,11 @@ export default function Checkout() {
                 <div className="divider" />
                 <div className="flex justify-between text-[15px] font-accent font-medium">
                   <span>Total</span>
-                  <span>{money(total)}</span>
+                  <span>
+                    {applyCredit
+                      ? formatMoneyCents(Math.max(0, Math.round(total * 100) - storeCreditCents))
+                      : money(total)}
+                  </span>
                 </div>
               </div>
 
