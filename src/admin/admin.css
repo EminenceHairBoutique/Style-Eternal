@@ -21,7 +21,7 @@
   --admin-blue: #2c6cb0;
   --admin-amber: #c79320;
 
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
   color: var(--admin-text);
   background: var(--admin-bg);
   min-height: 100vh;
@@ -36,7 +36,7 @@
 .admin-root h1,
 .admin-root h2,
 .admin-root h3 {
-  font-family: 'Oswald', sans-serif;
+  font-family: 'Oswald Variable', 'Oswald', sans-serif;
   letter-spacing: 0.02em;
   font-weight: 500;
 }

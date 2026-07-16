@@ -23,10 +23,10 @@
   --se-red: #8B2020;
   --se-red-bright: #C43030;
 
-  /* Typography */
-  --font-display: 'Oswald', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-accent: 'Space Grotesk', sans-serif;
+  /* Typography (self-hosted variable fonts via @fontsource-variable) */
+  --font-display: 'Oswald Variable', 'Oswald', sans-serif;
+  --font-body: 'Inter Variable', 'Inter', sans-serif;
+  --font-accent: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
 
   /* Spacing rhythm */
   --section-gap: clamp(4rem, 8vw, 8rem);
@@ -49,9 +49,9 @@
   --color-se-red: #8B2020;
   --color-se-red-bright: #C43030;
 
-  --font-family-display: 'Oswald', sans-serif;
-  --font-family-body: 'Inter', sans-serif;
-  --font-family-accent: 'Space Grotesk', sans-serif;
+  --font-family-display: 'Oswald Variable', 'Oswald', sans-serif;
+  --font-family-body: 'Inter Variable', 'Inter', sans-serif;
+  --font-family-accent: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
 }
 
 /* ─── Base Styles ────────────────────────────────────────────────────── */
@@ -63,6 +63,29 @@ html {
   html {
     scroll-behavior: auto;
   }
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* ─── Skip link (keyboard users jump past the nav) ───────────────────── */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.6rem 1.1rem;
+  background: var(--se-gold);
+  color: var(--se-black);
+  font-family: var(--font-accent);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transform: translateY(-250%);
+  transition: transform 150ms ease;
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
 }
 body {
   background-color: var(--se-black);

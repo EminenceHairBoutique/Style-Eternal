@@ -1,12 +1,14 @@
 // src/components/FitFinder.jsx — AI size recommendation on the PDP
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import useFocusTrap from "../hooks/useFocusTrap";
 
 export default function FitFinder({ open, onClose, product, onPick }) {
   const [form, setForm] = useState({ height: "", weight: "", fitPref: "regular", knownBrand: "", knownSize: "" });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const trapRef = useFocusTrap(open);
 
   useEffect(() => {
     if (!open) return;
@@ -54,6 +56,7 @@ export default function FitFinder({ open, onClose, product, onPick }) {
 
   return (
     <div
+      ref={trapRef}
       role="dialog"
       aria-modal="true"
       aria-label="Find my size"

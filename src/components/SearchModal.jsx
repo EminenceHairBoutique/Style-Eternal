@@ -6,6 +6,7 @@ import { products } from "../data/products";
 import { resolveProductImages } from "../utils/productMedia";
 import { norm } from "../utils/strings";
 import { buildAiCatalog } from "../utils/aiCatalog";
+import useFocusTrap from "../hooks/useFocusTrap";
 
 export default function SearchModal({ open, onClose }) {
   const [q, setQ] = useState("");
@@ -13,6 +14,7 @@ export default function SearchModal({ open, onClose }) {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const inputRef = useRef(null);
+  const trapRef = useFocusTrap(open);
 
   useEffect(() => {
     if (!open) return;
@@ -78,6 +80,7 @@ export default function SearchModal({ open, onClose }) {
     <AnimatePresence>
       {open && (
         <Motion.div
+          ref={trapRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

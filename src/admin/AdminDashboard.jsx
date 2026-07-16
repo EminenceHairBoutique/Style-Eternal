@@ -31,7 +31,7 @@ function MetricCard({ label, value, hint }) {
       >
         {label}
       </div>
-      <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "1.65rem", color: "#1a1a1a" }}>
+      <div style={{ fontFamily: "'Oswald Variable', 'Oswald', sans-serif", fontSize: "1.65rem", color: "#1a1a1a" }}>
         {value}
       </div>
       {hint && <div style={{ fontSize: "0.75rem", color: "#9a9a9a", marginTop: "0.25rem" }}>{hint}</div>}

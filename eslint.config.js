@@ -28,8 +28,10 @@ export default defineConfig([
       "no-unused-vars": [
         "error",
         {
+          // Capitalized identifiers are React components referenced from JSX,
+          // which plain ESLint (no eslint-plugin-react) can't see as usage.
           varsIgnorePattern: "^[A-Z_]",
-          argsIgnorePattern: "^_",
+          argsIgnorePattern: "^_|^[A-Z]",
           caughtErrorsIgnorePattern: "^_",
         },
       ],

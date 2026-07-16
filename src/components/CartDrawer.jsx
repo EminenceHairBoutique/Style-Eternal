@@ -6,6 +6,7 @@ import { motion as Motion } from "framer-motion";
 import { useCart } from "../context/CartContext";
 import FreeShippingMeter from "./FreeShippingMeter";
 import { formatMoney as money } from "../utils/format";
+import useFocusTrap from "../hooks/useFocusTrap";
 
 export default function CartDrawer() {
   const {
@@ -19,6 +20,8 @@ export default function CartDrawer() {
 
   const closeCartRef = useRef(closeCart);
   useEffect(() => { closeCartRef.current = closeCart; }, [closeCart]);
+
+  const trapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -39,6 +42,10 @@ export default function CartDrawer() {
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={closeCart} aria-hidden="true" />
 
       <Motion.aside
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Shopping bag"
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}

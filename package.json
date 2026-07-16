@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/oswald": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
     "@sentry/react": "^10.46.0",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.0",

@@ -22,6 +22,7 @@ import NotifyMeForm from "../components/NotifyMeForm";
 import FitFinder from "../components/FitFinder";
 import { resolveProductImages } from "../utils/productMedia";
 import { formatMoney } from "../utils/format";
+import { trackViewItem, trackAddToCart } from "../utils/track";
 import SmartImage from "../components/SmartImage";
 
 /* ------------------------------------------------------------------ */
@@ -370,12 +371,16 @@ export default function ProductDetail() {
     setSelectedSize(null);
     setQuantity(1);
     setSizeError(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, [slug]);
 
-  /* record recently viewed */
+  /* record recently viewed + view_item analytics */
   useEffect(() => {
-    if (product?.slug) addSlug(product.slug);
+    if (product?.slug) {
+      addSlug(product.slug);
+      trackViewItem(product, { value: Number(product.price) || undefined });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.slug, addSlug]);
 
   /* ---------- derived ---------- */
@@ -456,6 +461,15 @@ export default function ProductDetail() {
       },
       { quantity }
     );
+
+    trackAddToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.displayName || product.name,
+      type: product.type,
+      price: product.price,
+      quantity,
+    });
 
     openCart();
   }, [product, selectedSize, quantity, images, canAddToCart, addToCart, openCart]);

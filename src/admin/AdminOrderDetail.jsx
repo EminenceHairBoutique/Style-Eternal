@@ -71,7 +71,7 @@ export default function AdminOrderDetail() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <Label>Total</Label>
-              <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "1.5rem" }}>
+              <div style={{ fontFamily: "'Oswald Variable', 'Oswald', sans-serif", fontSize: "1.5rem" }}>
                 {USD.format(orderTotal(order))}
               </div>
             </div>

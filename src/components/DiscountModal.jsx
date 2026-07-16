@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import useFocusTrap from "../hooks/useFocusTrap";
+import { canShowCapture, markCaptureShown } from "../utils/captureGovernor";
 
 const STORAGE_KEY = "se_cookie_consent";
 
@@ -26,7 +27,7 @@ export default function DiscountModal({ user }) {
 
   useEffect(() => {
     if (user) return;
-    if (location.pathname.includes("checkout")) return;
+    if (!canShowCapture(location.pathname)) return;
     try {
       if (sessionStorage.getItem("se_discount_seen")) return;
     } catch { /* ignore */ }
@@ -39,7 +40,11 @@ export default function DiscountModal({ user }) {
 
     const startTimer = () => {
       timer = setTimeout(() => {
+        // Re-check at fire time: the visitor may have navigated into a
+        // purchase flow, or another capture surface may have shown.
+        if (!canShowCapture(window.location.pathname)) return;
         setOpen(true);
+        markCaptureShown();
         try { sessionStorage.setItem("se_discount_seen", "true"); } catch { /* ignore */ }
       }, DELAY);
     };

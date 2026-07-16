@@ -7,6 +7,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { resolveProductImages } from "../utils/productMedia";
 import { useProductPrice } from "../hooks/useProductOverlay";
 import { formatMoney } from "../utils/format";
+import { trackAddToCart } from "../utils/track";
 import ComingSoonOverlay from "./ComingSoonOverlay";
 import SmartImage from "./SmartImage";
 
@@ -36,13 +37,22 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
     e.stopPropagation();
 
     const price = Number(product.price ?? 0);
+    const size = product.sizes?.[Math.floor(product.sizes.length / 2)] || "M";
     addToCart({
       id: product.id,
       slug: product.slug,
       name: product.displayName || product.name,
       price,
       image: img,
-      size: product.sizes?.[Math.floor(product.sizes.length / 2)] || "M",
+      size,
+      quantity: 1,
+    });
+    trackAddToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.displayName || product.name,
+      type: product.type,
+      price,
       quantity: 1,
     });
     openCart();

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 const CONSENT_KEY = "se_cookie_consent";
@@ -7,13 +7,16 @@ const REFERRAL_KEY = "se_referral";
 
 /**
  * Route analytics helper (SPA)
- * - Sends GA4 page_view on route changes (only after analytics consent).
+ * - Sends GA4 page_view on route CHANGES (TrackingScripts owns the initial
+ *   page_view when its script loads — firing here too double-counted the
+ *   first pageview for returning visitors with stored consent).
  * - Sends Meta Pixel PageView on route changes (only after marketing consent).
- * - Captures UTM params (only after analytics/marketing consent) so you can attribute
- *   email signups + purchases.
+ * - Captures UTM params (only after analytics/marketing consent) so you can
+ *   attribute email signups + purchases.
  */
 export default function useRouteAnalytics() {
   const location = useLocation();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     try {
@@ -71,6 +74,13 @@ export default function useRouteAnalytics() {
         }
       }
 
+      // First render: UTM/referral capture only. TrackingScripts fires the
+      // initial page_view when the vendor scripts initialize.
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+
       // ---- GA4 page views (manual SPA) ----
       if (allowAnalytics && typeof window?.gtag === "function") {
         window.gtag("event", "page_view", {
@@ -83,6 +93,11 @@ export default function useRouteAnalytics() {
       // ---- Meta Pixel page views (manual SPA) ----
       if (allowMarketing && typeof window?.fbq === "function") {
         window.fbq("track", "PageView");
+      }
+
+      // ---- TikTok page views (manual SPA) ----
+      if (allowMarketing && typeof window?.ttq?.page === "function") {
+        window.ttq.page();
       }
     } catch {
       // fail closed (no analytics)
