@@ -32,19 +32,19 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
   const img = product.image || images?.[0] || product.images?.[0] || null;
   const imgSecondary = images?.[1] || product.images?.[1] || null;
 
-  const handleQuickAdd = (e) => {
+  // Quick add with an explicit size choice — never silently picks one.
+  const handleQuickAdd = (e, size) => {
     e.preventDefault();
     e.stopPropagation();
 
     const price = Number(product.price ?? 0);
-    const size = product.sizes?.[Math.floor(product.sizes.length / 2)] || "M";
     addToCart({
       id: product.id,
       slug: product.slug,
       name: product.displayName || product.name,
       price,
       image: img,
-      size,
+      size: size ?? null,
       quantity: 1,
     });
     trackAddToCart({
@@ -57,6 +57,9 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
     });
     openCart();
   };
+
+  const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+  const needsSizeChoice = sizes.length > 1;
 
   const isSoldOut = product.releaseStatus === "sold-out";
   const isPreorder = product.releaseStatus === "preorder";
@@ -156,16 +159,39 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
           />
         </button>
 
-        {/* Quick Add (desktop hover) — only for available/preorder */}
+        {/* Quick Add (desktop hover) — only for available/preorder.
+            Multi-size products show a size row; the size the customer taps
+            is the size that lands in the bag. */}
         {!isSoldOut && !isComingSoon && (
           <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-            <button
-              onClick={handleQuickAdd}
-              className="w-full py-3 bg-se-bone text-se-black text-[10px] font-accent font-medium tracking-[0.2em] uppercase hover:bg-se-cream transition-colors"
-              type="button"
-            >
-              {isPreorder ? "Pre-Order" : "Quick Add"}
-            </button>
+            {needsSizeChoice ? (
+              <div className="bg-se-bone">
+                <p className="pt-2 text-center text-[8px] font-accent font-medium tracking-[0.25em] uppercase text-se-black/50">
+                  {isPreorder ? "Pre-Order" : "Quick Add"} — Select Size
+                </p>
+                <div className="flex">
+                  {sizes.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={(e) => handleQuickAdd(e, s)}
+                      aria-label={`Add size ${s} to bag`}
+                      className="flex-1 py-2.5 text-[10px] font-accent font-medium tracking-[0.1em] uppercase text-se-black hover:bg-se-black hover:text-se-bone transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={(e) => handleQuickAdd(e, sizes[0] ?? null)}
+                className="w-full py-3 bg-se-bone text-se-black text-[10px] font-accent font-medium tracking-[0.2em] uppercase hover:bg-se-cream transition-colors"
+                type="button"
+              >
+                {isPreorder ? "Pre-Order" : "Quick Add"}
+              </button>
+            )}
           </div>
         )}
 

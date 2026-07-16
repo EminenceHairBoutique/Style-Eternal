@@ -100,6 +100,57 @@ async function issueGiftCards({ normalizedItems, email, orderNumber, sessionId }
   }
 }
 
+/**
+ * Reward the referrer when a referred customer completes their FIRST order.
+ * Self-referrals (same account or same email) never pay out. Never throws.
+ */
+async function rewardReferrer({ session, buyerUserId, buyerEmail, orderNumber }) {
+  const refCode = String(session.metadata?.referral_code || "").trim();
+  if (!refCode || !buyerEmail) return;
+
+  try {
+    // Only the buyer's first order pays out (this order is already inserted).
+    const { count, error: countErr } = await supabaseServer
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("email", buyerEmail);
+    if (countErr || Number(count) !== 1) return;
+
+    const { data: referrer, error: refErr } = await supabaseServer
+      .from("profiles")
+      .select("id, email, loyalty_points")
+      .eq("referral_code", refCode)
+      .maybeSingle();
+    if (refErr || !referrer) return;
+
+    const isSelf =
+      (buyerUserId && referrer.id === buyerUserId) ||
+      (referrer.email || "").toLowerCase() === buyerEmail.toLowerCase();
+    if (isSelf) return;
+
+    const bonus = LOYALTY.referralBonusPoints;
+    const { error: updErr } = await supabaseServer
+      .from("profiles")
+      .update({ loyalty_points: Number(referrer.loyalty_points || 0) + bonus })
+      .eq("id", referrer.id);
+    if (updErr) {
+      console.warn("Referral reward update failed:", updErr.message);
+      return;
+    }
+
+    await supabaseServer.from("loyalty_ledger").insert({
+      user_id: referrer.id,
+      delta: bonus,
+      reason: "referral",
+      order_number: orderNumber,
+      stripe_session_id: session.id,
+    });
+    console.log(`Referral reward: ${bonus} pts to ${referrer.id} (code ${refCode})`);
+  } catch (err) {
+    console.warn("Referral reward skipped:", err?.message || err);
+  }
+}
+
 /** Deduct applied store credit after payment (bearer-verified at session create). Never throws. */
 async function settleStoreCredit(session) {
   const cents = Number(session.metadata?.store_credit_cents || 0);
@@ -386,6 +437,7 @@ async function handleCheckoutCompleted(stripe, session) {
   await attributeDiscount(stripe, session, orderId);
   await issueGiftCards({ normalizedItems, email, orderNumber, sessionId: session.id });
   await settleStoreCredit(session);
+  await rewardReferrer({ session, buyerUserId: userId, buyerEmail: email, orderNumber });
 
   try {
     await sendOrderConfirmationEmail({

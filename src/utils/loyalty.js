@@ -8,6 +8,8 @@
 export const LOYALTY = {
   pointsPerDollar: 1, // $1 = 1 point
   firstPurchaseBonusPoints: 200,
+  // Awarded to the referrer when someone they referred places a first order.
+  referralBonusPoints: 250,
   // Spend thresholds are in cents
   tiers: [
     {

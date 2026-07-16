@@ -338,6 +338,8 @@ export default function AccountDashboard() {
           }
         />
 
+        <ReferralPanel />
+
         {/* Tier Visualizer */}
         <TierTrack tier={tier} tierIndex={tierIndex} nextTier={nextTier} />
 
@@ -491,6 +493,78 @@ function StoreCreditPanel({ balanceCents, onRedeemed }) {
           {message.text}
         </p>
       )}
+    </div>
+  );
+}
+
+/* ---------------- Referral link ---------------- */
+function ReferralPanel() {
+  const [link, setLink] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
+
+  const getLink = async () => {
+    if (busy || !supabase) return;
+    setBusy(true);
+    setError("");
+    try {
+      const { data, error: rpcErr } = await supabase.rpc("ensure_referral_code");
+      if (rpcErr) throw rpcErr;
+      setLink(`${window.location.origin}/?ref=${data}`);
+    } catch (err) {
+      setError(err?.message || "Could not create your link. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard unavailable — the link is selectable */ }
+  };
+
+  return (
+    <div className="mb-8 border border-white/5 bg-se-charcoal p-5 flex flex-col md:flex-row md:items-center gap-4">
+      <div className="flex items-center gap-3 md:min-w-[220px]">
+        <Zap className="w-5 h-5 text-se-gold" aria-hidden="true" />
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">Refer a friend</p>
+          <p className="text-[12px] text-se-bone/60 font-accent">
+            Earn {LOYALTY.referralBonusPoints} points on their first order.
+          </p>
+        </div>
+      </div>
+
+      {link ? (
+        <div className="flex-1 flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            readOnly
+            value={link}
+            onFocus={(e) => e.target.select()}
+            aria-label="Your referral link"
+            className="flex-1 bg-se-black border border-white/10 px-4 py-2.5 text-[12px] font-accent text-se-bone focus:outline-none focus:border-se-gold/60"
+          />
+          <button type="button" onClick={copy} className="btn-outline text-[10px] whitespace-nowrap">
+            {copied ? "Copied" : "Copy Link"}
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={getLink}
+          disabled={busy}
+          className={`btn-outline text-[10px] ${busy ? "opacity-70 cursor-wait" : ""}`}
+        >
+          {busy ? "Creating…" : "Get My Link"}
+        </button>
+      )}
+
+      {error && <p className="text-[12px] text-se-red-bright font-accent" role="alert">{error}</p>}
     </div>
   );
 }
