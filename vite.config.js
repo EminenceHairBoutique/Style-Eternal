@@ -26,10 +26,6 @@ export default defineConfig({
           if (id.includes("node_modules/framer-motion")) {
             return "vendor-motion";
           }
-          // Stripe — payment library, isolated for security/cache reasons.
-          if (id.includes("node_modules/@stripe") || id.includes("node_modules/stripe")) {
-            return "vendor-stripe";
-          }
           // Supabase client — backend SDK.
           if (id.includes("node_modules/@supabase")) {
             return "vendor-supabase";
@@ -41,9 +37,6 @@ export default defineConfig({
         },
       },
     },
-  },
-  optimizeDeps: {
-    exclude: ['@mediapipe/tasks-vision']
   },
   server: {
     port: 5173,
