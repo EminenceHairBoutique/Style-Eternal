@@ -24,6 +24,7 @@ import { resolveProductImages } from "../utils/productMedia";
 import { formatMoney } from "../utils/format";
 import { trackViewItem, trackAddToCart } from "../utils/track";
 import SmartImage from "../components/SmartImage";
+import ReviewsSection from "../components/reviews/ReviewsSection";
 
 /* ------------------------------------------------------------------ */
 /*  Accordion                                                          */
@@ -366,6 +367,10 @@ export default function ProductDetail() {
   /* ---------- AI fit finder ---------- */
   const [fitOpen, setFitOpen] = useState(false);
 
+  /* ---------- reviews aggregate (feeds Product JSON-LD) ---------- */
+  const [reviewAggregate, setReviewAggregate] = useState(null);
+  useEffect(() => setReviewAggregate(null), [slug]);
+
   /* reset state when product changes */
   useEffect(() => {
     setSelectedSize(null);
@@ -508,9 +513,21 @@ export default function ProductDetail() {
         "@id": `${productUrl}#product`,
         name: productName,
         description: product.description,
+        sku: product.id,
         url: productUrl,
         image: images.map((img) => (String(img).startsWith("http") ? img : `${siteUrl}${img}`)),
         brand: { "@type": "Brand", name: "Style Eternal" },
+        ...(reviewAggregate
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: reviewAggregate.avg,
+                reviewCount: reviewAggregate.count,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
         ...(product.price
           ? {
               offers: {
@@ -871,6 +888,11 @@ export default function ProductDetail() {
               </Accordion>
             </Motion.div>
           </div>
+        </div>
+
+        {/* ---- Reviews ---- */}
+        <div className="content-wide">
+          <ReviewsSection productSlug={product.slug} onAggregate={setReviewAggregate} />
         </div>
 
         {/* ---- Complete the Look ---- */}

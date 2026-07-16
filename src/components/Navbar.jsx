@@ -4,12 +4,15 @@ import { motion as Motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Search, Menu, X, User, ChevronRight, Heart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
+import { useWishlist } from "../context/WishlistContext";
+import { categories } from "../data/products";
 import { BRAND } from "../config/brand";
 import SearchModal from "./SearchModal";
 
 export default function Navbar() {
   const { items, openCart } = useCart();
   const { user } = useUser();
+  const wishlist = useWishlist();
   const location = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -45,37 +48,31 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  // Shop navigation derives from the catalog's category list so the menus
+  // can never drift out of sync with the shop tabs again.
+  const categoryLinks = useMemo(
+    () => categories.map((c) => ({ label: c.label, href: `/shop/${c.slug}` })),
+    []
+  );
+
   const navLinks = useMemo(() => [
     { label: "New Arrivals", href: "/shop?filter=new" },
     {
       label: "Shop",
       href: "/shop",
-      mega: [
-        { label: "All Products", href: "/shop" },
-        { label: "Tees", href: "/shop/tees" },
-        { label: "Hoodies", href: "/shop/hoodies" },
-        { label: "Outerwear", href: "/shop/outerwear" },
-        { label: "Bottoms", href: "/shop/bottoms" },
-        { label: "Headwear", href: "/shop/headwear" },
-        { label: "Accessories", href: "/shop/accessories" },
-      ],
+      mega: [{ label: "All Products", href: "/shop" }, ...categoryLinks],
     },
     { label: "Drops", href: "/drops" },
     { label: "Collections", href: "/collections" },
     { label: "Editorial", href: "/editorial" },
     { label: "Lookbook", href: "/lookbook" },
     { label: "About", href: "/about" },
-  ], []);
+  ], [categoryLinks]);
 
   const mobileLinks = useMemo(() => [
     { label: "New Arrivals", href: "/shop?filter=new" },
     { label: "Shop All", href: "/shop" },
-    { label: "Tees", href: "/shop/tees" },
-    { label: "Hoodies", href: "/shop/hoodies" },
-    { label: "Outerwear", href: "/shop/outerwear" },
-    { label: "Bottoms", href: "/shop/bottoms" },
-    { label: "Headwear", href: "/shop/headwear" },
-    { label: "Accessories", href: "/shop/accessories" },
+    ...categoryLinks,
     { divider: true },
     { label: "Drops", href: "/drops" },
     { label: "Collections", href: "/collections" },
@@ -89,9 +86,10 @@ export default function Navbar() {
     { label: "FAQ", href: "/faqs" },
     { label: "Shipping", href: "/shipping" },
     { label: "Size Guide", href: "/size-guide" },
-  ], []);
+  ], [categoryLinks]);
 
   const itemCount = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+  const wishlistCount = wishlist.count;
 
   return (
     <>
@@ -239,11 +237,16 @@ export default function Navbar() {
             </Link>
 
             <Link
-              to="/account"
-              className="hidden lg:inline-flex p-2 rounded-full hover:bg-white/5 transition"
-              aria-label="Favorites"
+              to="/wishlist"
+              className="relative hidden lg:inline-flex p-2 rounded-full hover:bg-white/5 transition"
+              aria-label={wishlistCount > 0 ? `Wishlist (${wishlistCount} saved)` : "Wishlist"}
             >
               <Heart size={18} className="text-se-bone/70" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-se-gold text-se-black text-[9px] font-accent font-semibold rounded-full h-4 w-4 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
             <button

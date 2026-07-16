@@ -520,6 +520,20 @@ async function main() {
       ogType: "website",
       noindex: true,
     },
+    {
+      pathname: "/wishlist",
+      title: "Wishlist",
+      description: "Your saved Style Eternal pieces.",
+      ogType: "website",
+      noindex: true,
+    },
+    {
+      pathname: "/account/reset",
+      title: "Reset Password",
+      description: "Reset your Style Eternal account password.",
+      ogType: "website",
+      noindex: true,
+    },
   ];
 
   // Collection pages
@@ -556,7 +570,7 @@ async function main() {
       "@id": `${url}#product`,
       name: title,
       description,
-      sku: p.verificationCode,
+      sku: p.id,
       brand: { "@type": "Brand", name: SITE_NAME },
       url,
       image: (Array.isArray(p.images) ? p.images.map(abs).filter(Boolean) : []).slice(0, 10),
@@ -630,6 +644,8 @@ async function main() {
     "Disallow: /cancel",
     "Disallow: /account",
     "Disallow: /cart",
+    "Disallow: /wishlist",
+    "Disallow: /admin",
     "",
     `Sitemap: ${SITE_URL}/sitemap.xml`,
     "",

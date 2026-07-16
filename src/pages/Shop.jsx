@@ -6,6 +6,7 @@ import { motion as Motion } from "framer-motion";
 
 import { categories, collections } from "../data/products";
 import { useProducts } from "../context/ProductsContext";
+import { availabilityRank } from "../utils/productFiltering";
 import ProductCard from "../components/ProductCard";
 import SEO from "../components/SEO";
 
@@ -60,20 +61,24 @@ export default function Shop() {
     if (minN != null && !Number.isNaN(minN)) result = result.filter((p) => Number(p.price ?? 0) >= minN);
     if (maxN != null && !Number.isNaN(maxN)) result = result.filter((p) => Number(p.price ?? 0) <= maxN);
 
-    // Sort
+    // Sort — availability first in every mode (see productFiltering.js), so
+    // the grid never leads with pieces nobody can buy.
+    const rank = availabilityRank;
     switch (sortParam) {
       case "newest":
-        result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+        result.sort((a, b) => rank(a) - rank(b) || (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
         break;
       case "price-asc":
-        result.sort((a, b) => a.price - b.price);
+        result.sort((a, b) => rank(a) - rank(b) || a.price - b.price);
         break;
       case "price-desc":
-        result.sort((a, b) => b.price - a.price);
+        result.sort((a, b) => rank(a) - rank(b) || b.price - a.price);
         break;
       default:
-        // featured: new first, then limited, then available, then archive
+        // featured: purchasable → new → limited
         result.sort((a, b) => {
+          const r = rank(a) - rank(b);
+          if (r !== 0) return r;
           if (a.isNew !== b.isNew) return b.isNew ? 1 : -1;
           if (a.limited !== b.limited) return b.limited ? 1 : -1;
           return 0;
@@ -82,6 +87,16 @@ export default function Shop() {
 
     return result;
   }, [allProducts, filterParam, activeCategory, collectionParam, sortParam, sizeParam, priceMin, priceMax]);
+
+  // Segment the grid: pieces you can buy now vs teasers.
+  const availableNow = useMemo(
+    () => filtered.filter((p) => availabilityRank(p) === 0),
+    [filtered]
+  );
+  const comingLater = useMemo(
+    () => filtered.filter((p) => availabilityRank(p) > 0),
+    [filtered]
+  );
 
   const updateParam = (key, value) => {
     const p = new URLSearchParams(searchParams);
@@ -358,22 +373,51 @@ export default function Shop() {
           </div>
         )}
 
-        {/* Product Grid */}
+        {/* Product Grid — buyable pieces lead; teasers follow under their own header */}
         <section className="section-pad">
           <div className="content-wide">
             {filtered.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                {filtered.map((product, i) => (
-                  <Motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.4), ease: [0.2, 0, 0, 1] }}
-                  >
-                    <ProductCard product={product} />
-                  </Motion.div>
-                ))}
-              </div>
+              <>
+                {availableNow.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    {availableNow.map((product, i) => (
+                      <Motion.div
+                        key={product.id}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.4), ease: [0.2, 0, 0, 1] }}
+                      >
+                        <ProductCard product={product} />
+                      </Motion.div>
+                    ))}
+                  </div>
+                )}
+
+                {comingLater.length > 0 && (
+                  <div className={availableNow.length > 0 ? "mt-16" : ""}>
+                    {availableNow.length > 0 && (
+                      <div className="flex items-center gap-4 mb-8">
+                        <h2 className="font-display text-[13px] tracking-[0.2em] text-se-steel">
+                          COMING SOON
+                        </h2>
+                        <div className="flex-1 h-px bg-white/[0.06]" />
+                      </div>
+                    )}
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                      {comingLater.map((product, i) => (
+                        <Motion.div
+                          key={product.id}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.4), ease: [0.2, 0, 0, 1] }}
+                        >
+                          <ProductCard product={product} />
+                        </Motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-24">
                 <p className="font-display text-[20px] tracking-[0.1em] text-se-steel mb-4">

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useUser } from "../context/UserContext";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { MailCheck } from "lucide-react";
 import AccountDashboard from "../components/account/AccountDashboard";
 import SEO from "../components/SEO";
 
@@ -26,24 +27,66 @@ const Input = ({ label, ...props }) => (
   </label>
 );
 
-export default function Account() {
-  const [tab, setTab] = useState("signin");
+const AppleIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true">
+    <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-167.2-143.5S50 239.2 118.1 162.9c64.1-71.7 163.5-120.3 255.2-120.3 87.5 0 158.3 56.6 212.8 56.6 54.5 0 139.7-59.8 238.4-59.8 38.2 0 137.9 3.2 213.4 97.4zm-494.1-65.4c-55.7 0-113.5 38.2-148.4 100.4-30.7 55.7-50.8 129.1-50.8 196.5 0 90 33.3 173.1 90.7 230.1 50.3 50.8 107.7 76.6 165.1 76.6 55.7 0 109.1-33.3 152-33.3 43.4 0 95.6 33.3 151.9 33.3 57.9 0 117.1-26.4 168.5-78.6 62.2-60.4 91.1-142 91.7-143.8-3.2-1.3-177.9-72.5-177.9-270.3 0-172.4 141.9-248.9 149.5-254.1-82.3-116.9-210.4-121.5-251.5-121.5-85.5 0-164.7 56-191.8 64.5z"/>
+  </svg>
+);
 
-  const { user, login, register, loginWithGoogle, loginWithApple } = useUser();
-  const navigate = useNavigate();
+function OAuthButtons({ loading, setLoading, setError }) {
+  const { loginWithGoogle, loginWithApple } = useUser();
+
+  const run = (fn, label) => async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await fn();
+    } catch (err) {
+      setError(err.message || `${label} sign-in failed. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={run(loginWithGoogle, "Google")}
+        disabled={loading}
+        className="btn-outline w-full"
+      >
+        Continue with Google
+      </button>
+      <button
+        type="button"
+        onClick={run(loginWithApple, "Apple")}
+        disabled={loading}
+        className="btn-outline w-full flex items-center justify-center gap-2"
+      >
+        <AppleIcon />
+        Continue with Apple
+      </button>
+    </>
+  );
+}
+
+export default function Account() {
+  const [tab, setTab] = useState("signin"); // signin | create | forgot
+
+  const { user, login, register, resetPassword } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState(""); // success messaging (confirm email / reset sent)
 
-  useEffect(() => {
-    if (user) navigate("/account");
-  }, [user, navigate]);
-
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e?.preventDefault?.();
     setError("");
+    setNotice("");
     setLoading(true);
     try {
       await login({ email, password });
@@ -54,15 +97,43 @@ export default function Account() {
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e?.preventDefault?.();
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
     setError("");
+    setNotice("");
     setLoading(true);
     try {
-      await register({ email, password });
+      const data = await register({ email, password });
+      // With email confirmation enabled, Supabase returns a user but no
+      // session — tell the customer to check their inbox instead of leaving
+      // them staring at the form.
+      if (data?.user && !data?.session) {
+        setNotice(
+          `Almost there — we sent a confirmation link to ${email}. Open it to activate your account.`
+        );
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgot = async (e) => {
+    e?.preventDefault?.();
+    if (!email.trim()) {
+      setError("Enter your email first.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await resetPassword(email.trim());
+      setNotice(`If an account exists for ${email}, a reset link is on its way.`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -95,122 +166,82 @@ export default function Account() {
           </div>
 
           <div className="flex justify-center gap-6 mb-8">
-            <TabButton active={tab === "signin"} onClick={() => setTab("signin")}>
+            <TabButton active={tab === "signin"} onClick={() => { setTab("signin"); setError(""); setNotice(""); }}>
               Sign In
             </TabButton>
-            <TabButton active={tab === "create"} onClick={() => setTab("create")}>
+            <TabButton active={tab === "create"} onClick={() => { setTab("create"); setError(""); setNotice(""); }}>
               Create Account
             </TabButton>
           </div>
 
           <div className="border border-white/10 bg-se-charcoal p-8 space-y-5">
-            {tab === "signin" && (
-              <>
-                <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            {notice && (
+              <div className="flex items-start gap-3 border border-se-gold/30 bg-se-black/40 p-4" role="status">
+                <MailCheck className="w-4 h-4 text-se-gold shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="text-[12px] text-se-bone/80 leading-relaxed">{notice}</p>
+              </div>
+            )}
 
-                <button onClick={handleLogin} disabled={loading} className="btn-primary w-full" type="button">
+            {tab === "signin" && (
+              <form onSubmit={handleLogin} className="space-y-5">
+                <Input label="Email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input label="Password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+
+                <div className="text-right -mt-2">
+                  <button
+                    type="button"
+                    onClick={() => { setTab("forgot"); setError(""); setNotice(""); }}
+                    className="text-[11px] font-accent text-se-steel hover:text-se-gold transition underline underline-offset-2"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
+                <button type="submit" disabled={loading} className="btn-primary w-full">
                   {loading ? "Signing in..." : "Sign In"}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setError("");
-                    setLoading(true);
-                    try {
-                      await loginWithGoogle();
-                    } catch (err) {
-                      setError(err.message || "Google sign-in failed. Please try again.");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  disabled={loading}
-                  className="btn-outline w-full"
-                >
-                  Continue with Google
-                </button>
-
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setError("");
-                    setLoading(true);
-                    try {
-                      await loginWithApple();
-                    } catch (err) {
-                      setError(err.message || "Apple sign-in failed. Please try again.");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  disabled={loading}
-                  className="btn-outline w-full flex items-center justify-center gap-2"
-                >
-                  <svg width="15" height="15" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true">
-                    <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-167.2-143.5S50 239.2 118.1 162.9c64.1-71.7 163.5-120.3 255.2-120.3 87.5 0 158.3 56.6 212.8 56.6 54.5 0 139.7-59.8 238.4-59.8 38.2 0 137.9 3.2 213.4 97.4zm-494.1-65.4c-55.7 0-113.5 38.2-148.4 100.4-30.7 55.7-50.8 129.1-50.8 196.5 0 90 33.3 173.1 90.7 230.1 50.3 50.8 107.7 76.6 165.1 76.6 55.7 0 109.1-33.3 152-33.3 43.4 0 95.6 33.3 151.9 33.3 57.9 0 117.1-26.4 168.5-78.6 62.2-60.4 91.1-142 91.7-143.8-3.2-1.3-177.9-72.5-177.9-270.3 0-172.4 141.9-248.9 149.5-254.1-82.3-116.9-210.4-121.5-251.5-121.5-85.5 0-164.7 56-191.8 64.5z"/>
-                  </svg>
-                  Continue with Apple
-                </button>
-              </>
+                <OAuthButtons loading={loading} setLoading={setLoading} setError={setError} />
+              </form>
             )}
 
             {tab === "create" && (
-              <>
-                <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <Input label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+              <form onSubmit={handleRegister} className="space-y-5">
+                <Input label="Email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input label="Password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input label="Confirm Password" type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                <button onClick={handleRegister} disabled={loading} className="btn-primary w-full" type="button">
+                <button type="submit" disabled={loading} className="btn-primary w-full">
                   {loading ? "Creating..." : "Create Account"}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setError("");
-                    setLoading(true);
-                    try {
-                      await loginWithGoogle();
-                    } catch (err) {
-                      setError(err.message || "Google sign-in failed. Please try again.");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  disabled={loading}
-                  className="btn-outline w-full"
-                >
-                  Continue with Google
+                <OAuthButtons loading={loading} setLoading={setLoading} setError={setError} />
+              </form>
+            )}
+
+            {tab === "forgot" && (
+              <form onSubmit={handleForgot} className="space-y-5">
+                <p className="text-[13px] text-se-bone/60 leading-relaxed">
+                  Enter your email and we'll send you a secure link to reset your password.
+                </p>
+                <Input label="Email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+
+                <button type="submit" disabled={loading} className="btn-primary w-full">
+                  {loading ? "Sending…" : "Send Reset Link"}
                 </button>
 
                 <button
                   type="button"
-                  onClick={async () => {
-                    setError("");
-                    setLoading(true);
-                    try {
-                      await loginWithApple();
-                    } catch (err) {
-                      setError(err.message || "Apple sign-in failed. Please try again.");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  disabled={loading}
-                  className="btn-outline w-full flex items-center justify-center gap-2"
+                  onClick={() => { setTab("signin"); setError(""); setNotice(""); }}
+                  className="w-full text-[11px] font-accent text-se-steel hover:text-se-bone transition"
                 >
-                  <svg width="15" height="15" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true">
-                    <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-167.2-143.5S50 239.2 118.1 162.9c64.1-71.7 163.5-120.3 255.2-120.3 87.5 0 158.3 56.6 212.8 56.6 54.5 0 139.7-59.8 238.4-59.8 38.2 0 137.9 3.2 213.4 97.4zm-494.1-65.4c-55.7 0-113.5 38.2-148.4 100.4-30.7 55.7-50.8 129.1-50.8 196.5 0 90 33.3 173.1 90.7 230.1 50.3 50.8 107.7 76.6 165.1 76.6 55.7 0 109.1-33.3 152-33.3 43.4 0 95.6 33.3 151.9 33.3 57.9 0 117.1-26.4 168.5-78.6 62.2-60.4 91.1-142 91.7-143.8-3.2-1.3-177.9-72.5-177.9-270.3 0-172.4 141.9-248.9 149.5-254.1-82.3-116.9-210.4-121.5-251.5-121.5-85.5 0-164.7 56-191.8 64.5z"/>
-                  </svg>
-                  Continue with Apple
+                  Back to sign in
                 </button>
-              </>
+              </form>
             )}
 
             {error && (
-              <p className="text-[12px] text-red-400 text-center pt-1">{error}</p>
+              <p className="text-[12px] text-red-400 text-center pt-1" role="alert">{error}</p>
             )}
 
             <p className="text-[10px] text-se-steel font-accent text-center leading-relaxed pt-2">
