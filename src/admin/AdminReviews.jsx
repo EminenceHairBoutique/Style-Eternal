@@ -4,6 +4,31 @@ import AdminTable from "./components/AdminTable";
 import StatusBadge from "./components/StatusBadge";
 import { useAdminToast } from "./components/Toast";
 
+const mediaUrl = (path) =>
+  supabase?.storage.from("review-media").getPublicUrl(path)?.data?.publicUrl || null;
+
+function MediaStrip({ media }) {
+  const entries = (Array.isArray(media) ? media : [])
+    .map((m) => ({ ...m, url: mediaUrl(m.path) }))
+    .filter((m) => m.url);
+  if (!entries.length) return null;
+  return (
+    <div style={{ display: "flex", gap: "0.3rem", marginTop: "0.35rem" }}>
+      {entries.map((m, i) => (
+        <a key={i} href={m.url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+          {m.type === "video" ? (
+            <span style={{ display: "inline-block", padding: "0.35rem 0.5rem", border: "0.5px solid #d6d3cc", fontSize: "0.62rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "#6b6b6b" }}>
+              ▶ Video
+            </span>
+          ) : (
+            <img src={m.url} alt="" style={{ width: 34, height: 34, objectFit: "cover", border: "0.5px solid #d6d3cc" }} />
+          )}
+        </a>
+      ))}
+    </div>
+  );
+}
+
 const Stars = ({ n }) => (
   <span style={{ color: "#c9a96e", letterSpacing: "2px", fontSize: "0.8rem" }} aria-label={`${n} out of 5 stars`}>
     {"★".repeat(n)}
@@ -96,6 +121,7 @@ export default function AdminReviews() {
               Verified purchase
             </span>
           )}
+          <MediaStrip media={r.media} />
         </div>
       ),
     },

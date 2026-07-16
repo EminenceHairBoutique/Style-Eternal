@@ -6,12 +6,55 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, ImagePlus, X } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import { useUser } from "../../context/UserContext";
 import RatingStars from "./RatingStars";
 
 const PAGE_SIZE = 10;
+const MEDIA_BUCKET = "review-media";
+const MAX_IMAGES = 3;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
+const MAX_VIDEO_BYTES = 25 * 1024 * 1024; // 25MB (bucket-enforced too)
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const VIDEO_TYPES = ["video/mp4", "video/webm"];
+
+function mediaPublicUrl(path) {
+  if (!supabase || !path) return null;
+  return supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path)?.data?.publicUrl || null;
+}
+
+function ReviewMedia({ media = [] }) {
+  const entries = (Array.isArray(media) ? media : [])
+    .map((m) => ({ ...m, url: mediaPublicUrl(m.path) }))
+    .filter((m) => m.url);
+  if (!entries.length) return null;
+
+  return (
+    <div className="mt-3 flex flex-wrap gap-2">
+      {entries.map((m, i) =>
+        m.type === "video" ? (
+          <video
+            key={i}
+            src={m.url}
+            controls
+            preload="metadata"
+            className="h-28 max-w-[220px] bg-se-black border border-white/10"
+          />
+        ) : (
+          <a key={i} href={m.url} target="_blank" rel="noreferrer" className="block">
+            <img
+              src={m.url}
+              alt="Customer photo"
+              loading="lazy"
+              className="h-20 w-20 object-cover border border-white/10 hover:border-se-gold/50 transition"
+            />
+          </a>
+        )
+      )}
+    </div>
+  );
+}
 
 function niceDate(iso) {
   try {
@@ -37,8 +80,57 @@ export default function ReviewsSection({ productSlug, onAggregate }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [authorName, setAuthorName] = useState("");
+  const [files, setFiles] = useState([]); // File[] (images + at most one video)
   const [formStatus, setFormStatus] = useState("idle"); // idle | saving | done | already
   const [formError, setFormError] = useState("");
+
+  const addFiles = (list) => {
+    setFormError("");
+    const incoming = Array.from(list || []);
+    setFiles((prev) => {
+      let next = [...prev];
+      for (const f of incoming) {
+        const isImage = IMAGE_TYPES.includes(f.type);
+        const isVideo = VIDEO_TYPES.includes(f.type);
+        if (!isImage && !isVideo) {
+          setFormError("Photos (JPG/PNG/WebP) or video (MP4/WebM) only.");
+          continue;
+        }
+        if (isImage && f.size > MAX_IMAGE_BYTES) {
+          setFormError("Photos must be under 5MB.");
+          continue;
+        }
+        if (isVideo && f.size > MAX_VIDEO_BYTES) {
+          setFormError("Videos must be under 25MB.");
+          continue;
+        }
+        if (isVideo && next.some((x) => VIDEO_TYPES.includes(x.type))) {
+          setFormError("One video per review.");
+          continue;
+        }
+        if (isImage && next.filter((x) => IMAGE_TYPES.includes(x.type)).length >= MAX_IMAGES) {
+          setFormError(`Up to ${MAX_IMAGES} photos per review.`);
+          continue;
+        }
+        next.push(f);
+      }
+      return next;
+    });
+  };
+
+  const uploadMedia = async () => {
+    const media = [];
+    for (const [i, f] of files.entries()) {
+      const ext = (f.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const path = `${user.id}/${Date.now()}-${i}.${ext}`;
+      const { error } = await supabase.storage
+        .from(MEDIA_BUCKET)
+        .upload(path, f, { contentType: f.type, upsert: false });
+      if (error) throw new Error(`Upload failed: ${error.message}`);
+      media.push({ type: VIDEO_TYPES.includes(f.type) ? "video" : "image", path });
+    }
+    return media;
+  };
 
   useEffect(() => {
     if (!supabase || !productSlug) {
@@ -47,13 +139,23 @@ export default function ReviewsSection({ productSlug, onAggregate }) {
     }
     let active = true;
     (async () => {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("reviews")
-        .select("id, rating, title, body, author_name, verified_purchase, created_at")
+        .select("id, rating, title, body, author_name, verified_purchase, media, created_at")
         .eq("product_slug", productSlug)
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .limit(100);
+      // Pre-RUNBOOK DBs may lack the media column — retry without it.
+      if (error && /media/i.test(error.message || "")) {
+        ({ data, error } = await supabase
+          .from("reviews")
+          .select("id, rating, title, body, author_name, verified_purchase, created_at")
+          .eq("product_slug", productSlug)
+          .eq("status", "approved")
+          .order("created_at", { ascending: false })
+          .limit(100));
+      }
       if (!active) return;
       if (error) {
         setAvailable(false); // table missing / RLS — hide the section
@@ -92,6 +194,8 @@ export default function ReviewsSection({ productSlug, onAggregate }) {
     }
     setFormStatus("saving");
     try {
+      const media = files.length ? await uploadMedia() : [];
+
       const { error } = await supabase.from("reviews").insert({
         product_slug: productSlug,
         user_id: user.id,
@@ -99,10 +203,25 @@ export default function ReviewsSection({ productSlug, onAggregate }) {
         rating,
         title: title.trim().slice(0, 120) || null,
         body: body.trim().slice(0, 2000),
+        media,
       });
       if (error) {
         if (/duplicate|unique/i.test(error.message)) {
           setFormStatus("already");
+          return;
+        }
+        // Pre-RUNBOOK DBs may not have the media column — retry without it.
+        if (/media.*column|column.*media/i.test(error.message)) {
+          const retry = await supabase.from("reviews").insert({
+            product_slug: productSlug,
+            user_id: user.id,
+            author_name: authorName.trim().slice(0, 60) || null,
+            rating,
+            title: title.trim().slice(0, 120) || null,
+            body: body.trim().slice(0, 2000),
+          });
+          if (retry.error) throw retry.error;
+          setFormStatus("done");
           return;
         }
         throw error;
@@ -162,6 +281,7 @@ export default function ReviewsSection({ productSlug, onAggregate }) {
               {r.body && (
                 <p className="text-[13px] text-se-bone/60 leading-relaxed whitespace-pre-line">{r.body}</p>
               )}
+              <ReviewMedia media={r.media} />
               <p className="mt-3 text-[11px] text-se-steel font-accent">
                 {r.author_name || "Style Eternal customer"} · {niceDate(r.created_at)}
               </p>
@@ -252,6 +372,52 @@ export default function ReviewsSection({ productSlug, onAggregate }) {
               className="mt-2 w-full bg-se-black border border-white/10 px-4 py-3 text-[14px] text-se-bone focus:outline-none focus:border-se-gold/60"
             />
           </label>
+
+          {/* Photos / video */}
+          <div>
+            <span className="block text-[11px] font-accent tracking-[0.15em] uppercase text-se-bone/60 mb-2">
+              Photos or video <span className="normal-case text-se-steel">(optional — up to {MAX_IMAGES} photos, 1 video)</span>
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {files.map((f, i) => (
+                <div key={i} className="relative">
+                  {IMAGE_TYPES.includes(f.type) ? (
+                    <img
+                      src={URL.createObjectURL(f)}
+                      alt=""
+                      className="h-16 w-16 object-cover border border-white/10"
+                    />
+                  ) : (
+                    <div className="h-16 w-24 flex items-center justify-center border border-white/10 bg-se-black text-[9px] uppercase tracking-[0.15em] text-se-steel font-accent">
+                      Video
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setFiles((prev) => prev.filter((_, x) => x !== i))}
+                    aria-label="Remove file"
+                    className="absolute -top-1.5 -right-1.5 w-4 h-4 flex items-center justify-center rounded-full bg-se-black border border-white/20 text-se-bone/70 hover:text-se-bone"
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </div>
+              ))}
+              <label className="h-16 w-16 flex flex-col items-center justify-center gap-1 border border-dashed border-white/20 text-se-steel hover:text-se-bone hover:border-se-gold/40 transition cursor-pointer">
+                <ImagePlus className="w-4 h-4" aria-hidden="true" />
+                <span className="text-[8px] uppercase tracking-[0.12em] font-accent">Add</span>
+                <input
+                  type="file"
+                  accept={[...IMAGE_TYPES, ...VIDEO_TYPES].join(",")}
+                  multiple
+                  className="sr-only"
+                  onChange={(e) => {
+                    addFiles(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+          </div>
 
           {formError && (
             <p className="text-[12px] text-se-red-bright font-accent" role="alert">
