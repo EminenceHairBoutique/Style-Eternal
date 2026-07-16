@@ -68,4 +68,21 @@ export default defineConfig([
       "react-refresh/only-export-components": "off",
     },
   },
+
+  // Tests — Node globals; vitest/playwright APIs are explicitly imported
+  {
+    files: ["tests/**/*.js", "playwright.config.js", "vitest.config.js"],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: { ...globals.node, ...globals.browser },
+      parserOptions: { ecmaVersion: "latest", sourceType: "module" },
+    },
+    rules: {
+      "no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^[A-Z_]", argsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+    },
+  },
 ]);
