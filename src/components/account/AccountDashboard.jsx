@@ -9,6 +9,7 @@ import {
 import { supabase } from "../../lib/supabaseClient";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { useProducts } from "../../context/ProductsContext";
 import { useAllDrops } from "../../hooks/useDrops";
 import {
@@ -17,10 +18,8 @@ import {
 import { buildAiCatalog } from "../../utils/aiCatalog";
 import { resolveProductImages } from "../../utils/productMedia";
 
-const money = (cents) => {
-  const dollars = Number(cents || 0) / 100;
-  return `$${dollars.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-};
+// Cents-denominated money (amount_total, lifetime_spend_cents, tier thresholds).
+import { formatMoney, formatMoneyCents as money } from "../../utils/format";
 
 const niceDate = (iso) => {
   try {
@@ -48,7 +47,8 @@ const STATUS_STYLE = {
 };
 
 export default function AccountDashboard() {
-  const { user, logout, toggleWishlistItem } = useUser();
+  const { user, logout } = useUser();
+  const wishlistCtx = useWishlist();
   const { addToCart } = useCart();
   const { products: catalog } = useProducts();
   const { drops: allDrops } = useAllDrops();
@@ -146,10 +146,24 @@ export default function AccountDashboard() {
     [tier]
   );
 
-  const wishlist = user?.wishlist || [];
-
   // Catalog lookups for reorder + matching order items to imagery.
   const bySlug = useMemo(() => new Map(catalog.map((p) => [p.slug, p])), [catalog]);
+
+  // Wishlist entries hydrated from the persistent slug list.
+  const wishlist = useMemo(
+    () =>
+      wishlistCtx.slugs
+        .map((slug) => bySlug.get(slug))
+        .filter(Boolean)
+        .map((p) => ({
+          id: p.id,
+          slug: p.slug,
+          name: p.displayName || p.name,
+          price: p.price,
+          image: resolveProductImages(p)?.[0] || null,
+        })),
+    [wishlistCtx.slugs, bySlug]
+  );
   const byName = useMemo(
     () => new Map(catalog.map((p) => [(p.displayName || p.name || "").toLowerCase(), p])),
     [catalog]
@@ -363,7 +377,7 @@ export default function AccountDashboard() {
                 wishlist={wishlist}
                 bySlug={bySlug}
                 moveToCart={moveToCart}
-                remove={(w) => toggleWishlistItem?.(w)}
+                remove={(w) => wishlistCtx.toggle(w.slug)}
               />
             )}
           </Motion.div>
@@ -730,7 +744,9 @@ function WishlistTab({ wishlist, bySlug, moveToCart, remove }) {
               <Link to={`/products/${w.slug}`} className="text-[12px] text-se-bone font-accent hover:text-se-gold transition line-clamp-1">
                 {w.name}
               </Link>
-              {price != null && <p className="text-[11px] text-se-steel font-accent mt-0.5">${price}</p>}
+              {price != null && (
+                <p className="text-[11px] text-se-steel font-accent mt-0.5">{formatMoney(price)}</p>
+              )}
               <div className="mt-3 flex items-center gap-2">
                 <button
                   type="button"

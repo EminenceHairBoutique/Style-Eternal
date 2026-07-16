@@ -3,14 +3,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { useUser } from "../context/UserContext";
+import { useWishlist } from "../context/WishlistContext";
 import { resolveProductImages } from "../utils/productMedia";
 import { useProductPrice } from "../hooks/useProductOverlay";
+import { formatMoney } from "../utils/format";
 import ComingSoonOverlay from "./ComingSoonOverlay";
 
 const ProductCard = ({ product: rawProduct, featured = false }) => {
   const { addToCart, openCart } = useCart();
-  const { user, toggleWishlistItem } = useUser();
+  const wishlist = useWishlist();
   // Overlay live price/compare-at from Supabase (admin-editable) onto the
   // hardcoded product. Falls back to the hardcoded values when no DB row.
   const overlay = useProductPrice(rawProduct?.slug);
@@ -47,17 +48,11 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
   const isPreorder = product.releaseStatus === "preorder";
   const isComingSoon = product.releaseStatus === "coming-soon";
 
-  const isWishlisted = !!user?.wishlist?.some((w) => w.id === product.id);
+  const isWishlisted = wishlist.has(product.slug);
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlistItem?.({
-      id: product.id,
-      slug: product.slug,
-      name: product.displayName || product.name,
-      price: Number(product.price ?? 0),
-      image: img,
-    });
+    wishlist.toggle(product.slug);
   };
 
   return (
@@ -184,11 +179,11 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
         <div className="flex items-center gap-3">
           {product.comparePrice && (
             <span className="text-[12px] text-se-steel line-through">
-              ${product.comparePrice}
+              {formatMoney(product.comparePrice)}
             </span>
           )}
           <span className={`text-[14px] font-medium ${isSoldOut || isComingSoon ? "text-se-steel" : "text-se-bone"}`}>
-            {isSoldOut ? "Sold Out" : isComingSoon ? `$${product.price}` : `$${product.price}`}
+            {isSoldOut ? "Sold Out" : formatMoney(product.price)}
           </span>
         </div>
 
@@ -201,4 +196,6 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
   );
 };
 
-export default ProductCard;
+// Grids render many cards; memoization keeps a cart or wishlist change from
+// re-rendering every card on the page.
+export default React.memo(ProductCard);

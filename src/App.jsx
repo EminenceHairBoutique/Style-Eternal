@@ -5,6 +5,7 @@ import { useCart } from "./context/CartContext";
 import { useUser } from "./context/UserContext";
 import { RecentlyViewedProvider } from "./context/RecentlyViewedContext";
 import { ProductsProvider } from "./context/ProductsContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import CookieBanner from "./components/legal/CookieBanner";
 import TrackingScripts from "./components/TrackingScripts";
 const CartDrawer = lazy(() => import("./components/CartDrawer"));
@@ -80,6 +81,7 @@ export default function App() {
   return (
     <RecentlyViewedProvider>
       <ProductsProvider>
+      <WishlistProvider>
       <TrackingScripts />
       <Suspense fallback={null}>
         <CartDrawer />
@@ -206,6 +208,7 @@ export default function App() {
           <StylistChat />
         </Suspense>
       )}
+      </WishlistProvider>
       </ProductsProvider>
     </RecentlyViewedProvider>
   );

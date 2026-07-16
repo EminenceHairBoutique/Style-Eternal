@@ -6,9 +6,7 @@ import { useCart } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
 import SEO from "../components/SEO";
 import { trackBeginCheckout } from "../utils/track";
-
-const money = (n) =>
-  `$${Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+import { formatMoney as money } from "../utils/format";
 
 const CONSENT_VERSION = "v1.0";
 const REFERRAL_KEY = "se_referral";

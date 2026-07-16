@@ -21,6 +21,7 @@ import ProductCard from "../components/ProductCard";
 import NotifyMeForm from "../components/NotifyMeForm";
 import FitFinder from "../components/FitFinder";
 import { resolveProductImages } from "../utils/productMedia";
+import { formatMoney } from "../utils/format";
 
 /* ------------------------------------------------------------------ */
 /*  Accordion                                                          */
@@ -607,7 +608,7 @@ export default function ProductDetail() {
                     isSoldOut ? "text-se-steel" : "text-se-bone"
                   }`}
                 >
-                  {isSoldOut ? "Sold Out" : `$${product.price}`}
+                  {isSoldOut ? "Sold Out" : formatMoney(product.price)}
                 </span>
               </div>
 
@@ -740,7 +741,7 @@ export default function ProductDetail() {
                     onClick={handleAddToCart}
                     className="btn-primary w-full py-4 text-[12px] tracking-[0.2em]"
                   >
-                    {isPreorder ? "Pre-Order" : "Add to Cart"} — ${product.price * quantity}
+                    {isPreorder ? "Pre-Order" : "Add to Cart"} — {formatMoney(product.price * quantity)}
                   </button>
                 )}
               </div>
@@ -889,7 +890,7 @@ export default function ProductDetail() {
               className="shrink-0 px-5 py-3 rounded-sm text-[12px] font-accent font-semibold tracking-[0.15em] uppercase"
               style={{ background: "#c9a96e", color: "#0A0A0A" }}
             >
-              Add — ${product.price * quantity}
+              Add — {formatMoney(product.price * quantity)}
             </button>
           </div>
         </div>

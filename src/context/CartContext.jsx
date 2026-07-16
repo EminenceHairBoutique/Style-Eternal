@@ -1,14 +1,21 @@
 // src/context/CartContext.jsx
 // Style Eternal — Cart state + drawer controls.
+//
+// All state math lives in src/utils/cartOps.js (pure, unit-tested). This
+// provider owns persistence (localStorage), the drawer flag, and a stable,
+// memoized context value so cart changes don't re-render every consumer
+// with fresh function identities.
 
 import React, {
   createContext,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
-  useEffect,
 } from "react";
 import { resolveProductImages } from "../utils/productMedia";
+import * as ops from "../utils/cartOps";
 
 const CartContext = createContext(null);
 
@@ -26,23 +33,23 @@ export function CartProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
+    } catch { /* storage full/blocked — cart still works in-memory */ }
   }, [cartItems]);
 
-  const openCart = () => setIsOpen(true);
-  const closeCart = () => setIsOpen(false);
-  const toggleCart = () => setIsOpen((v) => !v);
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
+  const toggleCart = useCallback(() => setIsOpen((v) => !v), []);
 
-  const addToCart = (product, options = {}) => {
+  const addToCart = useCallback((product, options = {}) => {
     if (!product?.id) return;
 
     const size = options.size ?? product.size ?? null;
     const colorway = options.colorway ?? product.colorway ?? null;
-    const quantity = Number(options.quantity ?? 1) || 1;
+    const quantity = ops.clampQty(options.quantity ?? 1);
 
-    const price = Number(
-      options.price ?? product.price ?? 0
-    );
+    const price = Number(options.price ?? product.price ?? 0);
 
     const images = resolveProductImages(product);
     const image =
@@ -55,9 +62,9 @@ export function CartProvider({ children }) {
     const isPreorder = Boolean(options.isPreorder ?? product.isPreorder ?? false);
     const leadTimeDays = Number(options.leadTimeDays ?? product.leadTimeDays ?? 0);
 
-    const cartKey = `${product.id}::${size || ""}::${colorway || ""}`;
+    const cartKey = ops.cartKeyFor(product.id, size, colorway);
 
-    const normalized = {
+    const entry = {
       id: product.id,
       slug: product.slug,
       name: product.displayName || product.name,
@@ -72,112 +79,80 @@ export function CartProvider({ children }) {
       variant: cartKey,
     };
 
-    setCartItems((prev) => {
-      const idx = prev.findIndex((p) => p.cartKey === normalized.cartKey);
-      if (idx >= 0) {
-        const copy = [...prev];
-        copy[idx] = { ...copy[idx], quantity: copy[idx].quantity + normalized.quantity };
-        return copy;
-      }
-      return [...prev, normalized];
-    });
-
+    setCartItems((prev) => ops.addItem(prev, entry));
     setIsOpen(true);
-  };
+  }, []);
 
-  const updateQuantity = (id, a, b) => {
+  // updateQuantity(id, qty) or updateQuantity(id, variant, qty) — the
+  // 2-arg legacy shape targets every line of the product.
+  const updateQuantity = useCallback((id, a, b) => {
     const hasVariant = typeof a === "string";
     const variant = hasVariant ? a : null;
     const qty = hasVariant ? b : a;
-    const nextQty = Math.max(1, Number(qty) || 1);
+    setCartItems((prev) => ops.setQuantity(prev, id, variant, qty));
+  }, []);
 
-    setCartItems((prev) =>
-      prev.map((p) => {
-        if (p.id !== id) return p;
-        if (variant && p.variant !== variant) return p;
-        return { ...p, quantity: nextQty };
-      })
-    );
-  };
+  const updateItemOptions = useCallback((id, cartKey, next = {}) => {
+    setCartItems((prev) => ops.changeOptions(prev, id, cartKey, next));
+  }, []);
 
-  const updateItemOptions = (id, cartKey, next = {}) => {
-    setCartItems((prev) => {
-      const current = prev.find((x) => (x.cartKey || x.variant) === cartKey);
-      if (!current) return prev;
+  // removeFromCart(id) removes every line of the product;
+  // removeFromCart(id, variant) removes only that line.
+  const removeFromCart = useCallback((id, variant = null) => {
+    setCartItems((prev) => ops.removeItem(prev, id, variant));
+  }, []);
 
-      const size = next.size ?? current.size;
-      const colorway = next.colorway ?? current.colorway;
-      const newCartKey = `${id}::${size || ""}::${colorway || ""}`;
+  // Same semantics as removeFromCart — the variant is honored, not dropped.
+  // (A dropped second argument here once made "remove size M" also delete
+  // size L of the same product from the drawer.)
+  const removeItem = removeFromCart;
 
-      const updated = {
-        ...current,
-        size,
-        colorway,
-        cartKey: newCartKey,
-        variant: newCartKey,
-      };
-
-      let nextArr = prev.filter((x) => (x.cartKey || x.variant) !== cartKey);
-      const mergeIdx = nextArr.findIndex((x) => (x.cartKey || x.variant) === newCartKey);
-      if (mergeIdx >= 0) {
-        const copy = [...nextArr];
-        copy[mergeIdx] = {
-          ...copy[mergeIdx],
-          quantity: Number(copy[mergeIdx].quantity || 0) + Number(updated.quantity || 0),
-        };
-        return copy;
-      }
-
-      return [...nextArr, updated];
-    });
-  };
-
-  const removeFromCart = (id, variant = null) => {
-    setCartItems((prev) =>
-      prev.filter((p) => {
-        if (p.id !== id) return true;
-        if (!variant) return false;
-        return p.variant !== variant;
-      })
-    );
-  };
-
-  const removeItem = (id) => removeFromCart(id, null);
-
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch { /* ignore */ }
     setIsOpen(false);
-  };
+  }, []);
 
-  const subtotal = useMemo(
-    () =>
-      cartItems.reduce(
-        (sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0),
-        0
-      ),
-    [cartItems]
+  const subtotal = useMemo(() => ops.subtotal(cartItems), [cartItems]);
+  const count = useMemo(() => ops.itemCount(cartItems), [cartItems]);
+
+  const value = useMemo(
+    () => ({
+      isOpen,
+      openCart,
+      closeCart,
+      toggleCart,
+      cartItems,
+      addToCart,
+      updateQuantity,
+      updateItemOptions,
+      removeFromCart,
+      removeItem,
+      clearCart,
+      items: cartItems,
+      setItems: setCartItems,
+      subtotal,
+      total: subtotal,
+      count,
+    }),
+    [
+      isOpen,
+      openCart,
+      closeCart,
+      toggleCart,
+      cartItems,
+      addToCart,
+      updateQuantity,
+      updateItemOptions,
+      removeFromCart,
+      removeItem,
+      clearCart,
+      subtotal,
+      count,
+    ]
   );
-
-  const total = subtotal;
-
-  const value = {
-    isOpen,
-    openCart,
-    closeCart,
-    toggleCart,
-    cartItems,
-    addToCart,
-    updateQuantity,
-    updateItemOptions,
-    removeFromCart,
-    removeItem,
-    clearCart,
-    items: cartItems,
-    setItems: setCartItems,
-    subtotal,
-    total,
-  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

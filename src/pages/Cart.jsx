@@ -1,16 +1,16 @@
 // src/pages/Cart.jsx — Style Eternal
 import React from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import SEO from "../components/SEO";
-
-const money = (n) => `$${Number(n).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+import FreeShippingMeter from "../components/FreeShippingMeter";
+import { formatMoney as money } from "../utils/format";
 
 export default function Cart() {
-  const { cartItems = [], items = [], updateQuantity, removeFromCart, removeItem, subtotal, total } = useCart();
-  const cartList = cartItems?.length ? cartItems : items || [];
-  const cartTotal = subtotal ?? total ?? 0;
+  const { cartItems = [], updateQuantity, removeFromCart, subtotal = 0 } = useCart();
+  const cartList = cartItems;
+  const cartTotal = subtotal;
 
   if (!cartList.length) {
     return (
@@ -63,14 +63,16 @@ export default function Cart() {
                       <div className="flex items-center gap-4 mt-4">
                         <div className="flex items-center border border-white/10">
                           <button
-                            onClick={() => (updateQuantity || (() => {}))(item.id, item.variant, Math.max(1, item.quantity - 1))}
+                            onClick={() => updateQuantity(item.id, item.variant, item.quantity - 1)}
+                            aria-label={`Decrease quantity of ${item.name}`}
                             className="px-2.5 py-1.5 text-se-steel hover:text-se-bone transition" type="button"
                           >
                             <Minus size={12} />
                           </button>
                           <span className="px-3 text-[12px] font-accent">{item.quantity}</span>
                           <button
-                            onClick={() => (updateQuantity || (() => {}))(item.id, item.variant, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id, item.variant, item.quantity + 1)}
+                            aria-label={`Increase quantity of ${item.name}`}
                             className="px-2.5 py-1.5 text-se-steel hover:text-se-bone transition" type="button"
                           >
                             <Plus size={12} />
@@ -78,7 +80,7 @@ export default function Cart() {
                         </div>
 
                         <button
-                          onClick={() => (removeFromCart || removeItem || (() => {}))(item.id, item.variant)}
+                          onClick={() => removeFromCart(item.id, item.variant)}
                           className="text-[10px] font-accent uppercase tracking-[0.15em] text-se-steel hover:text-se-red-bright transition"
                           type="button"
                         >
@@ -99,6 +101,7 @@ export default function Cart() {
                 <div className="border border-white/5 bg-se-charcoal p-6 space-y-5">
                   <h2 className="font-display text-[14px] tracking-[0.12em]">ORDER SUMMARY</h2>
                   <div className="divider" />
+                  <FreeShippingMeter subtotal={cartTotal} />
                   <div className="flex justify-between text-[13px] font-accent">
                     <span className="text-se-bone/60">Subtotal</span>
                     <span>{money(cartTotal)}</span>
