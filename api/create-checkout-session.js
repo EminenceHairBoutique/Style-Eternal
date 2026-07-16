@@ -8,6 +8,7 @@ import {
   buildShippingOptions,
   allowedShippingCountries,
   isDigitalOnly,
+  subscriptionInterval,
   CheckoutError,
 } from "../lib/checkout.js";
 
@@ -129,12 +130,16 @@ export async function createHandler(req, res) {
     // Digital gift-card-only orders: nothing ships, nothing to charge for.
     const digitalOnly = isDigitalOnly(items, products);
 
+    // Subscription carts bill recurring (mode switch below). Throws on mixed
+    // subscription + one-time carts. Dormant until a catalog product opts in.
+    const recurringInterval = subscriptionInterval(items, products);
+
     // Store credit: only for a BEARER-VERIFIED user (the body's userId is
     // client-supplied and must never unlock someone else's balance). Applied
     // as a one-off coupon; Stripe disallows combining explicit discounts
     // with allow_promotion_codes, so promo entry is off for these sessions.
     let storeCredit = null; // { userId, cents, couponId }
-    if (useStoreCredit) {
+    if (useStoreCredit && !recurringInterval) {
       const authedUser = await getUserFromReq(req);
       if (authedUser) {
         try {
@@ -164,7 +169,7 @@ export async function createHandler(req, res) {
       // No payment_method_types: automatic payment methods let Stripe show
       // Apple Pay / Google Pay / Link when enabled in the dashboard.
       line_items: lineItems,
-      mode: "payment",
+      mode: recurringInterval ? "subscription" : "payment",
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancel`,
 
@@ -174,14 +179,17 @@ export async function createHandler(req, res) {
 
       // Physical goods: collect where to ship and charge the promised rates
       // (free at/above the threshold, flat standard below). Digital gift
-      // cards skip shipping entirely.
+      // cards skip shipping entirely; subscription mode collects the address
+      // but doesn't support one-time shipping_options.
       ...(digitalOnly
         ? {}
         : {
             shipping_address_collection: {
               allowed_countries: allowedShippingCountries(process.env),
             },
-            shipping_options: buildShippingOptions({ subtotalCents, env: process.env }),
+            ...(recurringInterval
+              ? {}
+              : { shipping_options: buildShippingOptions({ subtotalCents, env: process.env }) }),
           }),
 
       // Supabase user mapping for loyalty + order history.

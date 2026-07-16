@@ -76,7 +76,7 @@ export default function AccountDashboard() {
       try {
         let { data: prof, error: profErr } = await supabase
           .from("profiles")
-          .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents")
+          .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents, stripe_customer_id")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -90,7 +90,7 @@ export default function AccountDashboard() {
               lifetime_spend_cents: 0,
               first_purchase_bonus_awarded: false,
             })
-            .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents")
+            .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents, stripe_customer_id")
             .maybeSingle();
           prof = inserted || null;
           profErr = insErr || null;
@@ -308,10 +308,13 @@ export default function AccountDashboard() {
             )}
           </div>
 
-          <button onClick={logout} className="btn-outline inline-flex items-center gap-2" type="button">
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
+          <div className="flex items-center gap-3">
+            {profile?.stripe_customer_id && <BillingPortalButton />}
+            <button onClick={logout} className="btn-outline inline-flex items-center gap-2" type="button">
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </div>
         </Motion.div>
 
         {error && (
@@ -494,6 +497,42 @@ function StoreCreditPanel({ balanceCents, onRedeemed }) {
         </p>
       )}
     </div>
+  );
+}
+
+/* ---------------- Billing portal (subscriptions) ---------------- */
+function BillingPortalButton() {
+  const [busy, setBusy] = useState(false);
+
+  const open = async () => {
+    if (busy || !supabase) return;
+    setBusy(true);
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data?.session?.access_token;
+      if (!token) throw new Error("Not authenticated");
+      const res = await fetch("/api/billing-portal", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.url) throw new Error(json.error || "Portal unavailable");
+      window.location.assign(json.url);
+    } catch {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={open}
+      disabled={busy}
+      className={`btn-outline inline-flex items-center gap-2 ${busy ? "opacity-70 cursor-wait" : ""}`}
+    >
+      <Receipt className="w-4 h-4" />
+      {busy ? "Opening…" : "Billing"}
+    </button>
   );
 }
 

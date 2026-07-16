@@ -4,6 +4,7 @@ import {
   buildShippingOptions,
   allowedShippingCountries,
   isDigitalOnly,
+  subscriptionInterval,
   CheckoutError,
 } from "../../lib/checkout.js";
 
@@ -232,6 +233,49 @@ describe("buildShippingOptions", () => {
     const [opt] = buildShippingOptions({ subtotalCents: 1, env: {} });
     expect(opt.shipping_rate_data.delivery_estimate.minimum.value).toBe(5);
     expect(opt.shipping_rate_data.delivery_estimate.maximum.value).toBe(7);
+  });
+});
+
+describe("subscriptionInterval", () => {
+  const SUB_CATALOG = [
+    ...CATALOG,
+    { id: "se-club-m", slug: "club-monthly", name: "Club", price: 30, sizes: [], releaseStatus: "available", subscription: { interval: "month" } },
+    { id: "se-club-y", slug: "club-yearly", name: "Club Annual", price: 300, sizes: [], releaseStatus: "available", subscription: { interval: "year" } },
+  ];
+
+  it("returns null for ordinary carts", () => {
+    expect(subscriptionInterval([{ slug: "test-tee", quantity: 1 }], SUB_CATALOG)).toBeNull();
+    expect(subscriptionInterval([], SUB_CATALOG)).toBeNull();
+  });
+
+  it("returns the interval for subscription-only carts", () => {
+    expect(subscriptionInterval([{ slug: "club-monthly", quantity: 1 }], SUB_CATALOG)).toBe("month");
+  });
+
+  it("rejects mixed subscription + one-time carts", () => {
+    expect(() =>
+      subscriptionInterval(
+        [{ slug: "club-monthly", quantity: 1 }, { slug: "test-tee", quantity: 1 }],
+        SUB_CATALOG
+      )
+    ).toThrow(/separately/i);
+  });
+
+  it("rejects mixed billing intervals", () => {
+    expect(() =>
+      subscriptionInterval(
+        [{ slug: "club-monthly", quantity: 1 }, { slug: "club-yearly", quantity: 1 }],
+        SUB_CATALOG
+      )
+    ).toThrow(/billing periods/i);
+  });
+
+  it("stamps recurring on subscription line items", () => {
+    const { lineItems } = buildLineItems({
+      items: [{ slug: "club-monthly", quantity: 1 }],
+      catalog: SUB_CATALOG,
+    });
+    expect(lineItems[0].price_data.recurring).toEqual({ interval: "month" });
   });
 });
 

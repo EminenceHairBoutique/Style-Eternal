@@ -97,11 +97,17 @@ Revoke anything unexpected with
    (`https://<domain>/api/stripe-webhook`): ensure these events are enabled:
    - `checkout.session.completed` (existing)
    - `checkout.session.expired` ← **add this** (powers abandoned-cart recovery)
+   - `charge.refunded` (marks orders refunded)
+   - `invoice.payment_succeeded` (records subscription renewals — only fires
+     if you ever sell a subscription product)
 2. **Payment methods** — Settings → Payment methods: enable **Apple Pay**,
    **Google Pay**, and **Link**. The code now uses automatic payment methods;
    wallets appear at checkout once enabled here (falls back to card if not).
 3. **Apple Pay domain** — Settings → Payment methods → Apple Pay → add
    `www.shopstyleeternal.com` (required for Apple Pay on the web).
+4. **Customer portal** (only needed for subscriptions) — Settings → Billing →
+   Customer portal: click Save once to activate the default configuration.
+   The account page's Billing button uses it.
 
 ---
 

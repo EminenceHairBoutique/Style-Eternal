@@ -36,10 +36,21 @@ CI (.github/workflows/ci.yml) runs all of the above on every push/PR.
   storefront; `api/create-checkout-session.js` does the same server-side, so
   the charged price always equals the displayed price.
 - **Orders**: Stripe Checkout (hosted) → `api/stripe-webhook.js` persists
-  `orders` + `order_items`, decrements stock, awards loyalty, attributes
-  promo codes, emails confirmation. Money convention: `amount_total`
-  (integer cents) is canonical; `total/subtotal/shipping/tax` (dollars)
-  are maintained for compatibility.
+  `orders` + `order_items`, decrements stock, awards loyalty + referral
+  bonuses, attributes promo codes, issues gift cards, settles store credit,
+  emails confirmation. Money convention: `amount_total` (integer cents) is
+  canonical; `total/subtotal/shipping/tax` (dollars) are maintained for
+  compatibility. Fulfillment: `api/admin/orders.js` ships (tracking + email)
+  and drives the returns lifecycle.
+- **Gift cards / store credit**: gift-card catalog products (`giftCard: true`)
+  → webhook issues codes → `redeem_gift_card()` RPC converts to
+  `profiles.store_credit_cents` → checkout applies it as a one-off coupon for
+  the bearer-verified user only.
+- **Subscriptions (dormant)**: give a catalog product
+  `subscription: { interval: "month" }` and checkout switches to Stripe
+  subscription mode; renewals are recorded by `invoice.payment_succeeded`;
+  customers manage billing via `api/billing-portal.js`. No product uses it
+  yet — the plumbing is tested but inert.
 - **Images**: originals in `public/assets/**` (JPG); `npm run media:optimize`
   emits WebP + 800/400 variants and `src/data/mediaManifest.json`. Render
   through `SmartImage` (manifest-driven `<picture>` + srcset). Product

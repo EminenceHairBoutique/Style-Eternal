@@ -439,6 +439,19 @@ async function handleCheckoutCompleted(stripe, session) {
   await settleStoreCredit(session);
   await rewardReferrer({ session, buyerUserId: userId, buyerEmail: email, orderNumber });
 
+  // Subscriptions create a Stripe customer — remember it so the account can
+  // open the billing portal (api/billing-portal.js).
+  if (userId && session.customer) {
+    try {
+      await supabaseServer
+        .from("profiles")
+        .update({ stripe_customer_id: session.customer })
+        .eq("id", userId);
+    } catch (err) {
+      console.warn("stripe_customer_id save skipped:", err?.message || err);
+    }
+  }
+
   try {
     await sendOrderConfirmationEmail({
       to: email,
@@ -510,6 +523,40 @@ async function handleCheckoutExpired(stripe, session) {
   }
 }
 
+/**
+ * Record subscription renewals as orders so revenue and history stay whole.
+ * The invoice id doubles as the idempotency key via the unique
+ * stripe_session_id index. Never throws.
+ */
+async function handleInvoicePaid(invoice) {
+  if (invoice.billing_reason !== "subscription_cycle") return; // first invoice = the checkout order
+  try {
+    const orderNumber = await generateOrderNumber(supabaseServer);
+    const { error } = await supabaseServer.from("orders").insert({
+      order_number: orderNumber,
+      stripe_session_id: invoice.id, // idempotency via the unique index
+      stripe_payment_intent: invoice.payment_intent || null,
+      stripe_payment_id: invoice.payment_intent || null,
+      email: invoice.customer_email || null,
+      customer_email: invoice.customer_email || null,
+      customer_name: invoice.customer_name || null,
+      amount_total: Number(invoice.amount_paid || 0),
+      total: Number(invoice.amount_paid || 0) / 100,
+      currency: invoice.currency,
+      items: invoice.lines?.data || [],
+      status: "paid",
+      notes: "Subscription renewal",
+    });
+    if (error && !isUniqueViolation(error)) {
+      console.warn("Renewal order insert failed:", error.message);
+    } else if (!error) {
+      console.log("Renewal order saved:", orderNumber);
+    }
+  } catch (err) {
+    console.warn("Renewal handling skipped:", err?.message || err);
+  }
+}
+
 async function handleChargeRefunded(charge) {
   const paymentIntent = charge?.payment_intent;
   if (!paymentIntent) return;
@@ -562,6 +609,10 @@ export default async function handler(req, res) {
 
       case "charge.refunded":
         await handleChargeRefunded(event.data.object);
+        break;
+
+      case "invoice.payment_succeeded":
+        await handleInvoicePaid(event.data.object);
         break;
 
       case "payment_intent.payment_failed": {
