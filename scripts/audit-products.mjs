@@ -7,7 +7,7 @@
  * Scans products.js entries and verifies that every referenced image path
  * exists in the /public directory. Outputs a report of:
  *   - Missing images (path listed in products.js but not found on disk)
- *   - Unused images (found in /public/assets/wigs but not referenced in products.js)
+ *   - Unused images (in /public but not referenced by the catalog)
  *   - Products with no images
  *   - Products with missing required fields (id, slug, name, type)
  *
@@ -71,7 +71,9 @@ for (const imgPath of referencedPaths) {
 }
 
 // ---------------------------------------------------------------------------
-// Find all webp/jpg/png/gif images in /public/assets/wigs (and root public)
+// Find all images under /public and flag ones no product references.
+// Generated WebP variants (scripts/optimize-media.mjs siblings of referenced
+// originals) are derived assets, not "unused".
 // ---------------------------------------------------------------------------
 
 function walkPublic(dir, found = []) {
@@ -91,9 +93,33 @@ function walkPublic(dir, found = []) {
 
 const allPublicImages = walkPublic(PUBLIC_DIR);
 
+const isDerivedVariant = (img) => {
+  const stem = img.replace(/-(?:800|400)\.webp$/i, "").replace(/\.webp$/i, "");
+  if (stem === img) return false;
+  return (
+    referencedPaths.has(`${stem}.jpg`) ||
+    referencedPaths.has(`${stem}.jpeg`) ||
+    referencedPaths.has(`${stem}.png`)
+  );
+};
+
 const unusedImages = allPublicImages.filter(
-  (img) => !referencedPaths.has(img)
+  (img) => !referencedPaths.has(img) && !isDerivedVariant(img)
 );
+
+// ---------------------------------------------------------------------------
+// Check the WebP pipeline covered every referenced raster image
+// ---------------------------------------------------------------------------
+
+const missingWebp = [...referencedPaths].filter((imgPath) => {
+  if (!/\.(jpg|jpeg|png)$/i.test(imgPath)) return false;
+  const normalized = imgPath.startsWith("/") ? imgPath.slice(1) : imgPath;
+  const original = join(PUBLIC_DIR, normalized);
+  if (!existsSync(original)) return false; // already reported as missing
+  if (statSync(original).size < 30 * 1024) return false; // below pipeline threshold
+  const webp = original.replace(/\.(jpg|jpeg|png)$/i, ".webp");
+  return !existsSync(webp);
+});
 
 // ---------------------------------------------------------------------------
 // Check products for missing required fields
@@ -124,10 +150,12 @@ const report = {
     totalProducts: products.length,
     totalReferencedImages: referencedPaths.size,
     missingImageCount: missingImages.length,
+    missingWebpCount: missingWebp.length,
     unusedImageCount: unusedImages.length,
     productsWithIssuesCount: productsWithIssues.length,
   },
   missingImages,
+  missingWebp,
   unusedImages,
   productsWithIssues,
 };
@@ -151,6 +179,13 @@ if (isJson) {
     missingImages.forEach((p) => console.log("  ✗ " + p));
   } else {
     console.log("\n✓ All referenced images found on disk.");
+  }
+
+  if (missingWebp.length > 0) {
+    console.log("\n── MISSING WEBP VARIANTS (run: npm run media:optimize) ──");
+    missingWebp.forEach((p) => console.log("  ✗ " + p));
+  } else {
+    console.log("✓ WebP variants exist for all referenced raster images.");
   }
 
   if (productsWithIssues.length > 0) {
@@ -177,7 +212,7 @@ if (isJson) {
   console.log("  2. Update products.js to use new image paths.");
   console.log("  3. Re-run: node scripts/audit-products.mjs\n");
 
-  if (missingImages.length > 0) {
+  if (missingImages.length > 0 || missingWebp.length > 0) {
     process.exit(1); // Non-zero exit signals CI failure
   }
 }

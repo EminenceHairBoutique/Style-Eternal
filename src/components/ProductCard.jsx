@@ -8,6 +8,10 @@ import { resolveProductImages } from "../utils/productMedia";
 import { useProductPrice } from "../hooks/useProductOverlay";
 import { formatMoney } from "../utils/format";
 import ComingSoonOverlay from "./ComingSoonOverlay";
+import SmartImage from "./SmartImage";
+
+// Grid cards: half viewport on phones, a third on tablets, a quarter on desktop.
+const CARD_SIZES = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw";
 
 const ProductCard = ({ product: rawProduct, featured = false }) => {
   const { addToCart, openCart } = useCart();
@@ -64,18 +68,20 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
       <div className={`relative ${featured ? "aspect-[3/4]" : "aspect-[3/4]"} bg-se-charcoal overflow-hidden ${imgSecondary ? "product-card-img-swap" : ""}`}>
         {img ? (
           <>
-            <img
+            <SmartImage
               src={img}
               alt={product.name}
+              sizes={CARD_SIZES}
               className={`img-primary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out ${
                 isSoldOut || isComingSoon ? "opacity-50 grayscale" : "group-hover:scale-[1.04]"
               }`}
               loading="lazy"
             />
             {imgSecondary && !isSoldOut && !isComingSoon && (
-              <img
+              <SmartImage
                 src={imgSecondary}
                 alt={`${product.name} alternate view`}
+                sizes={CARD_SIZES}
                 className="img-secondary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.04]"
                 loading="lazy"
               />

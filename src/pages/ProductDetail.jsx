@@ -22,6 +22,7 @@ import NotifyMeForm from "../components/NotifyMeForm";
 import FitFinder from "../components/FitFinder";
 import { resolveProductImages } from "../utils/productMedia";
 import { formatMoney } from "../utils/format";
+import SmartImage from "../components/SmartImage";
 
 /* ------------------------------------------------------------------ */
 /*  Accordion                                                          */
@@ -198,7 +199,7 @@ function ImageGallery({ images, alt, badge }) {
                   opacity: active === i ? 1 : 0.65,
                 }}
               >
-                <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <SmartImage src={src} alt="" sizes="72px" className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
@@ -210,10 +211,11 @@ function ImageGallery({ images, alt, badge }) {
           onMouseLeave={onLeave}
         >
           {images.map((src, i) => (
-            <img
+            <SmartImage
               key={i}
               src={src}
               alt={`${alt} — view ${i + 1}`}
+              sizes="(max-width: 1024px) 100vw, 55vw"
               aria-hidden={i !== active}
               className="absolute inset-0 w-full h-full object-cover"
               style={{
@@ -223,6 +225,7 @@ function ImageGallery({ images, alt, badge }) {
                 transition: "opacity 180ms ease, transform 120ms ease-out",
               }}
               loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : undefined}
             />
           ))}
           <ProductBadge badge={badge} />
@@ -240,11 +243,13 @@ function ImageGallery({ images, alt, badge }) {
           {images.map((src, i) => (
             <div key={i} className="snap-center shrink-0 w-full">
               <div className="relative aspect-[3/4] bg-se-charcoal overflow-hidden">
-                <img
+                <SmartImage
                   src={src}
                   alt={`${alt} — view ${i + 1}`}
+                  sizes="100vw"
                   className="w-full h-full object-cover"
                   loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : undefined}
                 />
                 {i === 0 && <ProductBadge badge={badge} />}
               </div>

@@ -11,6 +11,7 @@ import SEO from "../components/SEO";
 import HeroVideo from "../components/HeroVideo";
 import NotifyMeForm from "../components/NotifyMeForm";
 import CmsHero from "../components/CmsHero";
+import SmartImage from "../components/SmartImage";
 import { subscribeEmail } from "../utils/subscribe";
 import { usePageContent } from "../hooks/usePageContent";
 
@@ -73,10 +74,13 @@ export default function Home() {
           {/* ── MOBILE HERO (hidden on md+) ── */}
           <div className="md:hidden relative" style={{ height: "100dvh", minHeight: 600 }}>
             <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1C1205 0%, #0A0806 50%, #0A0A0A 100%)" }}>
-              <img
+              <SmartImage
                 src="/assets/editorial/hero-cityscape.jpg"
                 alt=""
                 aria-hidden="true"
+                sizes="100vw"
+                loading="eager"
+                fetchPriority="high"
                 className="absolute inset-0 w-full h-full object-cover object-center"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -149,10 +153,13 @@ export default function Home() {
             {/* ── PANEL 1: Left — editorial cityscape (full height) ── */}
             <div className="row-span-2 relative overflow-hidden group" style={{ background: "linear-gradient(135deg, #1C1205 0%, #0A0806 50%, #0A0A0A 100%)" }}>
               {/* Editorial photo — full opacity, no suppression */}
-              <img
+              <SmartImage
                 src="/assets/editorial/hero-cityscape.jpg"
                 alt=""
                 aria-hidden="true"
+                sizes="(min-width: 768px) 40vw, 100vw"
+                loading="eager"
+                fetchPriority="high"
                 className="absolute inset-0 w-full h-full object-cover object-center"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -204,9 +211,10 @@ export default function Home() {
 
             {/* ── PANEL 2: Top-mid — SE Worldwide (product) ── */}
             <div className="relative overflow-hidden bg-se-charcoal group">
-              <img
+              <SmartImage
                 src="/assets/products/se-worldwide-longsleeve/01.jpg"
                 alt="SE Worldwide Long Sleeve"
+                sizes="(min-width: 768px) 30vw, 100vw"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
                 style={{ filter: "brightness(0.55) contrast(1.25) grayscale(15%)" }}
                 onError={(e) => { e.target.style.display = "none"; }}
@@ -227,9 +235,10 @@ export default function Home() {
             {/* ── PANEL 3: Top-right — Editorial / Brand ── */}
             <div className="relative overflow-hidden bg-[#110A04] group">
               {/* Editorial photo slot */}
-              <img
+              <SmartImage
                 src="/assets/editorial/north-ward-street.jpg"
                 alt="Style Eternal Editorial"
+                sizes="(min-width: 768px) 30vw, 100vw"
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-70 transition-transform duration-700 group-hover:scale-[1.03]"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -254,9 +263,10 @@ export default function Home() {
 
             {/* ── PANEL 4: Bottom-mid — Love Never Dies tee (product) ── */}
             <div className="relative overflow-hidden bg-se-charcoal group">
-              <img
+              <SmartImage
                 src="/assets/products/love-never-dies-tee/01.jpg"
                 alt="Love Never Dies Tee"
+                sizes="(min-width: 768px) 30vw, 100vw"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
                 style={{ filter: "brightness(0.55) contrast(1.3) grayscale(10%)" }}
                 onError={(e) => { e.target.style.display = "none"; }}
@@ -278,10 +288,11 @@ export default function Home() {
             {/* ── PANEL 5: Bottom-right — Quote ── */}
             <div className="relative overflow-hidden bg-[#0F0C08] flex items-center justify-center p-6 md:p-8">
               {/* Editorial photo slot (optional hand/detail shot) */}
-              <img
+              <SmartImage
                 src="/assets/editorial/hero-detail.jpg"
                 alt=""
                 aria-hidden="true"
+                sizes="(min-width: 768px) 30vw, 100vw"
                 className="absolute inset-0 w-full h-full object-cover object-center"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
@@ -442,15 +453,12 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-0 md:gap-12 items-center">
               {/* Image */}
               <Motion.div {...fadeUp} className="aspect-[4/5] bg-se-asphalt overflow-hidden mb-8 md:mb-0">
-                <img
+                <SmartImage
                   src="/assets/products/love-never-dies-tee/01.jpg"
                   alt="Drop 01: Love Never Dies"
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   className="h-full w-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.parentElement.classList.add("flex", "items-center", "justify-center", "bg-gradient-to-br", "from-se-charcoal", "to-se-asphalt");
-                    e.target.parentElement.innerHTML = '<span class="font-display text-[32px] tracking-[0.2em] text-se-steel/30">DROP 03</span>';
-                  }}
+                  onError={(e) => { e.target.style.display = "none"; }}
                 />
               </Motion.div>
 

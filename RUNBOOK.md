@@ -154,7 +154,25 @@ UPDATE public.profiles SET is_admin = TRUE WHERE email = 'you@example.com';
    recovery email.
 7. Admin → Orders shows the order with items and a working Stripe link.
 
-## 6. Local development
+## 6. Hero video (one-time, optional but recommended)
+
+`public/assets/video/brand-promo-ss26.mp4` is 9.6MB. The site now paints a
+lightweight poster instantly and defers the film until the browser is idle,
+so it no longer blocks first paint — but the file itself is still heavy for
+mobile data. When convenient, compress it on any machine with ffmpeg and
+replace the file (same name, no code change needed):
+
+```bash
+ffmpeg -i brand-promo-ss26.mp4 -vf "scale=-2:720" -c:v libx264 -crf 28 \
+  -movflags +faststart -an brand-promo-720.mp4
+mv brand-promo-720.mp4 public/assets/video/brand-promo-ss26.mp4
+```
+
+Target: ≤3MB. `-movflags +faststart` makes it stream progressively.
+(This environment's ffmpeg build cannot decode H.264, so it could not be done
+automatically.)
+
+## 7. Local development
 
 ```bash
 npm ci

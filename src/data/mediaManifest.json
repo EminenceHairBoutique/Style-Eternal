@@ -1,0 +1,324 @@
+{
+  "/assets/campaign/campaign-ss26.png": {
+    "webp": "/assets/campaign/campaign-ss26.webp",
+    "widths": [
+      1200,
+      800,
+      400
+    ],
+    "width": 1200,
+    "height": 800
+  },
+  "/assets/campaign/lookbook-placeholder.png": {
+    "webp": "/assets/campaign/lookbook-placeholder.webp",
+    "widths": [
+      1200,
+      800,
+      400
+    ],
+    "width": 1200,
+    "height": 800
+  },
+  "/assets/collections/iron-bound-hero.png": {
+    "webp": "/assets/collections/iron-bound-hero.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/collections/legacy-hero.png": {
+    "webp": "/assets/collections/legacy-hero.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/collections/north-ward-hero.png": {
+    "webp": "/assets/collections/north-ward-hero.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/drop-teasers/drop-01-banner.png": {
+    "webp": "/assets/drop-teasers/drop-01-banner.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 500
+  },
+  "/assets/drop-teasers/drop-01-card.png": {
+    "webp": "/assets/drop-teasers/drop-01-card.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 800
+  },
+  "/assets/drop-teasers/drop-02-banner.png": {
+    "webp": "/assets/drop-teasers/drop-02-banner.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 500
+  },
+  "/assets/drop-teasers/drop-02-card.png": {
+    "webp": "/assets/drop-teasers/drop-02-card.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 800
+  },
+  "/assets/drop-teasers/drop-03-banner.png": {
+    "webp": "/assets/drop-teasers/drop-03-banner.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 500
+  },
+  "/assets/drop-teasers/drop-03-card.png": {
+    "webp": "/assets/drop-teasers/drop-03-card.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 800
+  },
+  "/assets/editorial/campaign-ss26.png": {
+    "webp": "/assets/editorial/campaign-ss26.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 1000
+  },
+  "/assets/editorial/hero-cityscape.jpg": {
+    "webp": "/assets/editorial/hero-cityscape.webp",
+    "widths": [
+      1024,
+      800,
+      400
+    ],
+    "width": 1024,
+    "height": 1536
+  },
+  "/assets/editorial/hero-detail.jpg": {
+    "webp": "/assets/editorial/hero-detail.webp",
+    "widths": [
+      1024,
+      800,
+      400
+    ],
+    "width": 1024,
+    "height": 1536
+  },
+  "/assets/editorial/journal-legacy.png": {
+    "webp": "/assets/editorial/journal-legacy.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 1000
+  },
+  "/assets/editorial/journal-newark.png": {
+    "webp": "/assets/editorial/journal-newark.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 1000
+  },
+  "/assets/editorial/lookbook-iron-bound.png": {
+    "webp": "/assets/editorial/lookbook-iron-bound.webp",
+    "widths": [
+      800,
+      400
+    ],
+    "width": 800,
+    "height": 1000
+  },
+  "/assets/editorial/north-ward-street.jpg": {
+    "webp": "/assets/editorial/north-ward-street.webp",
+    "widths": [
+      1536,
+      800,
+      400
+    ],
+    "width": 1536,
+    "height": 1024
+  },
+  "/assets/placeholders/collection-archive.png": {
+    "webp": "/assets/placeholders/collection-archive.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/placeholders/collection-essentials.png": {
+    "webp": "/assets/placeholders/collection-essentials.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/placeholders/collection-eternal-flame.png": {
+    "webp": "/assets/placeholders/collection-eternal-flame.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/placeholders/collection-eternal-love.png": {
+    "webp": "/assets/placeholders/collection-eternal-love.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/placeholders/collection-love-never-dies.png": {
+    "webp": "/assets/placeholders/collection-love-never-dies.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/placeholders/collection-utility-capsule.png": {
+    "webp": "/assets/placeholders/collection-utility-capsule.webp",
+    "widths": [
+      1440,
+      800,
+      400
+    ],
+    "width": 1440,
+    "height": 600
+  },
+  "/assets/placeholders/coming-soon-product.png": {
+    "webp": "/assets/placeholders/coming-soon-product.webp",
+    "widths": [
+      600,
+      400
+    ],
+    "width": 600,
+    "height": 800
+  },
+  "/assets/products/eternal-love-hoodie/01.jpg": {
+    "webp": "/assets/products/eternal-love-hoodie/01.webp",
+    "widths": [
+      1600,
+      800,
+      400
+    ],
+    "width": 2000,
+    "height": 2000
+  },
+  "/assets/products/forbidden-love-hoodie/01.jpg": {
+    "webp": "/assets/products/forbidden-love-hoodie/01.webp",
+    "widths": [
+      1600,
+      800,
+      400
+    ],
+    "width": 2000,
+    "height": 2017
+  },
+  "/assets/products/freedom-hoodie/01.jpg": {
+    "webp": "/assets/products/freedom-hoodie/01.webp",
+    "widths": [
+      1600,
+      800,
+      400
+    ],
+    "width": 2000,
+    "height": 2017
+  },
+  "/assets/products/love-never-dies-tee/01.jpg": {
+    "webp": "/assets/products/love-never-dies-tee/01.webp",
+    "widths": [
+      1600,
+      800,
+      400
+    ],
+    "width": 4000,
+    "height": 4000
+  },
+  "/assets/products/se-worldwide-longsleeve/01.jpg": {
+    "webp": "/assets/products/se-worldwide-longsleeve/01.webp",
+    "widths": [
+      1600,
+      800,
+      400
+    ],
+    "width": 2000,
+    "height": 2000
+  },
+  "/assets/products/se-worldwide-longsleeve/02.jpg": {
+    "webp": "/assets/products/se-worldwide-longsleeve/02.webp",
+    "widths": [
+      1320,
+      800,
+      400
+    ],
+    "width": 1320,
+    "height": 1104
+  },
+  "/assets/products/se-worldwide-longsleeve/03.jpg": {
+    "webp": "/assets/products/se-worldwide-longsleeve/03.webp",
+    "widths": [
+      1320,
+      800,
+      400
+    ],
+    "width": 1320,
+    "height": 1090
+  },
+  "/assets/se_og_banner.png": {
+    "webp": "/assets/se_og_banner.webp",
+    "widths": [
+      1200,
+      800,
+      400
+    ],
+    "width": 1200,
+    "height": 630
+  }
+}
