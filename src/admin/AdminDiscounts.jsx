@@ -17,6 +17,22 @@ const EMPTY_FORM = {
   is_active: true,
 };
 
+// Checkout redeems Stripe-native promotion codes, so a row only works for
+// customers once it's synced to Stripe via /api/admin/discounts.
+async function stripeSync(id, action = "sync") {
+  const { data } = await supabase.auth.getSession();
+  const token = data?.session?.access_token;
+  if (!token) throw new Error("Not authenticated");
+  const res = await fetch("/api/admin/discounts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id, action }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Stripe sync failed");
+  return json;
+}
+
 export default function AdminDiscounts() {
   const { showToast } = useAdminToast();
   const [rows, setRows] = useState([]);
@@ -42,7 +58,7 @@ export default function AdminDiscounts() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { load();   }, []);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -85,12 +101,23 @@ export default function AdminDiscounts() {
     }
 
     const query = editingId
-      ? supabase.from("discount_codes").update(payload).eq("id", editingId)
-      : supabase.from("discount_codes").insert(payload);
-    const { error } = await query;
+      ? supabase.from("discount_codes").update(payload).eq("id", editingId).select("id").single()
+      : supabase.from("discount_codes").insert(payload).select("id").single();
+    const { data: savedRow, error } = await query;
+    if (error) {
+      setSaving(false);
+      return showToast(error.message, "error");
+    }
+
+    // Push to Stripe so the code actually works at checkout.
+    try {
+      await stripeSync(savedRow.id, "sync");
+      showToast(editingId ? "Code updated & synced to Stripe" : "Code created & synced to Stripe");
+    } catch (syncErr) {
+      showToast(`Saved, but Stripe sync failed: ${syncErr.message}`, "error");
+    }
+
     setSaving(false);
-    if (error) return showToast(error.message, "error");
-    showToast(editingId ? "Code updated" : "Code created");
     setShowForm(false);
     setEditingId(null);
     setForm(EMPTY_FORM);
@@ -99,16 +126,30 @@ export default function AdminDiscounts() {
 
   const toggleActive = async (row, e) => {
     e.stopPropagation();
+    const next = !row.is_active;
     const { error } = await supabase
       .from("discount_codes")
-      .update({ is_active: !row.is_active })
+      .update({ is_active: next })
       .eq("id", row.id);
     if (error) return showToast(error.message, "error");
-    setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, is_active: !row.is_active } : r)));
+    setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, is_active: next } : r)));
+
+    // Mirror the change in Stripe (deactivate kills the live promo code;
+    // re-activating issues a fresh one).
+    try {
+      await stripeSync(row.id, next ? "sync" : "deactivate");
+      load();
+    } catch (syncErr) {
+      showToast(`Stripe: ${syncErr.message}`, "error");
+    }
   };
 
   const onDelete = async () => {
     if (!confirmDelete) return;
+    // Kill the live Stripe promo before removing the local record.
+    try {
+      await stripeSync(confirmDelete.id, "deactivate");
+    } catch { /* row may never have been synced */ }
     const { error } = await supabase.from("discount_codes").delete().eq("id", confirmDelete.id);
     setConfirmDelete(null);
     if (error) return showToast(error.message, "error");
@@ -153,6 +194,27 @@ export default function AdminDiscounts() {
         render: (r) => (r.expires_at ? new Date(r.expires_at).toLocaleDateString() : "—"),
       },
       { key: "status", label: "Status", render: (r) => <StatusBadge status={statusOf(r)} /> },
+      {
+        key: "sync_status",
+        label: "Stripe",
+        render: (r) =>
+          r.sync_status === "synced" ? (
+            <span style={{ fontSize: "0.7rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "#2c6b2f" }}>
+              Synced
+            </span>
+          ) : r.sync_status === "deactivated" ? (
+            <span style={{ fontSize: "0.7rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "#9a9a9a" }}>
+              Off
+            </span>
+          ) : (
+            <span
+              title="Not yet synced to Stripe — the code won't work at checkout until synced (edit & save to sync)."
+              style={{ fontSize: "0.7rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "#8a6310" }}
+            >
+              Unsynced
+            </span>
+          ),
+      },
       {
         key: "actions",
         label: "",

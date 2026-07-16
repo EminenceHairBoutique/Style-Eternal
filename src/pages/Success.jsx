@@ -1,12 +1,14 @@
 // src/pages/Success.jsx — Style Eternal
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Clock, Truck, PenLine } from "lucide-react";
+import { Clock, Truck } from "lucide-react";
 import SEO from "../components/SEO";
 import { useCart } from "../context/CartContext";
 import { trackPurchase } from "../utils/track";
 
 const DEFAULT_PREORDER_LEAD_TIME_RANGE = "14–21 business days";
+const POLL_ATTEMPTS = 3;
+const POLL_DELAY_MS = 2000;
 
 export default function Success() {
   const { clearCart } = useCart();
@@ -14,6 +16,46 @@ export default function Success() {
   const sessionId = searchParams.get("session_id");
   const [isPreorder, setIsPreorder] = useState(false);
   const [leadTimeDays, setLeadTimeDays] = useState(null);
+  const [order, setOrder] = useState(null); // { orderNumber, emailMasked } | null
+  const [verifying, setVerifying] = useState(Boolean(sessionId));
+  const pollRef = useRef({ cancelled: false });
+
+  // Verify the session server-side: the webhook persisted the order, so we can
+  // show the real order number. Brief poll covers webhook latency; the page
+  // still renders a full confirmation if lookup never lands (email has it).
+  useEffect(() => {
+    if (!sessionId) return;
+    const state = { cancelled: false };
+    pollRef.current = state;
+
+    (async () => {
+      for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+        try {
+          const res = await fetch(
+            `/api/order-status?session_id=${encodeURIComponent(sessionId)}`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            if (state.cancelled) return;
+            if (data?.found) {
+              setOrder(data);
+              setVerifying(false);
+              return;
+            }
+          }
+        } catch { /* transient — retry */ }
+        if (state.cancelled) return;
+        if (attempt < POLL_ATTEMPTS - 1) {
+          await new Promise((r) => setTimeout(r, POLL_DELAY_MS));
+        }
+      }
+      if (!state.cancelled) setVerifying(false);
+    })();
+
+    return () => {
+      state.cancelled = true;
+    };
+  }, [sessionId]);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -61,6 +103,26 @@ export default function Success() {
             Thank you for shopping with <strong className="text-se-bone">Style Eternal</strong>.
           </p>
 
+          {/* Real order number, verified server-side */}
+          {order?.orderNumber ? (
+            <div className="max-w-md mx-auto mb-8">
+              <p className="text-[10px] tracking-[0.25em] uppercase text-se-gold font-accent mb-2">
+                Order Number
+              </p>
+              <p className="font-display text-[22px] tracking-[0.08em]">{order.orderNumber}</p>
+              {order.emailMasked && (
+                <p className="mt-2 text-[12px] text-se-bone/40 font-accent">
+                  Confirmation sent to {order.emailMasked}
+                </p>
+              )}
+            </div>
+          ) : verifying ? (
+            <div className="max-w-md mx-auto mb-8" role="status" aria-live="polite">
+              <div className="h-6 w-40 mx-auto bg-se-charcoal se-skeleton" />
+              <p className="mt-2 text-[11px] text-se-steel font-accent">Confirming your order…</p>
+            </div>
+          ) : null}
+
           {isPreorder ? (
             <div className="max-w-md mx-auto mb-10 space-y-4">
               <div className="border border-se-gold/30 bg-se-charcoal p-6 text-left space-y-4">
@@ -98,12 +160,6 @@ export default function Success() {
           ) : (
             <p className="text-[15px] text-se-bone/40 max-w-md mx-auto mb-10">
               Your payment was successful. A confirmation email has been sent with your order details.
-            </p>
-          )}
-
-          {sessionId && (
-            <p className="text-[10px] tracking-[0.2em] uppercase text-se-steel font-accent mb-10">
-              Session · {sessionId.slice(-8)}
             </p>
           )}
 

@@ -53,21 +53,43 @@ export const filterBySize = (products, size) => {
 };
 
 /**
- * Sort products.
+ * Availability rank — purchasable products always sort before teasers.
+ * 0 = buy now (available/preorder), 1 = coming soon, 2 = sold out/archive.
+ */
+export const availabilityRank = (p) => {
+  const status = p?.releaseStatus || "available";
+  if (status === "available" || status === "preorder") return 0;
+  if (status === "coming-soon") return 1;
+  return 2;
+};
+
+/**
+ * Sort products. Every mode uses availability as the primary key so a grid
+ * never leads with pieces nobody can buy.
  */
 export const sortProducts = (products, sortKey) => {
   const sorted = [...products];
+  const byAvailability = (a, b) => availabilityRank(a) - availabilityRank(b);
+
   switch (sortKey) {
     case "price-asc":
-      return sorted.sort((a, b) => getStartingPrice(a) - getStartingPrice(b));
+      return sorted.sort(
+        (a, b) => byAvailability(a, b) || getStartingPrice(a) - getStartingPrice(b)
+      );
     case "price-desc":
-      return sorted.sort((a, b) => getStartingPrice(b) - getStartingPrice(a));
+      return sorted.sort(
+        (a, b) => byAvailability(a, b) || getStartingPrice(b) - getStartingPrice(a)
+      );
     case "newest":
-      return sorted.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+      return sorted.sort(
+        (a, b) => byAvailability(a, b) || (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)
+      );
     case "name-asc":
-      return sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      return sorted.sort(
+        (a, b) => byAvailability(a, b) || (a.name || "").localeCompare(b.name || "")
+      );
     default:
-      return sorted;
+      return sorted.sort(byAvailability);
   }
 };
 

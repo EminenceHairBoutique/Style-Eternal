@@ -1,10 +1,11 @@
 import { useState } from "react";
+import SmartImage from "./SmartImage";
 
 const PLACEHOLDER_STYLE = {
   background: "linear-gradient(135deg, #1A1A1A 0%, #0A0A0A 100%)",
 };
 
-export default function LazyImage({ src, alt = "", className = "" }) {
+export default function LazyImage({ src, alt = "", className = "", sizes = "100vw" }) {
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
 
@@ -16,7 +17,7 @@ export default function LazyImage({ src, alt = "", className = "" }) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
       {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-neutral-200" />
+        <div className="absolute inset-0 animate-pulse bg-se-charcoal" />
       )}
       {errored ? (
         <div
@@ -25,7 +26,7 @@ export default function LazyImage({ src, alt = "", className = "" }) {
           aria-label={alt || "Image unavailable"}
         >
           <svg
-            className="w-10 h-10 text-neutral-600"
+            className="w-10 h-10 text-se-steel"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -36,9 +37,10 @@ export default function LazyImage({ src, alt = "", className = "" }) {
           </svg>
         </div>
       ) : (
-        <img
+        <SmartImage
           src={src}
           alt={alt}
+          sizes={sizes}
           loading="lazy"
           onLoad={() => setLoaded(true)}
           onError={handleError}

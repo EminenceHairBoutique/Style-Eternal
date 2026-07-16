@@ -24,7 +24,7 @@ export default function AdminMedia() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { load();   }, []);
 
   const handleFiles = async (files) => {
     setUploading(true);

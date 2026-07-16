@@ -1,15 +1,13 @@
 // src/pages/Checkout.jsx — Style Eternal
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Lock, AlertTriangle, Truck, Clock } from "lucide-react";
+import { Lock, AlertTriangle, Truck, Loader2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
-import StripeProvider from "../components/StripeProvider";
+import { supabase } from "../lib/supabaseClient";
 import SEO from "../components/SEO";
 import { trackBeginCheckout } from "../utils/track";
-
-const money = (n) =>
-  `$${Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+import { formatMoney as money, formatMoneyCents } from "../utils/format";
 
 const CONSENT_VERSION = "v1.0";
 const REFERRAL_KEY = "se_referral";
@@ -57,7 +55,7 @@ function MixedCartModal({ onCheckoutDomestic, onCheckoutPreorder, onClose }) {
   );
 }
 
-async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
+async function buildAndRedirectCheckout({ items, user, filterFn, onError, useStoreCredit }) {
   try {
     const filteredItems = filterFn ? items.filter(filterFn) : items;
     const filteredTotal = filteredItems.reduce(
@@ -72,9 +70,19 @@ async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
 
     trackBeginCheckout({ items: filteredItems, value: filteredTotal });
 
+    // Store credit requires a verified identity server-side.
+    const headers = { "Content-Type": "application/json" };
+    if (useStoreCredit && supabase) {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const token = data?.session?.access_token;
+        if (token) headers.Authorization = `Bearer ${token}`;
+      } catch { /* proceed without credit */ }
+    }
+
     const res = await fetch("/api/create-checkout-session", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         items: filteredItems.map((i) => ({
           id: i.id,
@@ -92,12 +100,17 @@ async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
         customerEmail: user?.email || null,
         referralCode: readReferralCode() || undefined,
         consentVersion: CONSENT_VERSION,
+        useStoreCredit: Boolean(useStoreCredit),
       }),
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(errText || "Checkout API error");
+      let message = "Checkout is temporarily unavailable. Please try again.";
+      try {
+        const errBody = await res.json();
+        if (errBody?.error) message = errBody.error;
+      } catch { /* non-JSON error body */ }
+      throw new Error(message);
     }
 
     const data = await res.json();
@@ -113,41 +126,71 @@ export default function Checkout() {
   const { items = [], total = 0 } = useCart();
   const { user } = useUser();
 
-  const [pageLoading, setPageLoading] = useState(true);
   const [showMixedModal, setShowMixedModal] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
+  const [redirecting, setRedirecting] = useState(false);
+  const [storeCreditCents, setStoreCreditCents] = useState(0);
+  const [useStoreCredit, setUseStoreCredit] = useState(false);
   const rootRef = useRef(null);
 
+  // Available store credit for signed-in customers (gift cards redeem here).
   useEffect(() => {
-    setPageLoading(true);
-    const t = setTimeout(() => setPageLoading(false), 180);
-    return () => clearTimeout(t);
-  }, []);
+    if (!user?.id || !supabase) {
+      setStoreCreditCents(0);
+      setUseStoreCredit(false);
+      return;
+    }
+    let active = true;
+    supabase
+      .from("profiles")
+      .select("store_credit_cents")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!active) return;
+        const cents = Number(data?.store_credit_cents || 0);
+        setStoreCreditCents(cents);
+        if (cents > 0) setUseStoreCredit(true);
+      })
+      .catch(() => { /* column may not exist pre-RUNBOOK */ });
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
 
   const hasPreorder = items.some((i) => i.isPreorder);
   const hasDomestic = items.some((i) => !i.isPreorder);
   const isMixed = hasPreorder && hasDomestic;
 
   const onError = (err) => {
+    setRedirecting(false);
     setCheckoutError(err?.message || "Payment system temporarily unavailable. Please refresh and try again.");
   };
 
+  const applyCredit = useStoreCredit && storeCreditCents > 0;
+
   async function handleCheckout() {
+    if (redirecting) return;
     setCheckoutError(null);
     if (isMixed) { setShowMixedModal(true); return; }
-    await buildAndRedirectCheckout({ items, user, onError });
+    setRedirecting(true);
+    await buildAndRedirectCheckout({ items, user, onError, useStoreCredit: applyCredit });
   }
 
   async function handleCheckoutDomestic() {
+    if (redirecting) return;
     setShowMixedModal(false);
     setCheckoutError(null);
-    await buildAndRedirectCheckout({ items, user, filterFn: (i) => !i.isPreorder, onError });
+    setRedirecting(true);
+    await buildAndRedirectCheckout({ items, user, filterFn: (i) => !i.isPreorder, onError, useStoreCredit: applyCredit });
   }
 
   async function handleCheckoutPreorder() {
+    if (redirecting) return;
     setShowMixedModal(false);
     setCheckoutError(null);
-    await buildAndRedirectCheckout({ items, user, filterFn: (i) => i.isPreorder, onError });
+    setRedirecting(true);
+    await buildAndRedirectCheckout({ items, user, filterFn: (i) => i.isPreorder, onError, useStoreCredit: applyCredit });
   }
 
   return (
@@ -195,20 +238,15 @@ export default function Checkout() {
               </div>
             )}
 
-            {pageLoading ? (
-              <div className="space-y-4">
-                <div className="h-24 bg-se-charcoal se-skeleton" />
-                <div className="h-24 bg-se-charcoal se-skeleton" />
-              </div>
-            ) : (
-              <StripeProvider>
-                <div className="border border-white/5 bg-se-charcoal p-6">
-                  <p className="text-[13px] text-se-bone/50">
-                    You will be securely redirected to Stripe to complete your purchase.
-                  </p>
-                </div>
-              </StripeProvider>
-            )}
+            <div className="border border-white/5 bg-se-charcoal p-6 space-y-3">
+              <p className="text-[13px] text-se-bone/50">
+                You will be securely redirected to Stripe to complete your purchase.
+                Apple Pay, Google Pay and all major cards accepted.
+              </p>
+              <p className="text-[11px] text-se-steel font-accent">
+                Shipping address and delivery options are collected at payment.
+              </p>
+            </div>
           </div>
 
           {/* Right — Summary */}
@@ -256,6 +294,31 @@ export default function Checkout() {
                   <span className="text-se-bone/60">Subtotal</span>
                   <span>{money(total)}</span>
                 </div>
+
+                {storeCreditCents > 0 && (
+                  <div className="flex items-center justify-between gap-3 text-[13px] font-accent">
+                    <label className="flex items-center gap-2 cursor-pointer text-se-bone/60">
+                      <input
+                        type="checkbox"
+                        checked={useStoreCredit}
+                        onChange={(e) => setUseStoreCredit(e.target.checked)}
+                        className="accent-[#C4A35A]"
+                      />
+                      Store credit ({formatMoneyCents(storeCreditCents)})
+                    </label>
+                    {applyCredit && (
+                      <span className="text-se-gold">
+                        −{formatMoneyCents(Math.min(storeCreditCents, Math.round(total * 100)))}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {applyCredit && (
+                  <p className="text-[10px] text-se-steel font-accent">
+                    Promo codes can't be combined with store credit.
+                  </p>
+                )}
+
                 <div className="flex justify-between text-[13px] font-accent">
                   <span className="text-se-bone/60">Shipping</span>
                   <span className="text-se-steel">At checkout</span>
@@ -263,7 +326,11 @@ export default function Checkout() {
                 <div className="divider" />
                 <div className="flex justify-between text-[15px] font-accent font-medium">
                   <span>Total</span>
-                  <span>{money(total)}</span>
+                  <span>
+                    {applyCredit
+                      ? formatMoneyCents(Math.max(0, Math.round(total * 100) - storeCreditCents))
+                      : money(total)}
+                  </span>
                 </div>
               </div>
 
@@ -279,12 +346,20 @@ export default function Checkout() {
               )}
 
               <button
-                disabled={!items || items.length === 0}
+                disabled={!items || items.length === 0 || redirecting}
                 onClick={handleCheckout}
-                className={`mt-6 w-full ${!items || items.length === 0 ? "btn-outline opacity-50 cursor-not-allowed" : "btn-primary"}`}
+                aria-busy={redirecting}
+                className={`mt-6 w-full ${!items || items.length === 0 ? "btn-outline opacity-50 cursor-not-allowed" : "btn-primary"} ${redirecting ? "opacity-70 cursor-wait" : ""}`}
                 type="button"
               >
-                Continue to Payment
+                {redirecting ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    Redirecting to secure payment…
+                  </span>
+                ) : (
+                  "Continue to Payment"
+                )}
               </button>
 
               <div className="mt-4 text-[10px] text-se-steel font-accent space-y-1">

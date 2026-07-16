@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { subscribeEmail } from "../utils/subscribe";
 import useFocusTrap from "../hooks/useFocusTrap";
+import { canShowCapture, markCaptureShown } from "../utils/captureGovernor";
 
 const STORAGE_KEY = "se_email_popup_dismissed";
 const CONSENT_KEY = "se_cookie_consent";
@@ -43,7 +44,10 @@ export default function EmailPopup({ user }) {
         try {
           if (localStorage.getItem("se_sms_verified") === "true") return;
         } catch { /* ignore */ }
+        // One capture interruption per session, never on purchase routes.
+        if (!canShowCapture(window.location.pathname)) return;
         setVisible(true);
+        markCaptureShown();
       }, DELAY);
     };
 

@@ -1,4 +1,3 @@
-/* eslint-env node */
 /**
  * api/ai.js — single AI router for the Style Eternal commerce suite.
  *
@@ -15,7 +14,7 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { checkRateLimit } from "./_utils/rateLimit.js";
-import { supabaseServer } from "../lib/supabaseServer.js";
+import { requireAdmin } from "./_utils/auth.js";
 
 const MODEL = "claude-sonnet-4-6"; // sonnet-class, per spec
 
@@ -43,18 +42,9 @@ async function parseJsonBody(req) {
   try { return JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { return null; }
 }
 
-// Verify the caller is a signed-in admin (profiles.is_admin = true), matching
-// how the admin panel authenticates. Sends 401/403 and returns false on failure.
+// Shared admin guard (profiles.is_admin). Sends 401/403 and returns false on failure.
 async function isAdminRequest(req, res) {
-  const auth = req.headers?.authorization || req.headers?.Authorization;
-  const token = auth ? String(auth).match(/^Bearer\s+(.+)$/i)?.[1] : null;
-  if (!token) { json(res, 401, { error: "Unauthorized" }); return false; }
-  const { data: u, error: uErr } = await supabaseServer.auth.getUser(token);
-  if (uErr || !u?.user) { json(res, 401, { error: "Unauthorized" }); return false; }
-  const { data: p } = await supabaseServer
-    .from("profiles").select("is_admin").eq("id", u.user.id).maybeSingle();
-  if (!p?.is_admin) { json(res, 403, { error: "Forbidden" }); return false; }
-  return true;
+  return Boolean(await requireAdmin(req, res));
 }
 
 // Compact a client-supplied catalog into a small, stable context string.
@@ -244,7 +234,14 @@ export default async function handler(req, res) {
   if (!anthropic) return json(res, 503, { error: "AI is not configured (missing ANTHROPIC_API_KEY)." });
 
   // Rate limit: 20 AI calls per IP per minute.
-  const allowed = await checkRateLimit(req, res, { endpoint: "ai", max: 20, windowMs: 60_000 });
+  // failClosed: AI calls cost real money — if the limiter is down (beyond the
+  // missing-table bootstrap grace), refuse rather than run unmetered.
+  const allowed = await checkRateLimit(req, res, {
+    endpoint: "ai",
+    max: 20,
+    windowMs: 60_000,
+    failClosed: true,
+  });
   if (!allowed) return;
 
   const body = await parseJsonBody(req);

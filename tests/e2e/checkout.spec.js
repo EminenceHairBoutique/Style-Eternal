@@ -53,12 +53,28 @@ test.describe("Cart and checkout flow", () => {
   });
 
   test("referral code persists into checkout API call", async ({ page }) => {
-    // Seed referral code in localStorage
+    // Seed a referral code AND a cart item so the pay button is enabled.
     await page.goto("/");
     await page.evaluate(() => {
       localStorage.setItem(
         "se_referral",
         JSON.stringify({ code: "E2E-REFTEST", timestamp: Date.now() })
+      );
+      localStorage.setItem(
+        "se_cart",
+        JSON.stringify([
+          {
+            id: "se-lnd-tee-black",
+            slug: "love-never-dies-tee",
+            name: "Love Never Dies Tee",
+            price: 75,
+            quantity: 1,
+            size: "M",
+            colorway: null,
+            cartKey: "se-lnd-tee-black::M::",
+            variant: "se-lnd-tee-black::M::",
+          },
+        ])
       );
     });
 
@@ -75,24 +91,19 @@ test.describe("Cart and checkout flow", () => {
       });
     });
 
-    // Navigate to checkout (won't have items so it might redirect, but that's fine)
     await page.goto("/checkout");
     await page.waitForLoadState("networkidle");
 
-    // If the checkout form is visible and has a submit button, click it
     const submitBtn = page
       .locator("button")
-      .filter({ hasText: /checkout|pay|place.order/i })
+      .filter({ hasText: /continue to payment/i })
       .first();
 
-    if (await submitBtn.isVisible()) {
-      await submitBtn.click();
-      // Wait for the intercepted request
-      await page.waitForTimeout(1000);
-      if (capturedBody) {
-        expect(capturedBody.referralCode).toBe("E2E-REFTEST");
-      }
-    }
-    // If no button was visible, still pass — the route guard may have redirected
+    await expect(submitBtn).toBeEnabled();
+    await submitBtn.click();
+    await expect.poll(() => capturedBody, { timeout: 5000 }).not.toBeNull();
+    expect(capturedBody.referralCode).toBe("E2E-REFTEST");
+    expect(Array.isArray(capturedBody.items)).toBe(true);
+    expect(capturedBody.items[0].slug).toBe("love-never-dies-tee");
   });
 });

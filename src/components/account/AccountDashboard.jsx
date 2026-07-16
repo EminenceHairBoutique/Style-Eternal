@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import {
   Crown, Receipt, Sparkles, Gift, LogOut, ChevronRight, Star, Zap,
-  Heart, ShoppingBag, RotateCcw, Lock, Clock, Check,
+  Heart, ShoppingBag, RotateCcw, Lock, Clock, Check, Truck, X,
 } from "lucide-react";
 
 import { supabase } from "../../lib/supabaseClient";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { useProducts } from "../../context/ProductsContext";
 import { useAllDrops } from "../../hooks/useDrops";
 import {
@@ -17,10 +18,8 @@ import {
 import { buildAiCatalog } from "../../utils/aiCatalog";
 import { resolveProductImages } from "../../utils/productMedia";
 
-const money = (cents) => {
-  const dollars = Number(cents || 0) / 100;
-  return `$${dollars.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-};
+// Cents-denominated money (amount_total, lifetime_spend_cents, tier thresholds).
+import { formatMoney, formatMoneyCents as money } from "../../utils/format";
 
 const niceDate = (iso) => {
   try {
@@ -48,7 +47,8 @@ const STATUS_STYLE = {
 };
 
 export default function AccountDashboard() {
-  const { user, logout, toggleWishlistItem } = useUser();
+  const { user, logout } = useUser();
+  const wishlistCtx = useWishlist();
   const { addToCart } = useCart();
   const { products: catalog } = useProducts();
   const { drops: allDrops } = useAllDrops();
@@ -58,6 +58,8 @@ export default function AccountDashboard() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const [tab, setTab] = useState("overview");
+  const [returns, setReturns] = useState([]);
+  const [returnOrder, setReturnOrder] = useState(null); // order being returned
 
   // For You (AI) state.
   const [forYou, setForYou] = useState(null); // null | product[]
@@ -74,7 +76,7 @@ export default function AccountDashboard() {
       try {
         let { data: prof, error: profErr } = await supabase
           .from("profiles")
-          .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded")
+          .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents, stripe_customer_id")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -88,14 +90,15 @@ export default function AccountDashboard() {
               lifetime_spend_cents: 0,
               first_purchase_bonus_awarded: false,
             })
-            .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded")
+            .select("id, email, loyalty_points, lifetime_spend_cents, first_purchase_bonus_awarded, store_credit_cents, stripe_customer_id")
             .maybeSingle();
           prof = inserted || null;
           profErr = insErr || null;
         }
 
         const ordersSelect =
-          "order_number, created_at, amount_total, currency, status, " +
+          "id, order_number, created_at, amount_total, currency, status, " +
+          "tracking_number, tracking_carrier, tracking_url, shipped_at, " +
           "order_items(product_name, variant, quantity, unit_price, product_id)";
 
         let { data: ord, error: ordErr } = await supabase
@@ -116,11 +119,22 @@ export default function AccountDashboard() {
           ordErr = fallback.error || null;
         }
 
+        // Existing return requests (table may not exist pre-RUNBOOK — ignore errors).
+        let rets = [];
+        try {
+          const { data: retData } = await supabase
+            .from("returns")
+            .select("id, order_id, status, created_at")
+            .eq("user_id", user.id);
+          rets = retData || [];
+        } catch { /* graceful */ }
+
         if (!cancelled) {
           if (profErr) setError(profErr.message || "Failed to load profile.");
           if (ordErr) setError((prev) => prev || ordErr.message || "Failed to load orders.");
           setProfile(prof || null);
           setOrders(ord || []);
+          setReturns(rets);
         }
       } catch (e) {
         if (!cancelled) setError(e?.message || "Something went wrong.");
@@ -146,10 +160,24 @@ export default function AccountDashboard() {
     [tier]
   );
 
-  const wishlist = user?.wishlist || [];
-
   // Catalog lookups for reorder + matching order items to imagery.
   const bySlug = useMemo(() => new Map(catalog.map((p) => [p.slug, p])), [catalog]);
+
+  // Wishlist entries hydrated from the persistent slug list.
+  const wishlist = useMemo(
+    () =>
+      wishlistCtx.slugs
+        .map((slug) => bySlug.get(slug))
+        .filter(Boolean)
+        .map((p) => ({
+          id: p.id,
+          slug: p.slug,
+          name: p.displayName || p.name,
+          price: p.price,
+          image: resolveProductImages(p)?.[0] || null,
+        })),
+    [wishlistCtx.slugs, bySlug]
+  );
   const byName = useMemo(
     () => new Map(catalog.map((p) => [(p.displayName || p.name || "").toLowerCase(), p])),
     [catalog]
@@ -280,10 +308,13 @@ export default function AccountDashboard() {
             )}
           </div>
 
-          <button onClick={logout} className="btn-outline inline-flex items-center gap-2" type="button">
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
+          <div className="flex items-center gap-3">
+            {profile?.stripe_customer_id && <BillingPortalButton />}
+            <button onClick={logout} className="btn-outline inline-flex items-center gap-2" type="button">
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </div>
         </Motion.div>
 
         {error && (
@@ -299,6 +330,18 @@ export default function AccountDashboard() {
           <StatCard icon={Receipt} label="Lifetime Spend" value={loading ? "—" : money(lifetimeSpendCents)} sub="Drives your tier" />
           <StatCard icon={ShoppingBag} label="Orders" value={loading ? "—" : orders.length} sub="All-time" />
         </div>
+
+        <StoreCreditPanel
+          balanceCents={Number(profile?.store_credit_cents || 0)}
+          onRedeemed={(amountCents) =>
+            setProfile((p) => ({
+              ...p,
+              store_credit_cents: Number(p?.store_credit_cents || 0) + amountCents,
+            }))
+          }
+        />
+
+        <ReferralPanel />
 
         {/* Tier Visualizer */}
         <TierTrack tier={tier} tierIndex={tierIndex} nextTier={nextTier} />
@@ -352,6 +395,8 @@ export default function AccountDashboard() {
             )}
             {tab === "orders" && (
               <OrdersTab
+                returnsByOrder={new Map(returns.map((r) => [r.order_id, r]))}
+                onRequestReturn={setReturnOrder}
                 loading={loading}
                 orders={orders}
                 matchItem={matchItem}
@@ -363,12 +408,334 @@ export default function AccountDashboard() {
                 wishlist={wishlist}
                 bySlug={bySlug}
                 moveToCart={moveToCart}
-                remove={(w) => toggleWishlistItem?.(w)}
+                remove={(w) => wishlistCtx.toggle(w.slug)}
               />
             )}
           </Motion.div>
         </AnimatePresence>
       </div>
+
+      {returnOrder && (
+        <ReturnRequestModal
+          order={returnOrder}
+          user={user}
+          onClose={() => setReturnOrder(null)}
+          onSubmitted={(newReturn) => {
+            setReturns((prev) => [...prev, newReturn]);
+            setReturnOrder(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Store credit + gift card redemption ---------------- */
+function StoreCreditPanel({ balanceCents, onRedeemed }) {
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState(null); // { ok, text }
+
+  const redeem = async (e) => {
+    e.preventDefault();
+    if (!code.trim() || busy || !supabase) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      const { data, error } = await supabase.rpc("redeem_gift_card", {
+        p_code: code.trim(),
+      });
+      if (error) throw error;
+      if (data?.ok) {
+        onRedeemed(Number(data.amount_cents || 0));
+        setMessage({ ok: true, text: `${money(data.amount_cents)} added to your store credit.` });
+        setCode("");
+      } else {
+        setMessage({ ok: false, text: data?.error || "That code was not recognized." });
+      }
+    } catch (err) {
+      setMessage({ ok: false, text: err?.message || "Redemption failed. Try again." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mb-8 border border-white/5 bg-se-charcoal p-5 flex flex-col md:flex-row md:items-center gap-4">
+      <div className="flex items-center gap-3 md:min-w-[220px]">
+        <Gift className="w-5 h-5 text-se-gold" aria-hidden="true" />
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">Store credit</p>
+          <p className="text-[18px] font-display tracking-[0.04em]">{money(balanceCents)}</p>
+        </div>
+      </div>
+
+      <form onSubmit={redeem} className="flex-1 flex flex-col sm:flex-row gap-2">
+        <input
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Gift card code (SE-GIFT-…)"
+          aria-label="Gift card code"
+          className="flex-1 bg-se-black border border-white/10 px-4 py-2.5 text-[13px] font-accent text-se-bone focus:outline-none focus:border-se-gold/60 uppercase"
+        />
+        <button
+          type="submit"
+          disabled={busy || !code.trim()}
+          className={`btn-outline text-[10px] whitespace-nowrap ${busy ? "opacity-70 cursor-wait" : ""}`}
+        >
+          {busy ? "Redeeming…" : "Redeem Gift Card"}
+        </button>
+      </form>
+
+      {message && (
+        <p
+          role="status"
+          className={`text-[12px] font-accent ${message.ok ? "text-se-gold" : "text-se-red-bright"}`}
+        >
+          {message.text}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Billing portal (subscriptions) ---------------- */
+function BillingPortalButton() {
+  const [busy, setBusy] = useState(false);
+
+  const open = async () => {
+    if (busy || !supabase) return;
+    setBusy(true);
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data?.session?.access_token;
+      if (!token) throw new Error("Not authenticated");
+      const res = await fetch("/api/billing-portal", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.url) throw new Error(json.error || "Portal unavailable");
+      window.location.assign(json.url);
+    } catch {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={open}
+      disabled={busy}
+      className={`btn-outline inline-flex items-center gap-2 ${busy ? "opacity-70 cursor-wait" : ""}`}
+    >
+      <Receipt className="w-4 h-4" />
+      {busy ? "Opening…" : "Billing"}
+    </button>
+  );
+}
+
+/* ---------------- Referral link ---------------- */
+function ReferralPanel() {
+  const [link, setLink] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
+
+  const getLink = async () => {
+    if (busy || !supabase) return;
+    setBusy(true);
+    setError("");
+    try {
+      const { data, error: rpcErr } = await supabase.rpc("ensure_referral_code");
+      if (rpcErr) throw rpcErr;
+      setLink(`${window.location.origin}/?ref=${data}`);
+    } catch (err) {
+      setError(err?.message || "Could not create your link. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard unavailable — the link is selectable */ }
+  };
+
+  return (
+    <div className="mb-8 border border-white/5 bg-se-charcoal p-5 flex flex-col md:flex-row md:items-center gap-4">
+      <div className="flex items-center gap-3 md:min-w-[220px]">
+        <Zap className="w-5 h-5 text-se-gold" aria-hidden="true" />
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.15em] text-se-steel font-accent">Refer a friend</p>
+          <p className="text-[12px] text-se-bone/60 font-accent">
+            Earn {LOYALTY.referralBonusPoints} points on their first order.
+          </p>
+        </div>
+      </div>
+
+      {link ? (
+        <div className="flex-1 flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            readOnly
+            value={link}
+            onFocus={(e) => e.target.select()}
+            aria-label="Your referral link"
+            className="flex-1 bg-se-black border border-white/10 px-4 py-2.5 text-[12px] font-accent text-se-bone focus:outline-none focus:border-se-gold/60"
+          />
+          <button type="button" onClick={copy} className="btn-outline text-[10px] whitespace-nowrap">
+            {copied ? "Copied" : "Copy Link"}
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={getLink}
+          disabled={busy}
+          className={`btn-outline text-[10px] ${busy ? "opacity-70 cursor-wait" : ""}`}
+        >
+          {busy ? "Creating…" : "Get My Link"}
+        </button>
+      )}
+
+      {error && <p className="text-[12px] text-se-red-bright font-accent" role="alert">{error}</p>}
+    </div>
+  );
+}
+
+/* ---------------- Return request modal ---------------- */
+function ReturnRequestModal({ order, user, onClose, onSubmitted }) {
+  const items = order.order_items || [];
+  const [selected, setSelected] = useState(() => new Set(items.map((_, i) => i)));
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const toggle = (i) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!selected.size) return setError("Select at least one item.");
+    if (!reason.trim()) return setError("Tell us briefly why you're returning it.");
+    setSaving(true);
+    try {
+      const returnItems = items
+        .filter((_, i) => selected.has(i))
+        .map((it) => ({
+          product_name: it.product_name,
+          variant: it.variant,
+          quantity: it.quantity,
+        }));
+
+      const { data, error: insErr } = await supabase
+        .from("returns")
+        .insert({
+          order_id: order.id,
+          user_id: user.id,
+          email: user.email || null,
+          items: returnItems,
+          reason: reason.trim().slice(0, 1000),
+        })
+        .select("id, order_id, status, created_at")
+        .single();
+      if (insErr) throw insErr;
+      onSubmitted(data);
+    } catch (err) {
+      setSaving(false);
+      setError(err?.message || "Could not submit the return. Please try again.");
+    }
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Request a return"
+      className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <form
+        onSubmit={submit}
+        className="bg-se-charcoal border border-white/10 max-w-md w-full p-7 space-y-5 max-h-[85vh] overflow-y-auto"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[10px] tracking-[0.25em] uppercase text-se-gold font-accent mb-1">
+              Return request
+            </p>
+            <h2 className="font-display text-[17px] tracking-[0.08em]">
+              ORDER {order.order_number || ""}
+            </h2>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close" className="text-se-steel hover:text-se-bone transition">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          <span className="block text-[11px] font-accent tracking-[0.15em] uppercase text-se-bone/60">
+            Items to return
+          </span>
+          {items.map((it, i) => (
+            <label key={i} className="flex items-center gap-3 border border-white/5 bg-se-black/40 px-3 py-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selected.has(i)}
+                onChange={() => toggle(i)}
+                className="accent-[#C4A35A]"
+              />
+              <span className="text-[13px] font-accent text-se-bone flex-1 truncate">
+                {it.product_name}
+                {it.variant ? ` · ${it.variant}` : ""} · ×{it.quantity}
+              </span>
+            </label>
+          ))}
+        </div>
+
+        <label className="block">
+          <span className="text-[11px] font-accent tracking-[0.15em] uppercase text-se-bone/60">
+            Reason
+          </span>
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            rows={3}
+            maxLength={1000}
+            required
+            placeholder="Fit, quality, changed your mind…"
+            className="mt-2 w-full bg-se-black border border-white/10 px-4 py-3 text-[14px] text-se-bone focus:outline-none focus:border-se-gold/60 resize-y"
+          />
+        </label>
+
+        <p className="text-[11px] text-se-steel font-accent leading-relaxed">
+          Unworn items with tags qualify within 30 days. We'll review within
+          1–2 business days and email next steps.
+        </p>
+
+        {error && (
+          <p className="text-[12px] text-se-red-bright font-accent" role="alert">{error}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={saving}
+          className={`btn-primary w-full ${saving ? "opacity-70 cursor-wait" : ""}`}
+        >
+          {saving ? "Submitting…" : "Submit Return Request"}
+        </button>
+      </form>
     </div>
   );
 }
@@ -602,7 +969,17 @@ function OverviewTab({ tier, points, pointsHistory, forYou, forYouLoading, upcom
 }
 
 /* ---------------- Orders tab ---------------- */
-function OrdersTab({ loading, orders, matchItem, reorder }) {
+// Returns are accepted on paid/processing/shipped/fulfilled orders within 30 days.
+const RETURN_WINDOW_DAYS = 30;
+function returnEligible(order) {
+  const status = String(order.status || "").toLowerCase();
+  if (!["paid", "processing", "shipped", "fulfilled"].includes(status)) return false;
+  if (!order.created_at || !order.id) return false;
+  const ageDays = (Date.now() - new Date(order.created_at).getTime()) / 86_400_000;
+  return ageDays <= RETURN_WINDOW_DAYS;
+}
+
+function OrdersTab({ loading, orders, matchItem, reorder, returnsByOrder, onRequestReturn }) {
   if (loading) {
     return (
       <div className="space-y-3">
@@ -650,6 +1027,41 @@ function OrdersTab({ loading, orders, matchItem, reorder }) {
                 </button>
               </div>
             </div>
+
+            {(o.tracking_url || o.tracking_number || returnsByOrder?.get(o.id) || returnEligible(o)) && (
+              <div className="mt-3 flex items-center gap-4 flex-wrap text-[11px] font-accent">
+                {o.tracking_url ? (
+                  <a
+                    href={o.tracking_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-se-gold hover:text-se-bone transition underline underline-offset-2"
+                  >
+                    <Truck className="w-3.5 h-3.5" aria-hidden="true" />
+                    Track shipment{o.tracking_carrier ? ` (${o.tracking_carrier.toUpperCase()})` : ""}
+                  </a>
+                ) : o.tracking_number ? (
+                  <span className="inline-flex items-center gap-1.5 text-se-bone/60">
+                    <Truck className="w-3.5 h-3.5" aria-hidden="true" />
+                    Tracking {o.tracking_number}
+                  </span>
+                ) : null}
+
+                {returnsByOrder?.get(o.id) ? (
+                  <span className="text-se-steel">
+                    Return {returnsByOrder.get(o.id).status}
+                  </span>
+                ) : returnEligible(o) ? (
+                  <button
+                    type="button"
+                    onClick={() => onRequestReturn(o)}
+                    className="text-se-steel hover:text-se-bone transition underline underline-offset-2"
+                  >
+                    Request return
+                  </button>
+                ) : null}
+              </div>
+            )}
 
             {items.length > 0 && (
               <div className="mt-4 flex items-center gap-3 flex-wrap">
@@ -730,7 +1142,9 @@ function WishlistTab({ wishlist, bySlug, moveToCart, remove }) {
               <Link to={`/products/${w.slug}`} className="text-[12px] text-se-bone font-accent hover:text-se-gold transition line-clamp-1">
                 {w.name}
               </Link>
-              {price != null && <p className="text-[11px] text-se-steel font-accent mt-0.5">${price}</p>}
+              {price != null && (
+                <p className="text-[11px] text-se-steel font-accent mt-0.5">{formatMoney(price)}</p>
+              )}
               <div className="mt-3 flex items-center gap-2">
                 <button
                   type="button"

@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { X, Minus, Plus, Lock } from "lucide-react";
 import { motion as Motion } from "framer-motion";
 import { useCart } from "../context/CartContext";
-
-const money = (n) =>
-  `$${Number(n).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+import FreeShippingMeter from "./FreeShippingMeter";
+import { formatMoney as money } from "../utils/format";
+import useFocusTrap from "../hooks/useFocusTrap";
 
 export default function CartDrawer() {
   const {
@@ -20,6 +20,8 @@ export default function CartDrawer() {
 
   const closeCartRef = useRef(closeCart);
   useEffect(() => { closeCartRef.current = closeCart; }, [closeCart]);
+
+  const trapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -40,6 +42,10 @@ export default function CartDrawer() {
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={closeCart} aria-hidden="true" />
 
       <Motion.aside
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Shopping bag"
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
@@ -135,6 +141,8 @@ export default function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-white/[0.06] px-6 py-6 space-y-4">
+            <FreeShippingMeter subtotal={total} />
+
             <div className="flex justify-between text-[13px] font-accent text-se-bone">
               <span>Subtotal</span>
               <span>{money(total)}</span>

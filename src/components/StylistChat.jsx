@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, X, Send } from "lucide-react";
 import { buildAiCatalog } from "../utils/aiCatalog";
+import useFocusTrap from "../hooks/useFocusTrap";
 
 /**
  * Renders assistant text, turning /products/<slug> links into in-app links.
@@ -26,6 +27,7 @@ function AssistantText({ text }) {
 
 export default function StylistChat() {
   const [open, setOpen] = useState(false);
+  const trapRef = useFocusTrap(open);
   const [messages, setMessages] = useState([]); // {role, content}
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
@@ -71,7 +73,7 @@ export default function StylistChat() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let acc = "";
-      // eslint-disable-next-line no-constant-condition
+       
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -109,7 +111,9 @@ export default function StylistChat() {
       {/* Panel */}
       {open && (
         <div
+          ref={trapRef}
           role="dialog"
+          aria-modal="true"
           aria-label="Style Eternal stylist"
           className="fixed inset-x-0 bottom-0 z-50 sm:inset-x-auto sm:right-5 sm:bottom-5 sm:w-[380px]"
         >

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 
@@ -207,79 +207,63 @@ export const UserProvider = ({ children }) => {
      AUTH METHODS (REAL)
   ========================= */
 
-  const register = async ({ email, password }) => {
+  const register = useCallback(async ({ email, password }) => {
     if (!supabase) throw new Error("Auth not configured");
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
     return data;
-  };
+  }, []);
 
-  const login = async ({ email, password }) => {
+  const login = useCallback(async ({ email, password }) => {
     if (!supabase) throw new Error("Auth not configured");
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
-  };
+  }, []);
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = useCallback(async () => {
     if (!supabase) throw new Error("Auth not configured");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin },
     });
     if (error) throw error;
-  };
+  }, []);
 
-  const loginWithApple = async () => {
+  const loginWithApple = useCallback(async () => {
     if (!supabase) throw new Error("Auth not configured");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: { redirectTo: window.location.origin + "/account" },
     });
     if (error) throw error;
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     if (supabase) await supabase.auth.signOut();
     setUser(null);
-  };
+  }, []);
+
+  const resetPassword = useCallback(async (email) => {
+    if (!supabase) throw new Error("Auth not configured");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/account/reset",
+    });
+    if (error) throw error;
+  }, []);
+
+  const updatePassword = useCallback(async (password) => {
+    if (!supabase) throw new Error("Auth not configured");
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+  }, []);
 
   /* =========================
      PROFILE / COMMERCE LOGIC
      (UNCHANGED FROM YOUR WORK)
   ========================= */
 
-  const addOrder = (order) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      const orderWithDefaults = {
-        id: order.id || Date.now().toString(),
-        createdAt: order.createdAt || new Date().toISOString(),
-        status: order.status || "Processing",
-        items: order.items || [],
-        total: order.total || 0,
-      };
-      return {
-        ...prev,
-        orders: [orderWithDefaults, ...(prev.orders || [])],
-        loyaltyPoints:
-          (prev.loyaltyPoints || 0) +
-          Math.round((orderWithDefaults.total || 0) / 10),
-      };
-    });
-  };
-
-  const addLoyaltyPoints = (points) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        loyaltyPoints: (prev.loyaltyPoints || 0) + (points || 0),
-      };
-    });
-  };
-
-  const updateProfile = (updates) => {
+  const updateProfile = useCallback((updates) => {
     setUser((prev) => {
       if (!prev) return prev;
       return hydrateUser({
@@ -291,43 +275,38 @@ export const UserProvider = ({ children }) => {
         },
       });
     });
-  };
-
-  const toggleWishlistItem = (item) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      const wishlist = prev.wishlist || [];
-      const exists = wishlist.find((p) => p.id === item.id);
-      return {
-        ...prev,
-        wishlist: exists
-          ? wishlist.filter((p) => p.id !== item.id)
-          : [...wishlist, item],
-      };
-    });
-  };
+  }, []);
 
   /* ========================= */
 
-  return (
-    <UserContext.Provider
-      value={{
-        user,
-        loading,
-        register,
-        login,
-        loginWithGoogle,
-        loginWithApple,
-        logout,
-        addOrder,
-        addLoyaltyPoints,
-        updateProfile,
-        toggleWishlistItem,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      register,
+      login,
+      loginWithGoogle,
+      loginWithApple,
+      logout,
+      resetPassword,
+      updatePassword,
+      updateProfile,
+    }),
+    [
+      user,
+      loading,
+      register,
+      login,
+      loginWithGoogle,
+      loginWithApple,
+      logout,
+      resetPassword,
+      updatePassword,
+      updateProfile,
+    ]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => useContext(UserContext);

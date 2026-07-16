@@ -3,14 +3,20 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { useUser } from "../context/UserContext";
+import { useWishlist } from "../context/WishlistContext";
 import { resolveProductImages } from "../utils/productMedia";
 import { useProductPrice } from "../hooks/useProductOverlay";
+import { formatMoney } from "../utils/format";
+import { trackAddToCart } from "../utils/track";
 import ComingSoonOverlay from "./ComingSoonOverlay";
+import SmartImage from "./SmartImage";
+
+// Grid cards: half viewport on phones, a third on tablets, a quarter on desktop.
+const CARD_SIZES = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw";
 
 const ProductCard = ({ product: rawProduct, featured = false }) => {
   const { addToCart, openCart } = useCart();
-  const { user, toggleWishlistItem } = useUser();
+  const wishlist = useWishlist();
   // Overlay live price/compare-at from Supabase (admin-editable) onto the
   // hardcoded product. Falls back to the hardcoded values when no DB row.
   const overlay = useProductPrice(rawProduct?.slug);
@@ -26,7 +32,8 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
   const img = product.image || images?.[0] || product.images?.[0] || null;
   const imgSecondary = images?.[1] || product.images?.[1] || null;
 
-  const handleQuickAdd = (e) => {
+  // Quick add with an explicit size choice — never silently picks one.
+  const handleQuickAdd = (e, size) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -37,27 +44,32 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
       name: product.displayName || product.name,
       price,
       image: img,
-      size: product.sizes?.[Math.floor(product.sizes.length / 2)] || "M",
+      size: size ?? null,
+      quantity: 1,
+    });
+    trackAddToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.displayName || product.name,
+      type: product.type,
+      price,
       quantity: 1,
     });
     openCart();
   };
 
+  const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+  const needsSizeChoice = sizes.length > 1;
+
   const isSoldOut = product.releaseStatus === "sold-out";
   const isPreorder = product.releaseStatus === "preorder";
   const isComingSoon = product.releaseStatus === "coming-soon";
 
-  const isWishlisted = !!user?.wishlist?.some((w) => w.id === product.id);
+  const isWishlisted = wishlist.has(product.slug);
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlistItem?.({
-      id: product.id,
-      slug: product.slug,
-      name: product.displayName || product.name,
-      price: Number(product.price ?? 0),
-      image: img,
-    });
+    wishlist.toggle(product.slug);
   };
 
   return (
@@ -69,18 +81,20 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
       <div className={`relative ${featured ? "aspect-[3/4]" : "aspect-[3/4]"} bg-se-charcoal overflow-hidden ${imgSecondary ? "product-card-img-swap" : ""}`}>
         {img ? (
           <>
-            <img
+            <SmartImage
               src={img}
               alt={product.name}
+              sizes={CARD_SIZES}
               className={`img-primary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out ${
                 isSoldOut || isComingSoon ? "opacity-50 grayscale" : "group-hover:scale-[1.04]"
               }`}
               loading="lazy"
             />
             {imgSecondary && !isSoldOut && !isComingSoon && (
-              <img
+              <SmartImage
                 src={imgSecondary}
                 alt={`${product.name} alternate view`}
+                sizes={CARD_SIZES}
                 className="img-secondary absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.04]"
                 loading="lazy"
               />
@@ -145,16 +159,39 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
           />
         </button>
 
-        {/* Quick Add (desktop hover) — only for available/preorder */}
+        {/* Quick Add (desktop hover) — only for available/preorder.
+            Multi-size products show a size row; the size the customer taps
+            is the size that lands in the bag. */}
         {!isSoldOut && !isComingSoon && (
           <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-            <button
-              onClick={handleQuickAdd}
-              className="w-full py-3 bg-se-bone text-se-black text-[10px] font-accent font-medium tracking-[0.2em] uppercase hover:bg-se-cream transition-colors"
-              type="button"
-            >
-              {isPreorder ? "Pre-Order" : "Quick Add"}
-            </button>
+            {needsSizeChoice ? (
+              <div className="bg-se-bone">
+                <p className="pt-2 text-center text-[8px] font-accent font-medium tracking-[0.25em] uppercase text-se-black/50">
+                  {isPreorder ? "Pre-Order" : "Quick Add"} — Select Size
+                </p>
+                <div className="flex">
+                  {sizes.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={(e) => handleQuickAdd(e, s)}
+                      aria-label={`Add size ${s} to bag`}
+                      className="flex-1 py-2.5 text-[10px] font-accent font-medium tracking-[0.1em] uppercase text-se-black hover:bg-se-black hover:text-se-bone transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={(e) => handleQuickAdd(e, sizes[0] ?? null)}
+                className="w-full py-3 bg-se-bone text-se-black text-[10px] font-accent font-medium tracking-[0.2em] uppercase hover:bg-se-cream transition-colors"
+                type="button"
+              >
+                {isPreorder ? "Pre-Order" : "Quick Add"}
+              </button>
+            )}
           </div>
         )}
 
@@ -184,11 +221,11 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
         <div className="flex items-center gap-3">
           {product.comparePrice && (
             <span className="text-[12px] text-se-steel line-through">
-              ${product.comparePrice}
+              {formatMoney(product.comparePrice)}
             </span>
           )}
           <span className={`text-[14px] font-medium ${isSoldOut || isComingSoon ? "text-se-steel" : "text-se-bone"}`}>
-            {isSoldOut ? "Sold Out" : isComingSoon ? `$${product.price}` : `$${product.price}`}
+            {isSoldOut ? "Sold Out" : formatMoney(product.price)}
           </span>
         </div>
 
@@ -201,4 +238,6 @@ const ProductCard = ({ product: rawProduct, featured = false }) => {
   );
 };
 
-export default ProductCard;
+// Grids render many cards; memoization keeps a cart or wishlist change from
+// re-rendering every card on the page.
+export default React.memo(ProductCard);

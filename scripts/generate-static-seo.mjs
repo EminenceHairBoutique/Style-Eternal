@@ -520,6 +520,20 @@ async function main() {
       ogType: "website",
       noindex: true,
     },
+    {
+      pathname: "/wishlist",
+      title: "Wishlist",
+      description: "Your saved Style Eternal pieces.",
+      ogType: "website",
+      noindex: true,
+    },
+    {
+      pathname: "/account/reset",
+      title: "Reset Password",
+      description: "Reset your Style Eternal account password.",
+      ogType: "website",
+      noindex: true,
+    },
   ];
 
   // Collection pages
@@ -540,6 +554,44 @@ async function main() {
     };
   });
 
+  // Approved-review aggregates for Product JSON-LD (rich results with stars).
+  // Fetched with the anon key — the reviews RLS policy exposes approved rows
+  // publicly — and skipped silently when env/network/table are unavailable,
+  // so the build never depends on Supabase being reachable.
+  const reviewAggregates = await (async () => {
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+    const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !anonKey) return new Map();
+    try {
+      const { createClient } = await import("@supabase/supabase-js");
+      const client = createClient(supabaseUrl, anonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data, error } = await client
+        .from("reviews")
+        .select("product_slug, rating")
+        .eq("status", "approved")
+        .limit(5000);
+      if (error || !Array.isArray(data)) return new Map();
+      const agg = new Map();
+      for (const r of data) {
+        if (!r.product_slug) continue;
+        const cur = agg.get(r.product_slug) || { sum: 0, count: 0 };
+        cur.sum += Number(r.rating || 0);
+        cur.count += 1;
+        agg.set(r.product_slug, cur);
+      }
+      const out = new Map();
+      for (const [slug, { sum, count }] of agg) {
+        if (count > 0) out.set(slug, { avg: Math.round((sum / count) * 10) / 10, count });
+      }
+      if (out.size) console.log(`[seo] review aggregates for ${out.size} product(s)`);
+      return out;
+    } catch {
+      return new Map();
+    }
+  })();
+
   // Product pages
   const productRoutes = (products || []).map((p) => {
     const title = p.displayName || p.name || "Product";
@@ -550,16 +602,28 @@ async function main() {
 
     const url = ensureSiteUrl(`/products/${p.slug}`);
     const offers = buildOffersForProduct(p);
+    const rating = reviewAggregates.get(p.slug);
 
     const productJsonLd = {
       "@type": "Product",
       "@id": `${url}#product`,
       name: title,
       description,
-      sku: p.verificationCode,
+      sku: p.id,
       brand: { "@type": "Brand", name: SITE_NAME },
       url,
       image: (Array.isArray(p.images) ? p.images.map(abs).filter(Boolean) : []).slice(0, 10),
+      ...(rating
+        ? {
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: rating.avg,
+              reviewCount: rating.count,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          }
+        : {}),
       ...(offers ? { offers } : {}),
     };
 
@@ -630,6 +694,8 @@ async function main() {
     "Disallow: /cancel",
     "Disallow: /account",
     "Disallow: /cart",
+    "Disallow: /wishlist",
+    "Disallow: /admin",
     "",
     `Sitemap: ${SITE_URL}/sitemap.xml`,
     "",

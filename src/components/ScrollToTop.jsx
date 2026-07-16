@@ -5,7 +5,9 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Instant, not smooth: smooth-scrolling to top on every navigation drags
+    // against the route crossfade and makes navigation feel slower.
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname]);
 
   return null;

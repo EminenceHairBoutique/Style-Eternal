@@ -21,6 +21,10 @@ import ProductCard from "../components/ProductCard";
 import NotifyMeForm from "../components/NotifyMeForm";
 import FitFinder from "../components/FitFinder";
 import { resolveProductImages } from "../utils/productMedia";
+import { formatMoney } from "../utils/format";
+import { trackViewItem, trackAddToCart } from "../utils/track";
+import SmartImage from "../components/SmartImage";
+import ReviewsSection from "../components/reviews/ReviewsSection";
 
 /* ------------------------------------------------------------------ */
 /*  Accordion                                                          */
@@ -197,7 +201,7 @@ function ImageGallery({ images, alt, badge }) {
                   opacity: active === i ? 1 : 0.65,
                 }}
               >
-                <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <SmartImage src={src} alt="" sizes="72px" className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
@@ -209,10 +213,11 @@ function ImageGallery({ images, alt, badge }) {
           onMouseLeave={onLeave}
         >
           {images.map((src, i) => (
-            <img
+            <SmartImage
               key={i}
               src={src}
               alt={`${alt} — view ${i + 1}`}
+              sizes="(max-width: 1024px) 100vw, 55vw"
               aria-hidden={i !== active}
               className="absolute inset-0 w-full h-full object-cover"
               style={{
@@ -222,6 +227,7 @@ function ImageGallery({ images, alt, badge }) {
                 transition: "opacity 180ms ease, transform 120ms ease-out",
               }}
               loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : undefined}
             />
           ))}
           <ProductBadge badge={badge} />
@@ -239,11 +245,13 @@ function ImageGallery({ images, alt, badge }) {
           {images.map((src, i) => (
             <div key={i} className="snap-center shrink-0 w-full">
               <div className="relative aspect-[3/4] bg-se-charcoal overflow-hidden">
-                <img
+                <SmartImage
                   src={src}
                   alt={`${alt} — view ${i + 1}`}
+                  sizes="100vw"
                   className="w-full h-full object-cover"
                   loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : undefined}
                 />
                 {i === 0 && <ProductBadge badge={badge} />}
               </div>
@@ -359,17 +367,25 @@ export default function ProductDetail() {
   /* ---------- AI fit finder ---------- */
   const [fitOpen, setFitOpen] = useState(false);
 
+  /* ---------- reviews aggregate (feeds Product JSON-LD) ---------- */
+  const [reviewAggregate, setReviewAggregate] = useState(null);
+  useEffect(() => setReviewAggregate(null), [slug]);
+
   /* reset state when product changes */
   useEffect(() => {
     setSelectedSize(null);
     setQuantity(1);
     setSizeError(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, [slug]);
 
-  /* record recently viewed */
+  /* record recently viewed + view_item analytics */
   useEffect(() => {
-    if (product?.slug) addSlug(product.slug);
+    if (product?.slug) {
+      addSlug(product.slug);
+      trackViewItem(product, { value: Number(product.price) || undefined });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.slug, addSlug]);
 
   /* ---------- derived ---------- */
@@ -451,6 +467,15 @@ export default function ProductDetail() {
       { quantity }
     );
 
+    trackAddToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.displayName || product.name,
+      type: product.type,
+      price: product.price,
+      quantity,
+    });
+
     openCart();
   }, [product, selectedSize, quantity, images, canAddToCart, addToCart, openCart]);
 
@@ -488,9 +513,21 @@ export default function ProductDetail() {
         "@id": `${productUrl}#product`,
         name: productName,
         description: product.description,
+        sku: product.id,
         url: productUrl,
         image: images.map((img) => (String(img).startsWith("http") ? img : `${siteUrl}${img}`)),
         brand: { "@type": "Brand", name: "Style Eternal" },
+        ...(reviewAggregate
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: reviewAggregate.avg,
+                reviewCount: reviewAggregate.count,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
         ...(product.price
           ? {
               offers: {
@@ -607,7 +644,7 @@ export default function ProductDetail() {
                     isSoldOut ? "text-se-steel" : "text-se-bone"
                   }`}
                 >
-                  {isSoldOut ? "Sold Out" : `$${product.price}`}
+                  {isSoldOut ? "Sold Out" : formatMoney(product.price)}
                 </span>
               </div>
 
@@ -740,7 +777,7 @@ export default function ProductDetail() {
                     onClick={handleAddToCart}
                     className="btn-primary w-full py-4 text-[12px] tracking-[0.2em]"
                   >
-                    {isPreorder ? "Pre-Order" : "Add to Cart"} — ${product.price * quantity}
+                    {isPreorder ? "Pre-Order" : "Add to Cart"} — {formatMoney(product.price * quantity)}
                   </button>
                 )}
               </div>
@@ -853,6 +890,11 @@ export default function ProductDetail() {
           </div>
         </div>
 
+        {/* ---- Reviews ---- */}
+        <div className="content-wide">
+          <ReviewsSection productSlug={product.slug} onAggregate={setReviewAggregate} />
+        </div>
+
         {/* ---- Complete the Look ---- */}
         <ProductRow title="COMPLETE THE LOOK" items={completeTheLook} />
 
@@ -889,7 +931,7 @@ export default function ProductDetail() {
               className="shrink-0 px-5 py-3 rounded-sm text-[12px] font-accent font-semibold tracking-[0.15em] uppercase"
               style={{ background: "#c9a96e", color: "#0A0A0A" }}
             >
-              Add — ${product.price * quantity}
+              Add — {formatMoney(product.price * quantity)}
             </button>
           </div>
         </div>

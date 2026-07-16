@@ -28,8 +28,10 @@ export default defineConfig([
       "no-unused-vars": [
         "error",
         {
+          // Capitalized identifiers are React components referenced from JSX,
+          // which plain ESLint (no eslint-plugin-react) can't see as usage.
           varsIgnorePattern: "^[A-Z_]",
-          argsIgnorePattern: "^_",
+          argsIgnorePattern: "^_|^[A-Z]",
           caughtErrorsIgnorePattern: "^_",
         },
       ],
@@ -38,7 +40,7 @@ export default defineConfig([
 
   // Server-side (Vercel functions / Node) — Node globals (process, Buffer, etc.)
   {
-    files: ["api/**/*.js", "lib/**/*.js", "dev-server.js", "serverbackup.js"],
+    files: ["api/**/*.js", "lib/**/*.js", "dev-server.js", "scripts/**/*.mjs"],
     extends: [js.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
@@ -60,11 +62,29 @@ export default defineConfig([
     },
   },
 
-  // Context providers export hooks/constants — allow without breaking fast refresh rule
+  // Provider modules export hooks/constants alongside their component —
+  // allow without breaking the fast-refresh rule
   {
-    files: ["src/context/**/*.{js,jsx}"],
+    files: ["src/context/**/*.{js,jsx}", "src/admin/components/Toast.jsx"],
     rules: {
       "react-refresh/only-export-components": "off",
+    },
+  },
+
+  // Tests — Node globals; vitest/playwright APIs are explicitly imported
+  {
+    files: ["tests/**/*.js", "playwright.config.js", "vitest.config.js"],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: { ...globals.node, ...globals.browser },
+      parserOptions: { ecmaVersion: "latest", sourceType: "module" },
+    },
+    rules: {
+      "no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^[A-Z_]", argsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
     },
   },
 ]);

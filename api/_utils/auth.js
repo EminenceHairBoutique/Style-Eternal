@@ -1,20 +1,18 @@
-/* eslint-env node */
 /**
  * api/_utils/auth.js
- * Centralized server-side authentication helpers for Vercel serverless functions.
+ * Centralized server-side authentication for Vercel serverless functions.
+ *
+ * Admin model: profiles.is_admin — the same source of truth the admin SPA's
+ * RLS policies use (public.is_admin()). The old ADMIN_EMAILS env allowlist is
+ * retired: it was a second, divergent admin model, and its VITE_-prefixed
+ * fallback risked shipping the allowlist to browsers.
  *
  * Usage:
- *   import { requireAdmin, requirePartner, getUserFromReq } from "../_utils/auth.js";
- *
  *   const user = await requireAdmin(req, res);
  *   if (!user) return; // response already sent
  */
 
 import { supabaseServer } from "../../lib/supabaseServer.js";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 function getBearerToken(req) {
   const auth = req.headers?.authorization || req.headers?.Authorization;
@@ -23,23 +21,11 @@ function getBearerToken(req) {
   return tokenMatch ? tokenMatch[1] : null;
 }
 
-function adminEmailAllowlist() {
-  const raw = process.env.ADMIN_EMAILS || process.env.VITE_ADMIN_EMAILS || "";
-  return raw
-    .split(",")
-    .map((emailAddress) => emailAddress.trim().toLowerCase())
-    .filter(Boolean);
-}
-
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
   res.end(JSON.stringify(body));
 }
-
-// ---------------------------------------------------------------------------
-// Core: resolve Supabase user from Bearer token
-// ---------------------------------------------------------------------------
 
 /**
  * Resolve the Supabase user from the Authorization header.
@@ -58,10 +44,6 @@ export async function getUserFromReq(req) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Guards (call in serverless handler; return null if response already sent)
-// ---------------------------------------------------------------------------
-
 /**
  * Require a valid authenticated Supabase user.
  * On failure: sends 401 and returns null.
@@ -76,8 +58,8 @@ export async function requireUser(req, res) {
 }
 
 /**
- * Require the caller to be an admin (email must be in ADMIN_EMAILS env var).
- * On failure: sends 401 or 403 and returns null.
+ * Require the caller to be an admin (profiles.is_admin = true).
+ * On failure: sends 401 or 403 and returns null. Fails closed.
  */
 export async function requireAdmin(req, res) {
   const user = await getUserFromReq(req);
@@ -86,49 +68,21 @@ export async function requireAdmin(req, res) {
     return null;
   }
 
-  const allow = adminEmailAllowlist();
-  const email = String(user.email || "").toLowerCase();
+  try {
+    const { data: profile, error } = await supabaseServer
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  if (!allow.length || !allow.includes(email)) {
+    if (error || !profile?.is_admin) {
+      json(res, 403, { error: "Forbidden" });
+      return null;
+    }
+  } catch {
     json(res, 403, { error: "Forbidden" });
     return null;
   }
 
   return user;
-}
-
-/**
- * Require the caller to be an approved partner (checks Supabase profile row).
- * On failure: sends 401 or 403 and returns null.
- */
-export async function requirePartner(req, res) {
-  const user = await getUserFromReq(req);
-  if (!user) {
-    json(res, 401, { error: "Unauthorized" });
-    return null;
-  }
-
-  // Fetch partner status from profile table (server-side enforcement).
-  const { data: profile } = await supabaseServer
-    .from("profiles")
-    .select("account_tier, partner_status")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const tier = String(profile?.account_tier || "").toLowerCase();
-  const status = String(profile?.partner_status || "").toLowerCase();
-
-  const isApproved =
-    tier === "partner" ||
-    tier === "wholesale" ||
-    tier.startsWith("partner_") ||
-    status === "approved" ||
-    status === "active";
-
-  if (!isApproved) {
-    json(res, 403, { error: "Forbidden: partner access required" });
-    return null;
-  }
-
-  return { ...user, profile };
 }

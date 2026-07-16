@@ -1,4 +1,3 @@
-/* eslint-env node */
 
 import { supabaseServer } from "../lib/supabaseServer.js";
 import { sendConciergeRequestEmail } from "../lib/email.js";

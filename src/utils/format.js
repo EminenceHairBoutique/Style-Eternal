@@ -9,6 +9,19 @@ export const formatMoney = (n) =>
   `$${Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
 /**
+ * Formats an integer cent amount as dollars (two decimals when not whole).
+ * e.g. 15000 → "$150", 15050 → "$150.50"
+ */
+export const formatMoneyCents = (cents) => {
+  const dollars = Number(cents || 0) / 100;
+  const isWhole = Number.isInteger(dollars);
+  return `$${dollars.toLocaleString(undefined, {
+    minimumFractionDigits: isWhole ? 0 : 2,
+    maximumFractionDigits: isWhole ? 0 : 2,
+  })}`;
+};
+
+/**
  * Formats a byte count as a human-readable file size string.
  * e.g. 1536 → "2 KB", 2097152 → "2.0 MB"
  */

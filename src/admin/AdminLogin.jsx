@@ -131,7 +131,7 @@ export default function AdminLogin() {
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div
             style={{
-              fontFamily: "'Oswald', sans-serif",
+              fontFamily: "'Oswald Variable', 'Oswald', sans-serif",
               fontSize: "1.05rem",
               letterSpacing: "0.3em",
               color: "#f0f0f0",

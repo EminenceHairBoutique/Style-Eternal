@@ -20,8 +20,10 @@ const NAV = [
     section: "Commerce",
     items: [
       { label: "Orders", to: "/admin/orders" },
+      { label: "Returns", to: "/admin/returns" },
       { label: "Customers", to: "/admin/customers" },
       { label: "Discounts", to: "/admin/discounts" },
+      { label: "Reviews", to: "/admin/reviews" },
     ],
   },
   {
@@ -45,8 +47,10 @@ const TITLES = {
   "/admin/drops": "Drops",
   "/admin/drops/new": "New drop",
   "/admin/orders": "Orders",
+  "/admin/returns": "Returns",
   "/admin/customers": "Customers",
   "/admin/discounts": "Discount codes",
+  "/admin/reviews": "Reviews",
   "/admin/homepage": "Homepage",
   "/admin/pages": "Pages",
   "/admin/media": "Media library",
@@ -92,7 +96,7 @@ export default function AdminLayout() {
           <div
             style={{
               padding: "1.5rem 1.25rem",
-              fontFamily: "'Oswald', sans-serif",
+              fontFamily: "'Oswald Variable', 'Oswald', sans-serif",
               fontSize: "0.95rem",
               letterSpacing: "3px",
               color: "#f0f0f0",
