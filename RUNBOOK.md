@@ -20,6 +20,8 @@ Open **Supabase Studio → SQL Editor** and run these four files from
 2. `20260716110000_rls_is_admin_policies.sql`
 3. `20260716120000_rate_limit_rpc.sql`
 4. `20260716130000_wishlists_reviews_recovery.sql`
+5. `20260716140000_fulfillment_giftcards_referrals.sql` ← **contains a
+   security fix; apply promptly** (see 1c below)
 
 All four are idempotent — re-running them is safe. They are written to
 converge **any** starting state (fresh database, migration-built, or the
@@ -63,9 +65,29 @@ SELECT policyname FROM pg_policies WHERE tablename = 'discount_codes';
 
 -- RPCs exist:
 SELECT proname FROM pg_proc WHERE proname IN
-  ('next_order_number','decrement_stock','increment_discount_usage','rate_limit_hit');
--- expect 4 rows
+  ('next_order_number','decrement_stock','increment_discount_usage','rate_limit_hit',
+   'redeem_gift_card','deduct_store_credit','ensure_referral_code');
+-- expect 7 rows
 ```
+
+### 1c. Security post-check — profile privilege escalation
+
+Until migration 5 is applied, **any signed-in user could grant themselves
+admin** by updating their own `profiles` row (the row-level policy couldn't
+restrict columns). After applying, audit for accounts that shouldn't be
+admins and check for implausible balances:
+
+```sql
+SELECT email, is_admin, loyalty_points, store_credit_cents
+FROM public.profiles
+WHERE is_admin = TRUE
+   OR loyalty_points > 10000
+   OR store_credit_cents > 0
+ORDER BY is_admin DESC, loyalty_points DESC;
+```
+
+Revoke anything unexpected with
+`UPDATE public.profiles SET is_admin = FALSE WHERE email = '…';`
 
 ---
 
