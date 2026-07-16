@@ -1,10 +1,9 @@
 // src/pages/Checkout.jsx — Style Eternal
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Lock, AlertTriangle, Truck, Clock } from "lucide-react";
+import { Lock, AlertTriangle, Truck, Loader2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useUser } from "../context/UserContext";
-import StripeProvider from "../components/StripeProvider";
 import SEO from "../components/SEO";
 import { trackBeginCheckout } from "../utils/track";
 
@@ -96,8 +95,12 @@ async function buildAndRedirectCheckout({ items, user, filterFn, onError }) {
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(errText || "Checkout API error");
+      let message = "Checkout is temporarily unavailable. Please try again.";
+      try {
+        const errBody = await res.json();
+        if (errBody?.error) message = errBody.error;
+      } catch { /* non-JSON error body */ }
+      throw new Error(message);
     }
 
     const data = await res.json();
@@ -113,40 +116,41 @@ export default function Checkout() {
   const { items = [], total = 0 } = useCart();
   const { user } = useUser();
 
-  const [pageLoading, setPageLoading] = useState(true);
   const [showMixedModal, setShowMixedModal] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
+  const [redirecting, setRedirecting] = useState(false);
   const rootRef = useRef(null);
-
-  useEffect(() => {
-    setPageLoading(true);
-    const t = setTimeout(() => setPageLoading(false), 180);
-    return () => clearTimeout(t);
-  }, []);
 
   const hasPreorder = items.some((i) => i.isPreorder);
   const hasDomestic = items.some((i) => !i.isPreorder);
   const isMixed = hasPreorder && hasDomestic;
 
   const onError = (err) => {
+    setRedirecting(false);
     setCheckoutError(err?.message || "Payment system temporarily unavailable. Please refresh and try again.");
   };
 
   async function handleCheckout() {
+    if (redirecting) return;
     setCheckoutError(null);
     if (isMixed) { setShowMixedModal(true); return; }
+    setRedirecting(true);
     await buildAndRedirectCheckout({ items, user, onError });
   }
 
   async function handleCheckoutDomestic() {
+    if (redirecting) return;
     setShowMixedModal(false);
     setCheckoutError(null);
+    setRedirecting(true);
     await buildAndRedirectCheckout({ items, user, filterFn: (i) => !i.isPreorder, onError });
   }
 
   async function handleCheckoutPreorder() {
+    if (redirecting) return;
     setShowMixedModal(false);
     setCheckoutError(null);
+    setRedirecting(true);
     await buildAndRedirectCheckout({ items, user, filterFn: (i) => i.isPreorder, onError });
   }
 
@@ -195,20 +199,15 @@ export default function Checkout() {
               </div>
             )}
 
-            {pageLoading ? (
-              <div className="space-y-4">
-                <div className="h-24 bg-se-charcoal se-skeleton" />
-                <div className="h-24 bg-se-charcoal se-skeleton" />
-              </div>
-            ) : (
-              <StripeProvider>
-                <div className="border border-white/5 bg-se-charcoal p-6">
-                  <p className="text-[13px] text-se-bone/50">
-                    You will be securely redirected to Stripe to complete your purchase.
-                  </p>
-                </div>
-              </StripeProvider>
-            )}
+            <div className="border border-white/5 bg-se-charcoal p-6 space-y-3">
+              <p className="text-[13px] text-se-bone/50">
+                You will be securely redirected to Stripe to complete your purchase.
+                Apple Pay, Google Pay and all major cards accepted.
+              </p>
+              <p className="text-[11px] text-se-steel font-accent">
+                Shipping address and delivery options are collected at payment.
+              </p>
+            </div>
           </div>
 
           {/* Right — Summary */}
@@ -279,12 +278,20 @@ export default function Checkout() {
               )}
 
               <button
-                disabled={!items || items.length === 0}
+                disabled={!items || items.length === 0 || redirecting}
                 onClick={handleCheckout}
-                className={`mt-6 w-full ${!items || items.length === 0 ? "btn-outline opacity-50 cursor-not-allowed" : "btn-primary"}`}
+                aria-busy={redirecting}
+                className={`mt-6 w-full ${!items || items.length === 0 ? "btn-outline opacity-50 cursor-not-allowed" : "btn-primary"} ${redirecting ? "opacity-70 cursor-wait" : ""}`}
                 type="button"
               >
-                Continue to Payment
+                {redirecting ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    Redirecting to secure payment…
+                  </span>
+                ) : (
+                  "Continue to Payment"
+                )}
               </button>
 
               <div className="mt-4 text-[10px] text-se-steel font-accent space-y-1">

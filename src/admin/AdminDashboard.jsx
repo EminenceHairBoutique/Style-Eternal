@@ -59,12 +59,12 @@ export default function AdminDashboard() {
         const [recentRes, statRes, productRes] = await Promise.all([
           supabase
             .from("orders")
-            .select("id, customer_name, customer_email, total, status, created_at, order_items(product_name)")
+            .select("id, order_number, customer_name, email, customer_email, amount_total, total, status, created_at, order_items(product_name)")
             .order("created_at", { ascending: false })
             .limit(10),
           supabase
             .from("orders")
-            .select("user_id, total, status, created_at")
+            .select("user_id, amount_total, total, status, created_at")
             .gte("created_at", since),
           supabase
             .from("products")
@@ -88,8 +88,12 @@ export default function AdminDashboard() {
         setRecentOrders(recentRes.data || []);
 
         const rows = statRes.data || [];
-        const active = rows.filter((o) => o.status !== "cancelled");
-        const revenue = active.reduce((s, r) => s + Number(r.total || 0), 0);
+        const active = rows.filter((o) => o.status !== "cancelled" && o.status !== "refunded");
+        // amount_total (cents) is canonical; total (dollars) covers legacy rows.
+        const revenue = active.reduce(
+          (s, r) => s + (r.amount_total != null ? Number(r.amount_total) / 100 : Number(r.total || 0)),
+          0
+        );
         const orderCount = active.length;
         const customerCount = new Set(active.map((r) => r.user_id).filter(Boolean)).size;
         const aov = orderCount > 0 ? revenue / orderCount : 0;
@@ -252,11 +256,13 @@ export default function AdminDashboard() {
                       <tr key={o.id} style={{ background: i % 2 === 1 ? "#fcfbf9" : "#fff" }}>
                         <td style={cellStyle}>
                           <Link to={`/admin/orders/${o.id}`} style={linkStyle}>
-                            {o.customer_name || o.customer_email || "—"}
+                            {o.customer_name || o.email || o.customer_email || "—"}
                           </Link>
                         </td>
                         <td style={cellStyle}>{firstName}{more}</td>
-                        <td style={cellStyle}>{USD.format(Number(o.total || 0))}</td>
+                        <td style={cellStyle}>
+                          {USD.format(o.amount_total != null ? Number(o.amount_total) / 100 : Number(o.total || 0))}
+                        </td>
                         <td style={cellStyle}><StatusBadge status={o.status} /></td>
                         <td style={cellStyle}>
                           {o.created_at ? new Date(o.created_at).toLocaleDateString() : "—"}

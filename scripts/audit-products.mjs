@@ -16,7 +16,7 @@
  *   node scripts/audit-products.mjs --json  (machine-readable output)
  */
 
-import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { existsSync, readdirSync, statSync } from "fs";
 import { resolve, join, relative } from "path";
 import { pathToFileURL } from "url";
 

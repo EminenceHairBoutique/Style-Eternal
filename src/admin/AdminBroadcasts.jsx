@@ -47,7 +47,7 @@ export default function AdminBroadcasts() {
     setHistory(data || []);
   };
 
-  useEffect(() => { loadHistory(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { loadHistory();   }, []);
   // Reset a stale preview when the filter changes.
   useEffect(() => { setPreviewCount(null); }, [recipientFilter]);
 

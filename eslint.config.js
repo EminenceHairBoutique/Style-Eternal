@@ -38,7 +38,7 @@ export default defineConfig([
 
   // Server-side (Vercel functions / Node) — Node globals (process, Buffer, etc.)
   {
-    files: ["api/**/*.js", "lib/**/*.js", "dev-server.js", "serverbackup.js"],
+    files: ["api/**/*.js", "lib/**/*.js", "dev-server.js", "scripts/**/*.mjs"],
     extends: [js.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
@@ -60,9 +60,10 @@ export default defineConfig([
     },
   },
 
-  // Context providers export hooks/constants — allow without breaking fast refresh rule
+  // Provider modules export hooks/constants alongside their component —
+  // allow without breaking the fast-refresh rule
   {
-    files: ["src/context/**/*.{js,jsx}"],
+    files: ["src/context/**/*.{js,jsx}", "src/admin/components/Toast.jsx"],
     rules: {
       "react-refresh/only-export-components": "off",
     },

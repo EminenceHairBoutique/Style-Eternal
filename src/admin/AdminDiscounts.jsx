@@ -42,7 +42,7 @@ export default function AdminDiscounts() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { load();   }, []);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 

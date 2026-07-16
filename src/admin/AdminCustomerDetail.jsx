@@ -20,7 +20,7 @@ export default function AdminCustomerDetail() {
         supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
         supabase
           .from("orders")
-          .select("id, total, status, created_at, order_items(product_name)")
+          .select("id, order_number, amount_total, total, status, created_at, order_items(product_name)")
           .eq("user_id", id)
           .order("created_at", { ascending: false }),
       ]);
@@ -34,8 +34,11 @@ export default function AdminCustomerDetail() {
   }, [id]);
 
   const stats = useMemo(() => {
-    const active = orders.filter((o) => o.status !== "cancelled");
-    const total = active.reduce((s, o) => s + Number(o.total || 0), 0);
+    // amount_total (cents) is canonical; total (dollars) covers legacy rows.
+    const orderDollars = (o) =>
+      o.amount_total != null ? Number(o.amount_total) / 100 : Number(o.total || 0);
+    const active = orders.filter((o) => o.status !== "cancelled" && o.status !== "refunded");
+    const total = active.reduce((s, o) => s + orderDollars(o), 0);
     const count = active.length;
     return { count, total, aov: count > 0 ? total / count : 0 };
   }, [orders]);
@@ -103,11 +106,13 @@ export default function AdminCustomerDetail() {
                   <tr key={o.id}>
                     <td style={tdStyle}>
                       <Link to={`/admin/orders/${o.id}`} style={linkStyle}>
-                        {String(o.id).slice(0, 8)}
+                        {o.order_number || String(o.id).slice(0, 8)}
                       </Link>
                     </td>
                     <td style={tdStyle}>{summary}</td>
-                    <td style={tdStyle}>{USD.format(Number(o.total || 0))}</td>
+                    <td style={tdStyle}>
+                      {USD.format(o.amount_total != null ? Number(o.amount_total) / 100 : Number(o.total || 0))}
+                    </td>
                     <td style={tdStyle}><StatusBadge status={o.status} /></td>
                     <td style={tdStyle}>{o.created_at ? new Date(o.created_at).toLocaleDateString() : "—"}</td>
                   </tr>

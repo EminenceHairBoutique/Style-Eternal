@@ -28,7 +28,7 @@ export default function AdminCustomers() {
           .order("created_at", { ascending: false }),
         supabase
           .from("orders")
-          .select("user_id, total, status, customer_email, customer_name"),
+          .select("user_id, amount_total, total, status, email, customer_email, customer_name"),
       ]);
       if (profilesRes.error) {
         showToast(profilesRes.error.message, "error");
@@ -39,13 +39,19 @@ export default function AdminCustomers() {
         showToast(ordersRes.error.message, "error");
       }
 
-      const orders = (ordersRes.data || []).filter((o) => o.status !== "cancelled");
+      // amount_total (cents) is canonical; total (dollars) covers legacy rows.
+      const orderDollars = (o) =>
+        o.amount_total != null ? Number(o.amount_total) / 100 : Number(o.total || 0);
+
+      const orders = (ordersRes.data || []).filter(
+        (o) => o.status !== "cancelled" && o.status !== "refunded"
+      );
       const aggByUser = new Map();
       for (const o of orders) {
         if (!o.user_id) continue;
         const cur = aggByUser.get(o.user_id) || { count: 0, total: 0 };
         cur.count += 1;
-        cur.total += Number(o.total || 0);
+        cur.total += orderDollars(o);
         aggByUser.set(o.user_id, cur);
       }
 
@@ -56,19 +62,19 @@ export default function AdminCustomers() {
       const guestByEmail = new Map();
       for (const o of orders) {
         if (o.user_id && profileIds.has(o.user_id)) continue;
-        const key = (o.customer_email || "").toLowerCase();
+        const key = (o.email || o.customer_email || "").toLowerCase();
         if (!key) continue;
         const cur = guestByEmail.get(key) || {
           id: `guest:${key}`,
           full_name: o.customer_name || "",
-          email: o.customer_email,
+          email: o.email || o.customer_email,
           created_at: null,
           count: 0,
           total: 0,
           guest: true,
         };
         cur.count += 1;
-        cur.total += Number(o.total || 0);
+        cur.total += orderDollars(o);
         guestByEmail.set(key, cur);
       }
 

@@ -38,7 +38,7 @@ export default function AdminProducts() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { load();   }, []);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();

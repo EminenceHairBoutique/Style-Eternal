@@ -1,8 +1,13 @@
-/* eslint-env node */
 import Stripe from "stripe";
 import { checkRateLimit } from "./_utils/rateLimit.js";
+import { supabaseServer } from "../lib/supabaseServer.js";
 import { products } from "../src/data/products.js";
-import { applyCustomPricing } from "../src/utils/pricing.js";
+import {
+  buildLineItems,
+  buildShippingOptions,
+  allowedShippingCountries,
+  CheckoutError,
+} from "../lib/checkout.js";
 
 // Lazy-init: guard against missing key in local dev (no .env set up)
 let _stripe = null;
@@ -10,6 +15,50 @@ function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) return null;
   if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   return _stripe;
+}
+
+// Pin redirect URLs to the canonical site when configured; otherwise fall
+// back to the request origin (local dev, previews).
+function resolveOrigin(req) {
+  const configured = process.env.SITE_URL || process.env.VITE_SITE_URL;
+  if (configured) return String(configured).replace(/\/+$/, "");
+  return (
+    req.headers.origin ||
+    `https://${req.headers["x-forwarded-host"] || req.headers.host}`
+  );
+}
+
+/**
+ * Live price/stock overlay for the requested slugs — the same Supabase
+ * `products` rows the admin panel edits and the storefront displays. This is
+ * what guarantees the charged price equals the displayed price. On any
+ * failure we fall back to static catalog prices rather than blocking sales.
+ */
+async function fetchOverlay(slugs) {
+  try {
+    const { data, error } = await supabaseServer
+      .from("products")
+      .select("slug, price, compare_at_price, stock, is_active")
+      .in("slug", slugs);
+    if (error || !Array.isArray(data)) {
+      if (error) console.warn("Checkout overlay unavailable:", error.message);
+      return null;
+    }
+    const map = new Map();
+    for (const r of data) {
+      if (!r.slug) continue;
+      map.set(r.slug, {
+        price: r.price != null ? Number(r.price) : null,
+        comparePrice: r.compare_at_price != null ? Number(r.compare_at_price) : null,
+        stock: r.stock != null ? Number(r.stock) : null,
+        isActive: r.is_active !== false,
+      });
+    }
+    return map;
+  } catch (err) {
+    console.warn("Checkout overlay fetch failed:", err?.message || err);
+    return null;
+  }
 }
 
 export default async function handler(req, res) {
@@ -47,65 +96,26 @@ export async function createHandler(req, res) {
     if (hasPreorder && hasDomestic) {
       return res.status(400).json({
         error:
-          "Mixed cart: pre-order and domestic items cannot be checked out together. " +
+          "Mixed cart: pre-order and standard items cannot be checked out together. " +
           "Please checkout each group separately.",
       });
     }
 
-    const origin =
-      req.headers.origin ||
-      `https://${req.headers["x-forwarded-host"] || req.headers.host}`;
+    const origin = resolveOrigin(req);
 
-    const line_items = items.map((item) => {
-      // Accept either an id or a slug. Quantity is required.
-      if ((!item?.id && !item?.slug) || !item.quantity) {
-        throw new Error("Missing item fields");
-      }
+    // Charged price = displayed price: overlay wins, static catalog fallback.
+    const slugs = [...new Set(
+      items
+        .map((i) => i.slug || products.find((p) => p.id === i.id)?.slug)
+        .filter(Boolean)
+    )];
+    const overlayBySlug = slugs.length ? await fetchOverlay(slugs) : null;
 
-      const product = products.find((p) => p.id === item.id || p.slug === item.slug);
-      if (!product) {
-        throw new Error(`Unknown product: ${item.id || item.slug}`);
-      }
-
-      // Variant selections — apparel uses size only (no length/density/lace)
-      const size = item.size ?? null;
-
-      // Compute base price on the server (flat pricing for apparel).
-      let basePrice = Number(product.price ?? 0);
-
-      // Apply custom pricing adjustments if any.
-      const finalPrice = Number(
-        applyCustomPricing({
-          basePrice,
-          isCustom: Boolean(item.isCustom),
-          customNotes: String(item.customNotes ?? ""),
-        }).price || basePrice
-      );
-
-      const unitAmount = Math.round(Number(finalPrice) * 100);
-      if (!Number.isFinite(unitAmount) || unitAmount <= 0) {
-        throw new Error(`Invalid price for ${product.id}`);
-      }
-
-      const imgPath = item.image || product.images?.[0] || null;
-      const image = imgPath
-        ? String(imgPath).startsWith("http")
-          ? imgPath
-          : `${origin}${imgPath}`
-        : null;
-
-      return {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: item.name || product.displayName || product.name,
-            ...(size ? { description: `Size: ${size}` } : {}),
-            images: image ? [image] : [],
-          },
-          unit_amount: unitAmount,
-        },
-        quantity: Number(item.quantity),
-      };
+    const { lineItems, subtotalCents } = buildLineItems({
+      items,
+      catalog: products,
+      overlayBySlug,
+      origin,
     });
 
     // Aggregate preorder metadata for the session.
@@ -113,19 +123,23 @@ export async function createHandler(req, res) {
     const preorderLeadDays = isPreorderSession
       ? Math.max(...items.map((i) => Number(i.leadTimeDays || 0)))
       : 0;
-    const qualityTiers = isPreorderSession
-      ? [...new Set(items.map((i) => i.qualityTier).filter(Boolean))].join(",")
-      : "";
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items,
+      // No payment_method_types: automatic payment methods let Stripe show
+      // Apple Pay / Google Pay / Link when enabled in the dashboard.
+      line_items: lineItems,
       mode: "payment",
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancel`,
 
-      // Allows standard Stripe promotion codes (optional but recommended).
       allow_promotion_codes: true,
+
+      // Physical goods: collect where to ship and charge the promised rates
+      // (free at/above the threshold, flat standard below).
+      shipping_address_collection: {
+        allowed_countries: allowedShippingCountries(process.env),
+      },
+      shipping_options: buildShippingOptions({ subtotalCents, env: process.env }),
 
       // Supabase user mapping for loyalty + order history.
       client_reference_id: userId ? String(userId) : undefined,
@@ -136,17 +150,17 @@ export async function createHandler(req, res) {
         user_id: userId ? String(userId) : "",
         customer_email: customerEmail ? String(customerEmail) : "",
         referral_code: referralCode ? String(referralCode).slice(0, 40) : "",
-        // Preorder-specific metadata
         preorder: isPreorderSession ? "true" : "false",
-        ships_from: isPreorderSession ? "Factory" : "Domestic",
         lead_time_days: isPreorderSession ? String(preorderLeadDays) : "0",
-        quality_tier: qualityTiers.slice(0, 100),
       },
     });
 
     res.json({ url: session.url });
   } catch (err) {
+    if (err instanceof CheckoutError) {
+      return res.status(err.status).json({ error: err.message, code: err.code });
+    }
     console.error("Stripe error:", err?.message || err);
-    res.status(500).json({ error: err?.message || "Stripe error" });
+    res.status(500).json({ error: "Unable to start checkout. Please try again." });
   }
 }

@@ -1,4 +1,3 @@
-/* eslint-env node */
 /**
  * api/admin-broadcast.js
  * Admin-only customer email broadcast.
@@ -15,18 +14,12 @@
  */
 import { supabaseServer } from "../lib/supabaseServer.js";
 import { sendBroadcastEmail } from "../lib/email.js";
+import { requireAdmin } from "./_utils/auth.js";
 
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
   res.end(JSON.stringify(body));
-}
-
-function getBearerToken(req) {
-  const auth = req.headers?.authorization || req.headers?.Authorization;
-  if (!auth) return null;
-  const m = String(auth).match(/^Bearer\s+(.+)$/i);
-  return m ? m[1] : null;
 }
 
 async function parseJsonBody(req) {
@@ -39,23 +32,6 @@ async function parseJsonBody(req) {
   try { return JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { return null; }
 }
 
-// Verify the caller is a signed-in admin (profiles.is_admin = true).
-async function requireAdmin(req, res) {
-  const token = getBearerToken(req);
-  if (!token) { json(res, 401, { error: "Unauthorized" }); return null; }
-
-  const { data: userData, error: userErr } = await supabaseServer.auth.getUser(token);
-  if (userErr || !userData?.user) { json(res, 401, { error: "Unauthorized" }); return null; }
-
-  const { data: profile, error: profErr } = await supabaseServer
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", userData.user.id)
-    .maybeSingle();
-  if (profErr || !profile?.is_admin) { json(res, 403, { error: "Forbidden" }); return null; }
-
-  return userData.user;
-}
 
 // Gather a de-duplicated list of recipient emails for a filter. Server-side only.
 async function gatherRecipients(recipientFilter) {
